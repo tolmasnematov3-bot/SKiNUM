@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SKiNUM</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #080b12;
+    color: #fff;
+    font-family: Arial, sans-serif;
+}
+
+header {
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 25px;
+    background: #0e121c;
+    border-bottom: 1px solid #202738;
+}
+
+.logo {
+    font-size: 26px;
+    font-weight: 800;
+    color: #6ee7ff;
+}
+
+.balance {
+    background: #151b28;
+    padding: 10px 16px;
+    border-radius: 10px;
+    color: #7df5a5;
+}
+
+main {
+    max-width: 1100px;
+    margin: auto;
+    padding: 35px 20px;
+}
+
+.hero {
+    text-align: center;
+    padding: 35px 10px;
+}
+
+.hero h1 {
+    font-size: 42px;
+    margin: 0 0 12px;
+}
+
+.hero p {
+    color: #8993a8;
+}
+
+.status {
+    margin: 25px auto;
+    padding: 15px;
+    max-width: 500px;
+    background: #101722;
+    border: 1px solid #263247;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.cases {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.case {
+    background: #111722;
+    border: 1px solid #273044;
+    border-radius: 16px;
+    padding: 25px;
+    text-align: center;
+}
+
+.case h2 {
+    margin-top: 0;
+}
+
+.price {
+    font-size: 22px;
+    font-weight: bold;
+    color: #ffd166;
+    margin: 15px 0;
+}
+
+button {
+    border: 0;
+    padding: 12px 20px;
+    border-radius: 10px;
+    background: #36c7ff;
+    color: #061018;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: .85;
+}
+
+.steam {
+    background: #1b73e8;
+    color: white;
+}
+
+footer {
+    text-align: center;
+    color: #667085;
+    padding: 40px 20px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">SKiNUM</div>
+
+    <div class="balance">
+        Balance: $100.00
+    </div>
+</header>
+
+<main>
+
+<section class="hero">
+    <h1>SKiNUM</h1>
+    <p>CS2 Skin Case Marketplace</p>
+
+    <button class="steam" onclick="loginSteam()">
+        LOGIN WITH STEAM
+    </button>
+</section>
+
+<div class="status" id="status">
+    Connecting to SKiNUM server...
+</div>
+
+<section class="cases">
+
+    <div class="case">
+        <h2>Knife Case</h2>
+        <p>Premium knife skins</p>
+        <div class="price">$25</div>
+        <button onclick="openCase('Knife')">
+            OPEN CASE
+        </button>
+    </div>
+
+    <div class="case">
+        <h2>Weapon Case</h2>
+        <p>Rare CS2 weapon skins</p>
+        <div class="price">$5</div>
+        <button onclick="openCase('Weapon')">
+            OPEN CASE
+        </button>
+    </div>
+
+    <div class="case">
+        <h2>AWP Case</h2>
+        <p>AWP skin collection</p>
+        <div class="price">$10</div>
+        <button onclick="openCase('AWP')">
+            OPEN CASE
+        </button>
+    </div>
+
+</section>
+
+</main>
+
+<footer>
+    SKiNUM © 2026
+</footer>
+
+<script>
+
+async function checkServer() {
+
+    try {
+
+        const response = await fetch("/api/status");
+
+        const data = await response.json();
+
+        document.getElementById("status").innerHTML =
+            "🟢 SKiNUM server is ONLINE — " + data.version;
+
+    } catch (error) {
+
+        document.getElementById("status").innerHTML =
+            "🔴 Server connection failed";
+
+    }
+}
+
+function loginSteam() {
+
+    window.location.href = "/auth/steam";
+
+}
+
+function openCase(type) {
+
+    alert(type + " Case will be connected to the backend next.");
+
+}
+
+checkServer();
+
+</script>
+
+</body>
+</html>
