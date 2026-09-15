@@ -3,9 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>SKiNUM</title>
 
 <style>
+
 * {
     box-sizing: border-box;
 }
@@ -13,7 +15,7 @@
 body {
     margin: 0;
     background: #080b12;
-    color: #fff;
+    color: white;
     font-family: Arial, sans-serif;
 }
 
@@ -33,11 +35,38 @@ header {
     color: #6ee7ff;
 }
 
-.balance {
+.user-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user {
     background: #151b28;
-    padding: 10px 16px;
+    padding: 10px 15px;
     border-radius: 10px;
     color: #7df5a5;
+    font-size: 14px;
+}
+
+.logout {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.login {
+    background: #1b73e8;
+    color: white;
+    border: none;
+    padding: 11px 18px;
+    border-radius: 9px;
+    cursor: pointer;
+    font-weight: bold;
 }
 
 main {
@@ -53,7 +82,7 @@ main {
 
 .hero h1 {
     font-size: 42px;
-    margin: 0 0 12px;
+    margin-bottom: 10px;
 }
 
 .hero p {
@@ -95,7 +124,7 @@ main {
     margin: 15px 0;
 }
 
-button {
+.case button {
     border: 0;
     padding: 12px 20px;
     border-radius: 10px;
@@ -105,105 +134,136 @@ button {
     cursor: pointer;
 }
 
-button:hover {
-    opacity: .85;
-}
-
-.steam {
-    background: #1b73e8;
-    color: white;
-}
-
 footer {
     text-align: center;
     color: #667085;
     padding: 40px 20px;
 }
+
 </style>
 </head>
 
 <body>
 
 <header>
-    <div class="logo">SKiNUM</div>
 
-    <div class="balance">
-        Balance: $100.00
+    <div class="logo">
+        SKiNUM
     </div>
+
+    <div class="user-area" id="userArea">
+
+        <button class="login" onclick="loginSteam()">
+            LOGIN WITH STEAM
+        </button>
+
+    </div>
+
 </header>
+
 
 <main>
 
 <section class="hero">
-    <h1>SKiNUM</h1>
-    <p>CS2 Skin Case Marketplace</p>
 
-    <button class="steam" onclick="loginSteam()">
-        LOGIN WITH STEAM
-    </button>
+    <h1>
+        SKiNUM
+    </h1>
+
+    <p>
+        CS2 Skin Case Marketplace
+    </p>
+
 </section>
+
 
 <div class="status" id="status">
     Connecting to SKiNUM server...
 </div>
 
+
 <section class="cases">
 
     <div class="case">
-        <h2>Knife Case</h2>
-        <p>Premium knife skins</p>
-        <div class="price">$25</div>
+
+        <h2>
+            🔪 Knife Case
+        </h2>
+
+        <p>
+            Premium knife skins
+        </p>
+
+        <div class="price">
+            $25
+        </div>
+
         <button onclick="openCase('Knife')">
             OPEN CASE
         </button>
+
     </div>
 
+
     <div class="case">
-        <h2>Weapon Case</h2>
-        <p>Rare CS2 weapon skins</p>
-        <div class="price">$5</div>
+
+        <h2>
+            🔫 Weapon Case
+        </h2>
+
+        <p>
+            Rare CS2 weapon skins
+        </p>
+
+        <div class="price">
+            $5
+        </div>
+
         <button onclick="openCase('Weapon')">
             OPEN CASE
         </button>
+
     </div>
 
+
     <div class="case">
-        <h2>AWP Case</h2>
-        <p>AWP skin collection</p>
-        <div class="price">$10</div>
+
+        <h2>
+            🎯 AWP Case
+        </h2>
+
+        <p>
+            AWP skin collection
+        </p>
+
+        <div class="price">
+            $10
+        </div>
+
         <button onclick="openCase('AWP')">
             OPEN CASE
         </button>
+
     </div>
 
 </section>
 
 </main>
 
+
 <footer>
+
     SKiNUM © 2026
+
 </footer>
+
 
 <script>
 
-async function checkServer() {
 
-    try {
-
-        const response = await fetch("/api/status");
-
-        const data = await response.json();
-
-        document.getElementById("status").innerHTML =
-            "🟢 SKiNUM server is ONLINE — " + data.version;
-
-    } catch (error) {
-
-        document.getElementById("status").innerHTML =
-            "🔴 Server connection failed";
-
-    }
-}
+/* ==============================
+   STEAM LOGIN
+============================== */
 
 function loginSteam() {
 
@@ -211,13 +271,115 @@ function loginSteam() {
 
 }
 
-function openCase(type) {
 
-    alert(type + " Case will be connected to the backend next.");
+/* ==============================
+   LOAD CURRENT USER
+============================== */
+
+async function loadUser() {
+
+    try {
+
+        const response = await fetch("/api/me");
+
+        const data = await response.json();
+
+        const userArea =
+            document.getElementById("userArea");
+
+
+        if (data.loggedIn) {
+
+            userArea.innerHTML = `
+
+                <div class="user">
+                    🟢 Steam Connected
+                </div>
+
+                <button
+                    class="logout"
+                    onclick="logoutSteam()"
+                >
+                    LOGOUT
+                </button>
+
+            `;
+
+            document.getElementById("status").innerHTML =
+                "🟢 Steam account connected";
+
+        }
+
+    } catch (error) {
+
+        console.log(error);
+
+    }
 
 }
 
+
+/* ==============================
+   LOGOUT
+============================== */
+
+function logoutSteam() {
+
+    window.location.href =
+        "/auth/logout";
+
+}
+
+
+/* ==============================
+   SERVER STATUS
+============================== */
+
+async function checkServer() {
+
+    try {
+
+        const response =
+            await fetch("/api/status");
+
+        const data =
+            await response.json();
+
+        document.getElementById("status").innerHTML =
+            "🟢 SKiNUM server ONLINE — " +
+            data.version;
+
+    } catch (error) {
+
+        document.getElementById("status").innerHTML =
+            "🔴 Server connection failed";
+
+    }
+
+}
+
+
+/* ==============================
+   CASE
+============================== */
+
+function openCase(type) {
+
+    alert(
+        type +
+        " Case will be connected to the backend next."
+    );
+
+}
+
+
+/* ==============================
+   START
+============================== */
+
 checkServer();
+
+loadUser();
 
 </script>
 
