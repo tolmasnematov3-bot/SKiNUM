@@ -84,10 +84,13 @@ passport.use(
    STEAM LOGIN
 ============================== */
 
-app.get(
-  "/auth/steam",
-  passport.authenticate("steam")
-);
+app.get("/auth/steam", (req, res, next) => {
+  console.log("STEAM LOGIN START");
+  console.log("SITE_URL:", SITE_URL);
+  console.log("returnURL:", `${SITE_URL}/auth/steam/return`);
+
+  passport.authenticate("steam")(req, res, next);
+});
 
 app.get(
   "/auth/steam/return",
