@@ -1,31 +1,205 @@
 const express = require("express");
 const path = require("path");
+const passport = require("passport");
+const SteamStrategy = require("passport-steam").Strategy;
+const cookieSession = require("cookie-session");
 
 const app = express();
+
 const PORT = process.env.PORT || 3000;
 
-// JSON qabul qilish
+const SITE_URL = (
+  process.env.SITE_URL ||
+  `http://localhost:${PORT}`
+).replace(/\/$/, "");
+
 app.use(express.json());
 
-// Frontend
-app.use(express.static(path.join(__dirname, "public")));
+app.use(
+  cookieSession({
+    name: "skinum-session",
+    keys: [
+      process.env.SESSION_SECRET || "CHANGE_THIS_SECRET"
+    ],
+    maxAge: 7 * 24 * 60 * 60 * 1000
+  })
+);
 
-// API tekshirish
-app.get("/api/status", (req, res) => {
+app.use(passport.initialize());
+app.use(passport.session());
+
+/* ==============================
+   PASSPORT SESSION
+============================== */
+
+passport.serializeUser((user, done) => {
+  done(null, user);
+});
+
+passport.deserializeUser((user, done) => {
+  done(null, user);
+});
+
+/* ==============================
+   STEAM OPENID
+============================== */
+
+passport.use(
+  new SteamStrategy(
+    {
+      returnURL: `${SITE_URL}/auth/steam/return`,
+      realm: `${SITE_URL}/`,
+      profile: false
+    },
+
+    (identifier, profile, done) => {
+
+      try {
+
+        const match = identifier.match(/\d+$/);
+
+        if (!match) {
+          return done(
+            new Error("SteamID64 not found")
+          );
+        }
+
+        const steamId = match[0];
+
+        return done(null, {
+          steamId
+        });
+
+      } catch (error) {
+
+        return done(error);
+
+      }
+
+    }
+  )
+);
+
+/* ==============================
+   STEAM LOGIN
+============================== */
+
+app.get(
+  "/auth/steam",
+  passport.authenticate("steam")
+);
+
+app.get(
+  "/auth/steam/return",
+
+  passport.authenticate("steam", {
+    failureRedirect: "/?steam_login=failed"
+  }),
+
+  (req, res) => {
+
+    res.redirect(
+      "/?steam_login=success"
+    );
+
+  }
+);
+
+/* ==============================
+   CURRENT USER
+============================== */
+
+app.get("/api/me", (req, res) => {
+
+  if (!req.user) {
+
+    return res.json({
+      loggedIn: false,
+      user: null
+    });
+
+  }
+
   res.json({
-    success: true,
-    app: "SKiNUM",
-    version: "7.1",
-    status: "online"
+    loggedIn: true,
+
+    user: {
+      steamId: req.user.steamId
+    }
   });
+
 });
 
-// Bosh sahifa
+/* ==============================
+   LOGOUT
+============================== */
+
+app.get("/auth/logout", (req, res) => {
+
+  req.logout(() => {
+
+    res.redirect("/");
+
+  });
+
+});
+
+/* ==============================
+   SERVER STATUS
+============================== */
+
+app.get("/api/status", (req, res) => {
+
+  res.json({
+
+    success: true,
+
+    app: "SKiNUM",
+
+    version: "7.1",
+
+    status: "online",
+
+    steamLogin: true
+
+  });
+
+});
+
+/* ==============================
+   FRONTEND
+============================== */
+
+app.use(
+  express.static(
+    path.join(__dirname, "public")
+  )
+);
+
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+
+  res.sendFile(
+    path.join(
+      __dirname,
+      "public",
+      "index.html"
+    )
+  );
+
 });
 
-// Server
+/* ==============================
+   START SERVER
+============================== */
+
 app.listen(PORT, () => {
-  console.log(`SKiNUM server running on port ${PORT}`);
+
+  console.log(
+    `SKiNUM server running on port ${PORT}`
+  );
+
+  console.log(
+    `SITE_URL: ${SITE_URL}`
+  );
+
 });
