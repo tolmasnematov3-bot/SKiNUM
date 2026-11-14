@@ -1,16 +1,13 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>SKiNUM</title>
 
 <style>
-
-* {
-    box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
     margin: 0;
@@ -20,13 +17,15 @@ body {
 }
 
 header {
-    height: 70px;
+    min-height: 70px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 25px;
+    padding: 12px 25px;
     background: #0e121c;
     border-bottom: 1px solid #202738;
+    gap: 15px;
+    flex-wrap: wrap;
 }
 
 .logo {
@@ -39,6 +38,7 @@ header {
     display: flex;
     align-items: center;
     gap: 10px;
+    flex-wrap: wrap;
 }
 
 .user {
@@ -47,6 +47,14 @@ header {
     border-radius: 10px;
     color: #7df5a5;
     font-size: 14px;
+}
+
+.steam-id {
+    color: #aab6ca;
+    font-size: 12px;
+    background: #101722;
+    padding: 9px 12px;
+    border-radius: 8px;
 }
 
 .logout {
@@ -85,9 +93,7 @@ main {
     margin-bottom: 10px;
 }
 
-.hero p {
-    color: #8993a8;
-}
+.hero p { color: #8993a8; }
 
 .status {
     margin: 25px auto;
@@ -113,9 +119,7 @@ main {
     text-align: center;
 }
 
-.case h2 {
-    margin-top: 0;
-}
+.case h2 { margin-top: 0; }
 
 .price {
     font-size: 22px;
@@ -140,248 +144,164 @@ footer {
     padding: 40px 20px;
 }
 
+@media (max-width: 500px) {
+    header { padding: 12px 15px; }
+    .hero h1 { font-size: 32px; }
+}
 </style>
 </head>
 
 <body>
 
 <header>
-
-    <div class="logo">
-        SKiNUM
-    </div>
-
+    <div class="logo">SKiNUM</div>
     <div class="user-area" id="userArea">
-
         <button class="login" onclick="loginSteam()">
             LOGIN WITH STEAM
         </button>
-
     </div>
-
 </header>
-
 
 <main>
 
 <section class="hero">
-
-    <h1>
-        SKiNUM
-    </h1>
-
-    <p>
-        CS2 Skin Case Marketplace
-    </p>
-
+    <h1>SKiNUM</h1>
+    <p>CS2 Skin Case Marketplace</p>
 </section>
-
 
 <div class="status" id="status">
     Connecting to SKiNUM server...
 </div>
 
-
 <section class="cases">
 
     <div class="case">
-
-        <h2>
-            🔪 Knife Case
-        </h2>
-
-        <p>
-            Premium knife skins
-        </p>
-
-        <div class="price">
-            $25
-        </div>
-
-        <button onclick="openCase('Knife')">
-            OPEN CASE
-        </button>
-
+        <h2>🔪 Knife Case</h2>
+        <p>Premium knife skins</p>
+        <div class="price">$25</div>
+        <button onclick="openCase('Knife')">OPEN CASE</button>
     </div>
 
-
     <div class="case">
-
-        <h2>
-            🔫 Weapon Case
-        </h2>
-
-        <p>
-            Rare CS2 weapon skins
-        </p>
-
-        <div class="price">
-            $5
-        </div>
-
-        <button onclick="openCase('Weapon')">
-            OPEN CASE
-        </button>
-
+        <h2>🔫 Weapon Case</h2>
+        <p>Rare CS2 weapon skins</p>
+        <div class="price">$5</div>
+        <button onclick="openCase('Weapon')">OPEN CASE</button>
     </div>
 
-
     <div class="case">
-
-        <h2>
-            🎯 AWP Case
-        </h2>
-
-        <p>
-            AWP skin collection
-        </p>
-
-        <div class="price">
-            $10
-        </div>
-
-        <button onclick="openCase('AWP')">
-            OPEN CASE
-        </button>
-
+        <h2>🎯 AWP Case</h2>
+        <p>AWP skin collection</p>
+        <div class="price">$10</div>
+        <button onclick="openCase('AWP')">OPEN CASE</button>
     </div>
 
 </section>
-
 </main>
 
-
-<footer>
-
-    SKiNUM © 2026
-
-</footer>
-
+<footer>SKiNUM © 2026</footer>
 
 <script>
 
-
-/* ==============================
-   STEAM LOGIN
-============================== */
+/* STEAM LOGIN */
 
 function loginSteam() {
-
     window.location.href = "/auth/steam";
-
 }
 
-
-/* ==============================
-   LOAD CURRENT USER
-============================== */
+/* LOAD USER */
 
 async function loadUser() {
+    const userArea = document.getElementById("userArea");
 
     try {
+        const response = await fetch("/api/me", {
+            credentials: "same-origin",
+            cache: "no-store"
+        });
 
-        const response = await fetch("/api/me");
+        if (!response.ok) {
+            throw new Error("User request failed");
+        }
 
         const data = await response.json();
 
-        const userArea =
-            document.getElementById("userArea");
-
-
-        if (data.loggedIn) {
-
+        if (data.loggedIn && data.user) {
             userArea.innerHTML = `
-
-                <div class="user">
-                    🟢 Steam Connected
+                <div class="user">🟢 Steam Connected</div>
+                <div class="steam-id">
+                    SteamID: ${escapeHTML(data.user.steamId)}
                 </div>
-
-                <button
-                    class="logout"
-                    onclick="logoutSteam()"
-                >
+                <button class="logout" onclick="logoutSteam()">
                     LOGOUT
                 </button>
-
             `;
-
-            document.getElementById("status").innerHTML =
-                "🟢 Steam account connected";
-
+        } else {
+            userArea.innerHTML = `
+                <button class="login" onclick="loginSteam()">
+                    LOGIN WITH STEAM
+                </button>
+            `;
         }
 
     } catch (error) {
-
-        console.log(error);
-
+        console.error("User loading error:", error);
     }
-
 }
 
+/* SAFE TEXT */
 
-/* ==============================
-   LOGOUT
-============================== */
+function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+    })[char]);
+}
+
+/* LOGOUT */
 
 function logoutSteam() {
-
-    window.location.href =
-        "/auth/logout";
-
+    window.location.href = "/auth/logout";
 }
 
-
-/* ==============================
-   SERVER STATUS
-============================== */
+/* SERVER STATUS */
 
 async function checkServer() {
+    const status = document.getElementById("status");
 
     try {
+        const response = await fetch("/api/status", {
+            cache: "no-store"
+        });
 
-        const response =
-            await fetch("/api/status");
+        if (!response.ok) {
+            throw new Error("Server unavailable");
+        }
 
-        const data =
-            await response.json();
+        const data = await response.json();
 
-        document.getElementById("status").innerHTML =
-            "🟢 SKiNUM server ONLINE — " +
-            data.version;
+        status.textContent =
+            "🟢 SKiNUM server ONLINE — " + data.version;
 
     } catch (error) {
-
-        document.getElementById("status").innerHTML =
-            "🔴 Server connection failed";
-
+        status.textContent = "🔴 Server connection failed";
     }
-
 }
 
-
-/* ==============================
-   CASE
-============================== */
+/* CASE */
 
 function openCase(type) {
-
-    alert(
-        type +
-        " Case will be connected to the backend next."
-    );
-
+    alert(type + " Case will be connected to the backend next.");
 }
 
-
-/* ==============================
-   START
-============================== */
+/* START */
 
 checkServer();
-
 loadUser();
 
 </script>
-
 </body>
 </html>
