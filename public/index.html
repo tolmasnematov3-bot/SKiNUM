@@ -4,149 +4,390 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SKiNUM</title>
+<title>SKiNUM — CS2 Skin Marketplace</title>
 
 <style>
+:root {
+    --bg: #080b12;
+    --panel: #101722;
+    --panel2: #151e2c;
+    --border: #263449;
+    --blue: #36c7ff;
+    --cyan: #70e7ff;
+    --text: #f4f7fb;
+    --muted: #8b9ab0;
+}
+
 * { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
 
 body {
     margin: 0;
-    background: #080b12;
-    color: white;
+    background:
+        radial-gradient(ellipse at 50% -20%, #16334b 0%, transparent 48%),
+        var(--bg);
+    color: var(--text);
     font-family: Arial, sans-serif;
 }
 
+button { font-family: inherit; }
+
 header {
-    min-height: 70px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    min-height: 76px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 25px;
-    background: #0e121c;
-    border-bottom: 1px solid #202738;
-    gap: 15px;
-    flex-wrap: wrap;
+    padding: 12px 5%;
+    background: rgba(10,15,24,.94);
+    backdrop-filter: blur(15px);
+    border-bottom: 1px solid var(--border);
+    gap: 20px;
 }
 
 .logo {
-    font-size: 26px;
-    font-weight: 800;
-    color: #6ee7ff;
+    font-size: 29px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: var(--cyan);
+    text-shadow: 0 0 20px #36c7ff55;
+}
+
+.logo span { color: white; }
+
+nav {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+}
+
+nav a {
+    color: #aab7c9;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: bold;
+    transition: .2s;
+}
+
+nav a:hover,
+nav a.active {
+    color: var(--cyan);
 }
 
 .user-area {
     display: flex;
     align-items: center;
     gap: 10px;
-    flex-wrap: wrap;
 }
 
-.user {
-    background: #151b28;
-    padding: 10px 15px;
-    border-radius: 10px;
-    color: #7df5a5;
-    font-size: 14px;
-}
-
-.steam-id {
-    color: #aab6ca;
-    font-size: 12px;
-    background: #101722;
-    padding: 9px 12px;
-    border-radius: 8px;
-}
-
-.logout {
-    background: #ef4444;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 8px;
+.login, .logout {
+    border: 0;
+    padding: 12px 17px;
+    border-radius: 9px;
     cursor: pointer;
-    font-weight: bold;
+    font-weight: 800;
+    transition: .2s;
 }
 
 .login {
-    background: #1b73e8;
+    background: linear-gradient(135deg,#1687e9,#36c7ff);
+    color: #04111c;
+}
+
+.login:hover, .primary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px #36c7ff44;
+}
+
+.logout {
+    background: #a8323d;
     color: white;
-    border: none;
-    padding: 11px 18px;
-    border-radius: 9px;
-    cursor: pointer;
-    font-weight: bold;
+}
+
+.user {
+    color: #75e8a1;
+    background: #10271e;
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+}
+
+.steam-id {
+    color: var(--muted);
+    font-size: 11px;
 }
 
 main {
-    max-width: 1100px;
+    width: 100%;
+    max-width: 1250px;
     margin: auto;
-    padding: 35px 20px;
+    padding: 0 25px;
 }
 
+/* HERO */
+
 .hero {
+    min-height: 360px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     text-align: center;
-    padding: 35px 10px;
+    padding: 65px 15px;
+}
+
+.tag {
+    display: inline-block;
+    padding: 8px 15px;
+    border: 1px solid #36c7ff55;
+    background: #36c7ff12;
+    border-radius: 30px;
+    color: var(--cyan);
+    font-size: 12px;
+    letter-spacing: 2px;
+    font-weight: bold;
 }
 
 .hero h1 {
-    font-size: 42px;
-    margin-bottom: 10px;
+    margin: 20px 0 10px;
+    font-size: clamp(42px, 7vw, 76px);
+    font-weight: 900;
+    letter-spacing: 3px;
 }
 
-.hero p { color: #8993a8; }
+.hero h1 span { color: var(--cyan); }
+
+.hero p {
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1.7;
+    max-width: 540px;
+}
+
+.primary-btn {
+    margin-top: 20px;
+    padding: 15px 30px;
+    border: 0;
+    border-radius: 10px;
+    background: linear-gradient(135deg,#1687e9,#36c7ff);
+    color: #04111c;
+    font-weight: 900;
+    cursor: pointer;
+    transition: .2s;
+}
+
+/* STATUS */
 
 .status {
-    margin: 25px auto;
-    padding: 15px;
-    max-width: 500px;
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto 45px;
+    padding: 11px 20px;
+    border: 1px solid var(--border);
+    border-radius: 30px;
     background: #101722;
-    border: 1px solid #263247;
-    border-radius: 12px;
-    text-align: center;
+    color: #8ce6ad;
+    font-size: 12px;
 }
+
+/* SECTION */
+
+.section-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 22px;
+    gap: 10px;
+}
+
+.section-heading h2 {
+    font-size: 25px;
+    margin: 0;
+}
+
+.section-heading p {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+/* CASES */
 
 .cases {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+    padding-bottom: 70px;
 }
 
 .case {
-    background: #111722;
-    border: 1px solid #273044;
-    border-radius: 16px;
-    padding: 25px;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(145deg,#182536,#0e1520);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 24px;
     text-align: center;
+    transition: .3s;
 }
 
-.case h2 { margin-top: 0; }
+.case:hover {
+    transform: translateY(-7px);
+    border-color: var(--blue);
+    box-shadow: 0 15px 40px #0008, 0 0 20px #36c7ff15;
+}
+
+.case-visual {
+    height: 155px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    border-radius: 13px;
+    background: radial-gradient(circle,#25435a,#111a27 70%);
+    font-size: 75px;
+    text-shadow: 0 0 30px #36c7ff66;
+}
+
+.case:nth-child(2) .case-visual {
+    background: radial-gradient(circle,#51402a,#191a20 70%);
+}
+
+.case:nth-child(3) .case-visual {
+    background: radial-gradient(circle,#3a315c,#151725 70%);
+}
+
+.case h3 {
+    font-size: 21px;
+    margin: 12px 0 7px;
+}
+
+.case p {
+    color: var(--muted);
+    font-size: 13px;
+}
 
 .price {
-    font-size: 22px;
-    font-weight: bold;
+    margin: 18px 0;
+    font-size: 25px;
+    font-weight: 900;
     color: #ffd166;
-    margin: 15px 0;
 }
 
 .case button {
-    border: 0;
-    padding: 12px 20px;
-    border-radius: 10px;
-    background: #36c7ff;
-    color: #061018;
-    font-weight: bold;
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #36c7ff66;
+    border-radius: 9px;
+    background: #36c7ff15;
+    color: var(--cyan);
+    font-weight: 900;
     cursor: pointer;
+    transition: .2s;
 }
+
+.case button:hover {
+    background: var(--blue);
+    color: #061018;
+}
+
+/* FEATURES */
+
+.features {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 15px;
+    margin-bottom: 65px;
+}
+
+.feature {
+    padding: 22px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 13px;
+}
+
+.feature-icon {
+    font-size: 27px;
+}
+
+.feature h3 {
+    margin-bottom: 8px;
+    font-size: 16px;
+}
+
+.feature p {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* FOOTER */
 
 footer {
+    border-top: 1px solid var(--border);
+    background: #090e16;
     text-align: center;
-    color: #667085;
-    padding: 40px 20px;
+    padding: 30px 15px;
+    color: #64748b;
+    font-size: 12px;
 }
 
-@media (max-width: 500px) {
-    header { padding: 12px 15px; }
-    .hero h1 { font-size: 32px; }
+.footer-logo {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--cyan);
+    margin-bottom: 10px;
+}
+
+/* MOBILE */
+
+@media(max-width:850px) {
+    header {
+        padding: 15px 20px;
+        flex-wrap: wrap;
+    }
+
+    nav {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+        gap: 20px;
+        padding-top: 10px;
+        border-top: 1px solid var(--border);
+    }
+
+    .cases { grid-template-columns: repeat(2,1fr); }
+}
+
+@media(max-width:550px) {
+    main { padding: 0 15px; }
+
+    .logo { font-size: 24px; }
+
+    .login {
+        padding: 10px 12px;
+        font-size: 11px;
+    }
+
+    nav {
+        gap: 0;
+        justify-content: space-between;
+    }
+
+    nav a { font-size: 12px; }
+
+    .hero { min-height: 320px; }
+
+    .hero p { font-size: 14px; }
+
+    .cases { grid-template-columns: 1fr; }
+
+    .features { grid-template-columns: 1fr; }
+
+    .section-heading h2 { font-size: 21px; }
 }
 </style>
 </head>
@@ -154,7 +395,15 @@ footer {
 <body>
 
 <header>
-    <div class="logo">SKiNUM</div>
+    <div class="logo">SKI<span>NUM</span></div>
+
+    <nav>
+        <a href="#market">Market</a>
+        <a href="#cases" class="active">Cases</a>
+        <a href="#upgrade">Upgrade</a>
+        <a href="#inventory">Inventory</a>
+    </nav>
+
     <div class="user-area" id="userArea">
         <button class="login" onclick="loginSteam()">
             LOGIN WITH STEAM
@@ -165,41 +414,89 @@ footer {
 <main>
 
 <section class="hero">
-    <h1>SKiNUM</h1>
-    <p>CS2 Skin Case Marketplace</p>
+    <div class="tag">THE ULTIMATE CS2 SKIN PLATFORM</div>
+
+    <h1>WELCOME TO <span>SKiNUM</span></h1>
+
+    <p>
+        Discover rare skins, open exclusive cases
+        and build your ultimate CS2 inventory.
+    </p>
+
+    <button class="primary-btn"
+        onclick="document.getElementById('cases').scrollIntoView({behavior:'smooth'})">
+        EXPLORE CASES →
+    </button>
 </section>
 
 <div class="status" id="status">
     Connecting to SKiNUM server...
 </div>
 
-<section class="cases">
-
-    <div class="case">
-        <h2>🔪 Knife Case</h2>
-        <p>Premium knife skins</p>
-        <div class="price">$25</div>
-        <button onclick="openCase('Knife')">OPEN CASE</button>
+<section id="cases">
+    <div class="section-heading">
+        <div>
+            <h2>Featured Cases</h2>
+            <p>Choose your case. Test your luck.</p>
+        </div>
     </div>
 
-    <div class="case">
-        <h2>🔫 Weapon Case</h2>
-        <p>Rare CS2 weapon skins</p>
-        <div class="price">$5</div>
-        <button onclick="openCase('Weapon')">OPEN CASE</button>
-    </div>
+    <div class="cases">
 
-    <div class="case">
-        <h2>🎯 AWP Case</h2>
-        <p>AWP skin collection</p>
-        <div class="price">$10</div>
-        <button onclick="openCase('AWP')">OPEN CASE</button>
-    </div>
+        <div class="case">
+            <div class="case-visual">🔪</div>
+            <h3>Knife Case</h3>
+            <p>Exclusive knives and legendary finishes</p>
+            <div class="price">$25.00</div>
+            <button onclick="openCase('Knife')">OPEN CASE →</button>
+        </div>
 
+        <div class="case">
+            <div class="case-visual">🔫</div>
+            <h3>Weapon Case</h3>
+            <p>Discover rare weapon skins</p>
+            <div class="price">$5.00</div>
+            <button onclick="openCase('Weapon')">OPEN CASE →</button>
+        </div>
+
+        <div class="case">
+            <div class="case-visual">🎯</div>
+            <h3>AWP Case</h3>
+            <p>Find your dream AWP skin</p>
+            <div class="price">$10.00</div>
+            <button onclick="openCase('AWP')">OPEN CASE →</button>
+        </div>
+
+    </div>
 </section>
+
+<section class="features">
+    <div class="feature">
+        <div class="feature-icon">🛒</div>
+        <h3>Skin Marketplace</h3>
+        <p>Buy and sell your favorite CS2 skins.</p>
+    </div>
+
+    <div class="feature">
+        <div class="feature-icon">⚡</div>
+        <h3>Skin Upgrade</h3>
+        <p>Try upgrading your skins to something better.</p>
+    </div>
+
+    <div class="feature">
+        <div class="feature-icon">🎒</div>
+        <h3>Your Inventory</h3>
+        <p>Keep your skins and winnings in one place.</p>
+    </div>
+</section>
+
 </main>
 
-<footer>SKiNUM © 2026</footer>
+<footer>
+    <div class="footer-logo">SKiNUM</div>
+    <p>CS2 SKIN MARKETPLACE</p>
+    <p>© 2026 SKiNUM. All rights reserved.</p>
+</footer>
 
 <script>
 
@@ -284,7 +581,7 @@ async function checkServer() {
         const data = await response.json();
 
         status.textContent =
-            "🟢 SKiNUM server ONLINE — " + data.version;
+            "🟢 SKiNUM SERVER ONLINE — " + data.version;
 
     } catch (error) {
         status.textContent = "🔴 Server connection failed";
