@@ -4,424 +4,418 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SKiNUM — CS2 Skin Marketplace</title>
+<title>SKiNUM — CS2 Skin Platform</title>
 
 <style>
 :root {
-    --bg: #080b12;
-    --panel: #101722;
-    --panel2: #151e2c;
-    --border: #263449;
-    --blue: #36c7ff;
-    --cyan: #70e7ff;
-    --text: #f4f7fb;
-    --muted: #8b9ab0;
+  --bg: #080a12;
+  --panel: #111522;
+  --blue: #36a9ff;
+  --purple: #8b5cf6;
+  --gold: #f4bd55;
+  --text: #f4f6ff;
+  --muted: #8992a8;
 }
 
-* { box-sizing: border-box; }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+}
 
 body {
-    margin: 0;
-    background:
-        radial-gradient(ellipse at 50% -20%, #16334b 0%, transparent 48%),
-        var(--bg);
-    color: var(--text);
-    font-family: Arial, sans-serif;
+  background:
+    radial-gradient(ellipse at 50% -20%, #18294c 0%, transparent 48%),
+    var(--bg);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
 }
 
-button { font-family: inherit; }
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* HEADER */
 
 header {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    min-height: 76px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 5%;
-    background: rgba(10,15,24,.96);
-    backdrop-filter: blur(15px);
-    border-bottom: 1px solid var(--border);
-    gap: 20px;
+  height: 76px;
+  padding: 0 6%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  background: rgba(8,10,18,.88);
+  backdrop-filter: blur(16px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .logo {
-    font-size: 29px;
-    font-weight: 900;
-    letter-spacing: 2px;
-    color: var(--cyan);
-    text-shadow: 0 0 20px #36c7ff55;
+  font-size: 29px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: white;
 }
 
-.logo span { color: white; }
-
-nav {
-    display: flex;
-    align-items: center;
-    gap: 28px;
+.logo span {
+  color: var(--blue);
 }
 
-nav a {
-    color: #aab7c9;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: bold;
-    transition: .2s;
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
 
-nav a:hover,
-nav a.active {
-    color: var(--cyan);
+.steam-btn {
+  background: linear-gradient(110deg,#1687d9,#2865d8);
+  border: 0;
+  border-radius: 9px;
+  color: white;
+  font-weight: 700;
+  padding: 12px 19px;
+  transition: .2s;
 }
 
-.user-area {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.steam-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 25px #1687d955;
 }
 
-.login, .logout {
-    border: 0;
-    padding: 12px 17px;
-    border-radius: 9px;
-    cursor: pointer;
-    font-weight: 800;
-    transition: .2s;
-}
-
-.login {
-    background: linear-gradient(135deg,#1687e9,#36c7ff);
-    color: #04111c;
-}
-
-.login:hover, .primary-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px #36c7ff44;
-}
-
-.logout {
-    background: #a8323d;
-    color: white;
-}
-
-.user {
-    color: #75e8a1;
-    background: #10271e;
-    padding: 9px 12px;
-    border-radius: 8px;
-    font-size: 12px;
-}
-
-.steam-id {
-    color: var(--muted);
-    font-size: 11px;
-}
-
-main {
-    width: 100%;
-    max-width: 1250px;
-    margin: auto;
-    padding: 0 25px;
+.user-info {
+  color: #b8c8e5;
+  font-size: 13px;
 }
 
 /* HERO */
 
 .hero {
-    min-height: 360px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 65px 15px;
+  text-align: center;
+  padding: 65px 20px 42px;
 }
 
-.tag {
-    display: inline-block;
-    padding: 8px 15px;
-    border: 1px solid #36c7ff55;
-    background: #36c7ff12;
-    border-radius: 30px;
-    color: var(--cyan);
-    font-size: 12px;
-    letter-spacing: 2px;
-    font-weight: bold;
+.hero-tag {
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 4px;
+  margin-bottom: 18px;
 }
 
 .hero h1 {
-    margin: 20px 0 10px;
-    font-size: clamp(42px, 7vw, 76px);
-    font-weight: 900;
-    letter-spacing: 3px;
+  font-size: clamp(36px, 7vw, 67px);
+  font-weight: 900;
+  letter-spacing: -2px;
 }
 
-.hero h1 span { color: var(--cyan); }
+.hero h1 span {
+  background: linear-gradient(90deg,#38baff,#8a63ff,#f3bd55);
+  -webkit-background-clip: text;
+  color: transparent;
+}
 
 .hero p {
-    color: var(--muted);
-    font-size: 16px;
-    line-height: 1.7;
-    max-width: 540px;
+  color: var(--muted);
+  margin-top: 15px;
+  font-size: 14px;
+  line-height: 1.7;
 }
 
-.primary-btn {
-    margin-top: 20px;
-    padding: 15px 30px;
-    border: 0;
-    border-radius: 10px;
-    background: linear-gradient(135deg,#1687e9,#36c7ff);
-    color: #04111c;
-    font-weight: 900;
-    cursor: pointer;
-    transition: .2s;
+/* SERVER */
+
+.server-status {
+  display: flex;
+  justify-content: center;
+  margin: 0 auto 48px;
 }
 
-/* STATUS */
-
-.status {
-    width: fit-content;
-    max-width: 100%;
-    margin: 0 auto 45px;
-    padding: 11px 20px;
-    border: 1px solid var(--border);
-    border-radius: 30px;
-    background: #101722;
-    color: #8ce6ad;
-    font-size: 12px;
+.status-pill {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  background: #111a20;
+  border: 1px solid #1d4938;
+  border-radius: 30px;
+  padding: 9px 17px;
+  color: #7ee4ad;
+  font-size: 12px;
 }
 
-/* SECTION */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  background: #43e58c;
+  border-radius: 50%;
+  box-shadow: 0 0 12px #43e58c;
+}
+
+/* MAIN MENU */
+
+.menu-section {
+  max-width: 1050px;
+  margin: 0 auto;
+  padding: 0 22px 65px;
+}
 
 .section-heading {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 22px;
-    gap: 10px;
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.section-heading small {
+  color: var(--blue);
+  letter-spacing: 4px;
+  font-size: 10px;
+  font-weight: bold;
 }
 
 .section-heading h2 {
-    font-size: 25px;
-    margin: 0;
+  font-size: 23px;
+  margin-top: 9px;
 }
 
-.section-heading p {
-    color: var(--muted);
-    font-size: 13px;
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 19px;
 }
+
+.menu-card {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  background: linear-gradient(145deg,#151b2b,#0d111c);
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 17px;
+  transition: .3s;
+  cursor: pointer;
+}
+
+.menu-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--blue);
+  box-shadow: 0 12px 35px rgba(38,143,255,.14);
+}
+
+.menu-art {
+  height: 190px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-art svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.menu-card:nth-child(1) .menu-art {
+  background: radial-gradient(ellipse at center,#244c78,#101827 70%);
+}
+
+.menu-card:nth-child(2) .menu-art {
+  background: radial-gradient(ellipse at center,#5b3c87,#171329 72%);
+}
+
+.menu-card:nth-child(3) .menu-art {
+  background: radial-gradient(ellipse at center,#155c65,#101b25 72%);
+}
+
+.menu-card:nth-child(4) .menu-art {
+  background: radial-gradient(ellipse at center,#78552b,#211b17 72%);
+}
+
+.menu-art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg,rgba(10,12,20,.35),transparent 60%);
+  pointer-events: none;
+}
+
+.menu-info {
+  padding: 17px 19px 20px;
+  text-align: left;
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+
+.menu-info h3 {
+  font-size: 17px;
+  letter-spacing: 1.5px;
+  margin-bottom: 6px;
+}
+
+.menu-info p {
+  color: #8f9ab0;
+  font-size: 11px;
+}
+
+.menu-card:nth-child(1) h3 { color: #55baff; }
+.menu-card:nth-child(2) h3 { color: #b99aff; }
+.menu-card:nth-child(3) h3 { color: #55e0d1; }
+.menu-card:nth-child(4) h3 { color: #f4c16d; }
 
 /* CASES */
 
-.cases {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 22px;
-    padding-bottom: 70px;
+.cases-section {
+  max-width: 1050px;
+  padding: 0 22px 70px;
+  margin: auto;
 }
 
-.case {
-    position: relative;
-    overflow: hidden;
-    background: linear-gradient(145deg,#182536,#0e1520);
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    padding: 24px;
-    text-align: center;
-    transition: .3s;
+.case-grid {
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 17px;
+  margin-top: 24px;
 }
 
-.case:hover {
-    transform: translateY(-7px);
-    border-color: var(--blue);
-    box-shadow: 0 15px 40px #0008, 0 0 20px #36c7ff15;
+.case-card {
+  text-align: center;
+  background: linear-gradient(145deg,#151b2a,#0e121e);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 15px;
+  padding: 25px 12px;
+  transition: .25s;
 }
 
-.case-visual {
-    height: 155px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 15px;
-    border-radius: 13px;
-    background: radial-gradient(circle,#25435a,#111a27 70%);
-    font-size: 75px;
-    text-shadow: 0 0 30px #36c7ff66;
+.case-card:hover {
+  transform: translateY(-4px);
+  border-color: #4aaeff;
 }
 
-.case:nth-child(2) .case-visual {
-    background: radial-gradient(circle,#51402a,#191a20 70%);
+.case-icon {
+  font-size: 53px;
+  margin-bottom: 14px;
+  filter: drop-shadow(0 0 15px #4aaeff66);
 }
 
-.case:nth-child(3) .case-visual {
-    background: radial-gradient(circle,#3a315c,#151725 70%);
+.case-card h3 {
+  font-size: 15px;
+  margin-bottom: 8px;
 }
 
-.case h3 {
-    font-size: 21px;
-    margin: 12px 0 7px;
+.case-card p {
+  color: var(--gold);
+  font-size: 13px;
+  margin-bottom: 17px;
 }
 
-.case p {
-    color: var(--muted);
-    font-size: 13px;
+.open-btn {
+  padding: 10px 22px;
+  border: 0;
+  border-radius: 7px;
+  color: white;
+  font-weight: bold;
+  background: linear-gradient(100deg,#168cde,#6754df);
 }
 
-.price {
-    margin: 18px 0;
-    font-size: 25px;
-    font-weight: 900;
-    color: #ffd166;
-}
-
-.case button {
-    width: 100%;
-    padding: 13px;
-    border: 1px solid #36c7ff66;
-    border-radius: 9px;
-    background: #36c7ff15;
-    color: var(--cyan);
-    font-weight: 900;
-    cursor: pointer;
-    transition: .2s;
-}
-
-.case button:hover {
-    background: var(--blue);
-    color: #061018;
-}
-
-/* FEATURES */
-
-.features {
-    display: grid;
-    grid-template-columns: repeat(3,1fr);
-    gap: 15px;
-    margin-bottom: 65px;
-}
-
-.feature {
-    padding: 22px;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 13px;
-}
-
-.feature-icon { font-size: 27px; }
-
-.feature h3 {
-    margin-bottom: 8px;
-    font-size: 16px;
-}
-
-.feature p {
-    color: var(--muted);
-    font-size: 13px;
-    line-height: 1.6;
+.open-btn:hover {
+  filter: brightness(1.2);
 }
 
 /* FOOTER */
 
 footer {
-    border-top: 1px solid var(--border);
-    background: #090e16;
-    text-align: center;
-    padding: 30px 15px;
-    color: #64748b;
-    font-size: 12px;
+  text-align: center;
+  padding: 27px 15px;
+  color: #667087;
+  font-size: 11px;
+  border-top: 1px solid rgba(255,255,255,.06);
 }
 
-.footer-logo {
-    font-size: 22px;
-    font-weight: 900;
-    color: var(--cyan);
-    margin-bottom: 10px;
-}
-
-/* TABLET */
-
-@media(max-width:850px) {
-    header {
-        padding: 15px 20px;
-        flex-wrap: wrap;
-    }
-
-    nav {
-        order: 3;
-        width: 100%;
-        justify-content: center;
-        gap: 20px;
-        padding-top: 10px;
-        border-top: 1px solid var(--border);
-    }
-
-    .cases {
-        grid-template-columns: repeat(2,1fr);
-    }
+footer strong {
+  color: #9eabc3;
 }
 
 /* MOBILE */
 
-@media(max-width:550px) {
-    header {
-        padding: 14px 15px;
-        gap: 12px;
-    }
+@media(max-width:600px) {
+  header {
+    height: 66px;
+    padding: 0 16px;
+  }
 
-    .logo { font-size: 24px; }
+  .logo {
+    font-size: 24px;
+  }
 
-    .user-area {
-        gap: 6px;
-    }
+  .steam-btn {
+    padding: 10px 12px;
+    font-size: 11px;
+  }
 
-    .login {
-        padding: 10px 12px;
-        font-size: 11px;
-    }
+  .hero {
+    padding: 47px 15px 30px;
+  }
 
-    nav {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0,1fr));
-        gap: 9px;
-        width: 100%;
-        order: 3;
-        padding-top: 12px;
-        border-top: 1px solid var(--border);
-    }
+  .hero h1 {
+    letter-spacing: -1px;
+  }
 
-    nav a {
-        display: block;
-        text-align: center;
-        padding: 12px 8px;
-        background: #151e2c;
-        border: 1px solid #263449;
-        border-radius: 8px;
-        font-size: 13px;
-    }
+  .server-status {
+    margin-bottom: 35px;
+  }
 
-    nav a.active {
-        background: #163248;
-        border-color: #36c7ff77;
-    }
+  .menu-section {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
 
-    main { padding: 0 15px; }
+  .menu-grid {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 11px;
+  }
 
-    .hero {
-        min-height: 320px;
-        padding: 45px 10px;
-    }
+  .menu-art {
+    height: 125px;
+  }
 
-    .hero p { font-size: 14px; }
+  .menu-info {
+    padding: 12px 10px 14px;
+  }
 
-    .cases { grid-template-columns: 1fr; }
+  .menu-info h3 {
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
 
-    .features { grid-template-columns: 1fr; }
+  .menu-info p {
+    font-size: 9px;
+  }
 
-    .section-heading h2 { font-size: 21px; }
+  .case-grid {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 10px;
+  }
 
-    .steam-id { font-size: 10px; }
+  .case-card {
+    padding: 19px 8px;
+  }
+
+  .case-icon {
+    font-size: 42px;
+  }
+}
+
+@media(max-width:350px) {
+  .menu-art {
+    height: 105px;
+  }
+
+  .menu-info h3 {
+    font-size: 10px;
+  }
 }
 </style>
 </head>
@@ -429,210 +423,351 @@ footer {
 <body>
 
 <header>
-    <div class="logo">SKI<span>NUM</span></div>
+  <div class="logo">SKI<span>NUM</span></div>
 
-    <nav>
-        <a href="#market">Market</a>
-        <a href="#cases" class="active">Cases</a>
-        <a href="#upgrade">Upgrade</a>
-        <a href="#inventory">Inventory</a>
-    </nav>
-
-    <div class="user-area" id="userArea">
-        <button class="login" onclick="loginSteam()">
-            LOGIN WITH STEAM
-        </button>
-    </div>
+  <div class="header-right">
+    <span class="user-info" id="userInfo"></span>
+    <button class="steam-btn" id="steamButton" onclick="loginSteam()">
+      STEAM LOGIN
+    </button>
+  </div>
 </header>
 
-<main>
-
 <section class="hero">
-    <div class="tag">THE ULTIMATE CS2 SKIN PLATFORM</div>
+  <div class="hero-tag">THE CS2 SKIN UNIVERSE</div>
 
-    <h1>WELCOME TO <span>SKiNUM</span></h1>
+  <h1>WELCOME TO <span>SKiNUM</span></h1>
 
-    <p>
-        Discover rare skins, open exclusive cases
-        and build your ultimate CS2 inventory.
-    </p>
-
-    <button class="primary-btn"
-        onclick="document.getElementById('cases').scrollIntoView({behavior:'smooth'})">
-        EXPLORE CASES →
-    </button>
+  <p>
+    Discover rare skins. Open cases. Upgrade your collection.<br>
+    Your CS2 skin journey starts here.
+  </p>
 </section>
 
-<div class="status" id="status">
-    Connecting to SKiNUM server...
+<div class="server-status">
+  <div class="status-pill">
+    <span class="status-dot" id="statusDot"></span>
+    <span id="serverStatus">Checking server...</span>
+  </div>
 </div>
 
-<section id="cases">
-    <div class="section-heading">
-        <div>
-            <h2>Featured Cases</h2>
-            <p>Choose your case. Test your luck.</p>
-        </div>
+<!-- FOUR MAIN MENUS -->
+
+<section class="menu-section" id="mainMenu">
+
+  <div class="section-heading">
+    <small>EXPLORE THE PLATFORM</small>
+    <h2>Choose Your Destination</h2>
+  </div>
+
+  <div class="menu-grid">
+
+    <!-- MARKET -->
+    <div class="menu-card" onclick="menuAction('Market')">
+      <div class="menu-art">
+        <svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="marketBlade" x1="0" y1="0" x2="1" y2="1">
+              <stop stop-color="#d9f4ff"/>
+              <stop offset=".4" stop-color="#3eabff"/>
+              <stop offset="1" stop-color="#173c83"/>
+            </linearGradient>
+            <filter id="marketGlow">
+              <feGaussianBlur stdDeviation="7"/>
+            </filter>
+          </defs>
+
+          <circle cx="200" cy="110" r="75" fill="#168dff" opacity=".15" filter="url(#marketGlow)"/>
+          <circle cx="200" cy="110" r="80" fill="none" stroke="#56baff" opacity=".2" stroke-dasharray="4 9"/>
+
+          <path d="M105 145 L245 48 L292 64 L162 157 L125 166 Z"
+                fill="#178fff" opacity=".25" filter="url(#marketGlow)"/>
+          <path d="M105 145 L245 48 L292 64 L162 157 L125 166 Z"
+                fill="url(#marketBlade)" stroke="#b9eaff" stroke-width="2"/>
+          <path d="M245 48 L292 64 L162 157 L179 126 Z"
+                fill="#d8f6ff" opacity=".55"/>
+          <path d="M105 145 L125 166 L162 157 L145 137 Z"
+                fill="#182d50" stroke="#64baff"/>
+          <path d="M112 150 L95 170 L120 179 L140 159"
+                fill="none" stroke="#e7f5ff" stroke-width="7" stroke-linecap="round"/>
+          <path d="M95 170 L85 183 M120 179 L110 192"
+                stroke="#56baff" stroke-width="5" stroke-linecap="round"/>
+
+          <circle cx="305" cy="60" r="5" fill="#8fd7ff"/>
+          <circle cx="87" cy="74" r="3" fill="#8fd7ff"/>
+          <path d="M45 180 H100 M300 175 H355" stroke="#55baff" opacity=".4"/>
+        </svg>
+      </div>
+      <div class="menu-info">
+        <h3>MARKET</h3>
+        <p>Buy & Sell Rare CS2 Skins</p>
+      </div>
     </div>
 
-    <div class="cases">
+    <!-- CASES -->
+    <div class="menu-card" onclick="menuAction('Cases')">
+      <div class="menu-art">
+        <svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="caseBox" x1="0" y1="0" x2="1" y2="1">
+              <stop stop-color="#b89aff"/>
+              <stop offset=".5" stop-color="#5934a5"/>
+              <stop offset="1" stop-color="#251548"/>
+            </linearGradient>
+            <filter id="caseGlow">
+              <feGaussianBlur stdDeviation="12"/>
+            </filter>
+          </defs>
 
-        <div class="case">
-            <div class="case-visual">🔪</div>
-            <h3>Knife Case</h3>
-            <p>Exclusive knives and legendary finishes</p>
-            <div class="price">$25.00</div>
-            <button onclick="openCase('Knife')">OPEN CASE →</button>
-        </div>
-
-        <div class="case">
-            <div class="case-visual">🔫</div>
-            <h3>Weapon Case</h3>
-            <p>Discover rare weapon skins</p>
-            <div class="price">$5.00</div>
-            <button onclick="openCase('Weapon')">OPEN CASE →</button>
-        </div>
-
-        <div class="case">
-            <div class="case-visual">🎯</div>
-            <h3>AWP Case</h3>
-            <p>Find your dream AWP skin</p>
-            <div class="price">$10.00</div>
-            <button onclick="openCase('AWP')">OPEN CASE →</button>
-        </div>
-
+          <ellipse cx="200" cy="174" rx="100" ry="22" fill="#a77aff" opacity=".3" filter="url(#caseGlow)"/>
+          <path d="M110 92 L200 48 L290 92 L200 137 Z"
+                fill="#b99bff" stroke="#e3d5ff" stroke-width="2"/>
+          <path d="M110 92 L200 137 L200 192 L110 145 Z"
+                fill="#58378d" stroke="#b99aff" stroke-width="2"/>
+          <path d="M200 137 L290 92 L290 145 L200 192 Z"
+                fill="#33205e" stroke="#9c7be0" stroke-width="2"/>
+          <path d="M110 92 L110 70 L200 28 L290 70 L290 92"
+                fill="none" stroke="#d9c7ff" stroke-width="5"/>
+          <path d="M160 112 L200 132 L240 112 L240 142 L200 163 L160 142 Z"
+                fill="#1c1336" stroke="#e0cfff" stroke-width="2"/>
+          <path d="M200 132 V162" stroke="#d5c3ff" stroke-width="3"/>
+          <path d="M200 28 V5 M95 55 L70 40 M305 55 L330 40"
+                stroke="#c9aaff" stroke-width="2" opacity=".7"/>
+          <path d="M200 0 L207 14 L200 28 L193 14 Z" fill="#f4dcff"/>
+          <circle cx="84" cy="112" r="4" fill="#d5bdff"/>
+          <circle cx="322" cy="119" r="5" fill="#d5bdff"/>
+        </svg>
+      </div>
+      <div class="menu-info">
+        <h3>CASES</h3>
+        <p>Open Exclusive Weapon Cases</p>
+      </div>
     </div>
+
+    <!-- UPGRADE -->
+    <div class="menu-card" onclick="menuAction('Upgrade')">
+      <div class="menu-art">
+        <svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="upArrow" x1="0" y1="1" x2="1" y2="0">
+              <stop stop-color="#20c9b8"/>
+              <stop offset="1" stop-color="#a2fff1"/>
+            </linearGradient>
+            <filter id="upGlow">
+              <feGaussianBlur stdDeviation="10"/>
+            </filter>
+          </defs>
+
+          <circle cx="200" cy="110" r="82" fill="none" stroke="#35e1d0" opacity=".17" stroke-width="2"/>
+          <circle cx="200" cy="110" r="62" fill="none" stroke="#35e1d0" opacity=".25" stroke-dasharray="5 8"/>
+
+          <path d="M70 155 L120 125 L150 145 L102 175 Z"
+                fill="#1b6570" stroke="#66e9db" stroke-width="2"/>
+          <path d="M120 125 L151 105 L180 126 L150 145 Z"
+                fill="#37bcb1"/>
+          <path d="M150 105 L180 126 L180 150 L150 145 Z"
+                fill="#17666b"/>
+
+          <path d="M220 120 L280 48 L316 62 L258 137 L230 145 Z"
+                fill="#44e4d4" opacity=".25" filter="url(#upGlow)"/>
+          <path d="M220 120 L280 48 L316 62 L258 137 L230 145 Z"
+                fill="url(#upArrow)" stroke="#d5fff9" stroke-width="2"/>
+          <path d="M280 48 L316 62 L258 137 L267 96 Z"
+                fill="#d9fff8" opacity=".5"/>
+
+          <path d="M184 110 L200 82 L216 110 M200 82 V154"
+                fill="none" stroke="#bafff5" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+
+          <path d="M200 15 V40 M85 80 L105 90 M310 160 L335 175"
+                stroke="#5ff2df" stroke-width="2" opacity=".8"/>
+          <circle cx="200" cy="15" r="4" fill="#c2fff8"/>
+          <circle cx="85" cy="80" r="3" fill="#c2fff8"/>
+          <circle cx="335" cy="175" r="4" fill="#c2fff8"/>
+        </svg>
+      </div>
+      <div class="menu-info">
+        <h3>UPGRADE</h3>
+        <p>Turn Your Skin Into Something Better</p>
+      </div>
+    </div>
+
+    <!-- INVENTORY -->
+    <div class="menu-card" onclick="menuAction('Inventory')">
+      <div class="menu-art">
+        <svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="goldBlade" x1="0" y1="0" x2="1" y2="1">
+              <stop stop-color="#fff1bd"/>
+              <stop offset=".45" stop-color="#e5ad49"/>
+              <stop offset="1" stop-color="#80521c"/>
+            </linearGradient>
+            <filter id="goldGlow">
+              <feGaussianBlur stdDeviation="10"/>
+            </filter>
+          </defs>
+
+          <circle cx="200" cy="110" r="75" fill="#e9b650" opacity=".16" filter="url(#goldGlow)"/>
+
+          <path d="M105 150 L245 54 L285 68 L160 160 L126 174 Z"
+                fill="url(#goldBlade)" stroke="#ffedb2" stroke-width="2"/>
+          <path d="M245 54 L285 68 L160 160 L179 129 Z"
+                fill="#fff0c0" opacity=".6"/>
+          <path d="M105 150 L126 174 L160 160 L143 143 Z"
+                fill="#49331d" stroke="#e8bb66" stroke-width="2"/>
+          <path d="M105 150 L85 173 L113 185 L135 163"
+                fill="none" stroke="#e9bd6c" stroke-width="9" stroke-linecap="round"/>
+
+          <path d="M200 26 L207 45 L228 48 L212 62 L216 82 L200 72 L184 82 L188 62 L172 48 L193 45 Z"
+                fill="#ffdc8a" stroke="#fff0bd" stroke-width="1"/>
+          <path d="M315 95 L320 108 L334 112 L322 121 L324 136 L315 127 L303 136 L306 121 L295 112 L310 108 Z"
+                fill="#f7d88f" opacity=".8"/>
+          <circle cx="85" cy="68" r="4" fill="#f9d991"/>
+          <circle cx="305" cy="45" r="3" fill="#f9d991"/>
+          <circle cx="340" cy="170" r="4" fill="#f9d991"/>
+        </svg>
+      </div>
+      <div class="menu-info">
+        <h3>INVENTORY</h3>
+        <p>Your Skins & Valuable Collection</p>
+      </div>
+    </div>
+
+  </div>
 </section>
 
-<section class="features">
-    <div class="feature">
-        <div class="feature-icon">🛒</div>
-        <h3>Skin Marketplace</h3>
-        <p>Buy and sell your favorite CS2 skins.</p>
+<!-- CASES SECTION -->
+
+<section class="cases-section" id="cases">
+
+  <div class="section-heading">
+    <small>DISCOVER YOUR LUCK</small>
+    <h2>Featured Cases</h2>
+  </div>
+
+  <div class="case-grid">
+
+    <div class="case-card">
+      <div class="case-icon">🔪</div>
+      <h3>KNIFE CASE</h3>
+      <p>$25.00</p>
+      <button class="open-btn" onclick="openCase('Knife')">OPEN CASE</button>
     </div>
 
-    <div class="feature">
-        <div class="feature-icon">⚡</div>
-        <h3>Skin Upgrade</h3>
-        <p>Try upgrading your skins to something better.</p>
+    <div class="case-card">
+      <div class="case-icon">🔫</div>
+      <h3>WEAPON CASE</h3>
+      <p>$5.00</p>
+      <button class="open-btn" onclick="openCase('Weapon')">OPEN CASE</button>
     </div>
 
-    <div class="feature">
-        <div class="feature-icon">🎒</div>
-        <h3>Your Inventory</h3>
-        <p>Keep your skins and winnings in one place.</p>
+    <div class="case-card">
+      <div class="case-icon">🎯</div>
+      <h3>AWP CASE</h3>
+      <p>$10.00</p>
+      <button class="open-btn" onclick="openCase('AWP')">OPEN CASE</button>
     </div>
+
+  </div>
 </section>
-
-</main>
 
 <footer>
-    <div class="footer-logo">SKiNUM</div>
-    <p>CS2 SKIN MARKETPLACE</p>
-    <p>© 2026 SKiNUM. All rights reserved.</p>
+  <strong>SKiNUM</strong> © 2026 — CS2 SKIN PLATFORM
 </footer>
 
 <script>
-
-/* STEAM LOGIN */
-
 function loginSteam() {
-    window.location.href = "/auth/steam";
+  window.location.href = "/auth/steam";
 }
-
-/* LOAD USER */
-
-async function loadUser() {
-    const userArea = document.getElementById("userArea");
-
-    try {
-        const response = await fetch("/api/me", {
-            credentials: "same-origin",
-            cache: "no-store"
-        });
-
-        if (!response.ok) {
-            throw new Error("User request failed");
-        }
-
-        const data = await response.json();
-
-        if (data.loggedIn && data.user) {
-            userArea.innerHTML = `
-                <div class="user">🟢 Steam Connected</div>
-                <div class="steam-id">
-                    SteamID: ${escapeHTML(data.user.steamId)}
-                </div>
-                <button class="logout" onclick="logoutSteam()">
-                    LOGOUT
-                </button>
-            `;
-        } else {
-            userArea.innerHTML = `
-                <button class="login" onclick="loginSteam()">
-                    LOGIN WITH STEAM
-                </button>
-            `;
-        }
-
-    } catch (error) {
-        console.error("User loading error:", error);
-    }
-}
-
-/* SAFE TEXT */
 
 function escapeHTML(value) {
-    return String(value).replace(/[&<>"']/g, char => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#039;"
-    })[char]);
+  return String(value).replace(/[&<>"']/g, function(char) {
+    return {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    }[char];
+  });
 }
 
-/* LOGOUT */
+async function loadUser() {
+  try {
+    const response = await fetch("/api/me", {
+      credentials: "include"
+    });
 
-function logoutSteam() {
-    window.location.href = "/auth/logout";
+    const data = await response.json();
+
+    const button = document.getElementById("steamButton");
+    const userInfo = document.getElementById("userInfo");
+
+    if (data.loggedIn && data.user) {
+      button.textContent = "LOG OUT";
+      button.onclick = logoutSteam;
+
+      userInfo.textContent = "Steam: " +
+        escapeHTML(data.user.steamId || "");
+
+    } else {
+      button.textContent = "STEAM LOGIN";
+      button.onclick = loginSteam;
+      userInfo.textContent = "";
+    }
+  } catch (error) {
+    console.error("User loading error:", error);
+  }
 }
 
-/* SERVER STATUS */
+async function logoutSteam() {
+  try {
+    await fetch("/auth/logout", {
+      method: "POST",
+      credentials: "include"
+    });
+
+    location.reload();
+  } catch (error) {
+    alert("Logout failed. Please try again.");
+  }
+}
 
 async function checkServer() {
-    const status = document.getElementById("status");
+  const status = document.getElementById("serverStatus");
+  const dot = document.getElementById("statusDot");
 
-    try {
-        const response = await fetch("/api/status", {
-            cache: "no-store"
-        });
+  try {
+    const response = await fetch("/api/status");
+    if (!response.ok) throw new Error("Server error");
 
-        if (!response.ok) {
-            throw new Error("Server unavailable");
-        }
-
-        const data = await response.json();
-
-        status.textContent =
-            "🟢 SKiNUM SERVER ONLINE — " + data.version;
-
-    } catch (error) {
-        status.textContent = "🔴 Server connection failed";
-    }
+    status.textContent = "SERVER ONLINE";
+    dot.style.background = "#43e58c";
+    dot.style.boxShadow = "0 0 12px #43e58c";
+  } catch (error) {
+    status.textContent = "SERVER OFFLINE";
+    dot.style.background = "#ff5555";
+    dot.style.boxShadow = "0 0 12px #ff5555";
+  }
 }
 
-/* CASE */
+function menuAction(name) {
+  if (name === "Cases") {
+    document.getElementById("cases").scrollIntoView({
+      behavior: "smooth"
+    });
+    return;
+  }
 
-function openCase(type) {
-    alert(type + " Case will be connected to the backend next.");
+  alert(name + " section is coming soon!");
 }
 
-/* START */
+function openCase(name) {
+  alert(name + " Case opening will be connected soon!");
+}
 
-checkServer();
 loadUser();
-
+checkServer();
 </script>
+
 </body>
 </html>
