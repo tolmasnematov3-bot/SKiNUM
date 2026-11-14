@@ -1,13 +1,14 @@
+
 {
   "name": "skinum",
-  "version": "7.1.0",
+  "version": "7.2.0",
   "private": true,
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "cookie-session": "^2.1.0",
     "express": "^5.1.0",
+    "express-session": "^1.18.2",
     "passport": "^0.7.0",
     "passport-steam": "^1.0.18"
   }
