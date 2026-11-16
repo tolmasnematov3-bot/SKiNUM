@@ -1,3 +1,4 @@
+
 'use strict';
 
 require('dotenv').config();
@@ -93,7 +94,6 @@ app.use(
     secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-
     name: 'skinum.sid',
 
     cookie: {
@@ -137,7 +137,6 @@ passport.deserializeUser(async (steamId, done) => {
       avatar: row.avatar_url,
       profileUrl: row.profile_url
     });
-
   } catch (err) {
     done(err);
   }
@@ -159,9 +158,7 @@ if (STEAM_API_KEY) {
       async (_identifier, profile, done) => {
         try {
           const steamId = profile.id;
-
-          const displayName =
-            profile.displayName || 'Steam User';
+          const displayName = profile.displayName || 'Steam User';
 
           const avatar =
             profile.photos?.[2]?.value ||
@@ -177,20 +174,13 @@ if (STEAM_API_KEY) {
             `INSERT INTO users
               (steam_id, display_name, avatar_url, profile_url)
              VALUES ($1, $2, $3, $4)
-
              ON CONFLICT (steam_id)
              DO UPDATE SET
                display_name = EXCLUDED.display_name,
                avatar_url = EXCLUDED.avatar_url,
                profile_url = EXCLUDED.profile_url,
                updated_at = NOW()`,
-
-            [
-              steamId,
-              displayName,
-              avatar,
-              profileUrl
-            ]
+            [steamId, displayName, avatar, profileUrl]
           );
 
           done(null, {
@@ -199,7 +189,6 @@ if (STEAM_API_KEY) {
             avatar,
             profileUrl
           });
-
         } catch (err) {
           done(err);
         }
@@ -235,144 +224,140 @@ function centsToMoney(cents) {
 }
 
 // ==========================================
-// DATABASE INITIALIZATION
+// DATABASE INITIALIZATION + MIGRATIONS
 // ==========================================
 
 async function initializeDatabase() {
+  // Create tables and safely add missing columns
+  // to existing tables. Existing records are not deleted.
 
   await pool.query(`
+
     CREATE TABLE IF NOT EXISTS users (
       steam_id TEXT PRIMARY KEY,
-
       display_name TEXT NOT NULL DEFAULT 'Steam User',
-
       avatar_url TEXT NOT NULL DEFAULT '',
-
       profile_url TEXT NOT NULL DEFAULT '',
-
       demo_balance_cents BIGINT NOT NULL DEFAULT 10000,
-
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
     ALTER TABLE users
-    ADD COLUMN IF NOT EXISTS
-    demo_balance_cents BIGINT NOT NULL DEFAULT 10000;
+      ADD COLUMN IF NOT EXISTS display_name TEXT NOT NULL DEFAULT 'Steam User',
+      ADD COLUMN IF NOT EXISTS avatar_url TEXT NOT NULL DEFAULT '',
+      ADD COLUMN IF NOT EXISTS profile_url TEXT NOT NULL DEFAULT '',
+      ADD COLUMN IF NOT EXISTS demo_balance_cents BIGINT NOT NULL DEFAULT 10000,
+      ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
 
 
     CREATE TABLE IF NOT EXISTS skins (
       id TEXT PRIMARY KEY,
-
       name TEXT NOT NULL,
-
       weapon TEXT NOT NULL,
-
       rarity TEXT NOT NULL,
-
       image_url TEXT NOT NULL DEFAULT '',
-
       market_price_cents INTEGER NOT NULL DEFAULT 0,
-
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
+
+    -- FIX: migrate old skins table
+    ALTER TABLE skins
+      ADD COLUMN IF NOT EXISTS name TEXT NOT NULL DEFAULT '',
+      ADD COLUMN IF NOT EXISTS weapon TEXT NOT NULL DEFAULT '',
+      ADD COLUMN IF NOT EXISTS rarity TEXT NOT NULL DEFAULT '',
+      ADD COLUMN IF NOT EXISTS image_url TEXT NOT NULL DEFAULT '',
+      ADD COLUMN IF NOT EXISTS market_price_cents INTEGER NOT NULL DEFAULT 0,
+      ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
 
 
     CREATE TABLE IF NOT EXISTS cases (
       id TEXT PRIMARY KEY,
-
       name TEXT NOT NULL,
-
       description TEXT NOT NULL DEFAULT '',
-
       price_cents INTEGER NOT NULL,
-
       image_url TEXT NOT NULL DEFAULT '',
-
       active BOOLEAN NOT NULL DEFAULT TRUE
     );
+
+    ALTER TABLE cases
+      ADD COLUMN IF NOT EXISTS name TEXT NOT NULL DEFAULT '',
+      ADD COLUMN IF NOT EXISTS description TEXT NOT NULL DEFAULT '',
+      ADD COLUMN IF NOT EXISTS price_cents INTEGER NOT NULL DEFAULT 0,
+      ADD COLUMN IF NOT EXISTS image_url TEXT NOT NULL DEFAULT '',
+      ADD COLUMN IF NOT EXISTS active BOOLEAN NOT NULL DEFAULT TRUE;
 
 
     CREATE TABLE IF NOT EXISTS case_items (
       id BIGSERIAL PRIMARY KEY,
-
-      case_id TEXT NOT NULL
-        REFERENCES cases(id) ON DELETE CASCADE,
-
-      skin_id TEXT NOT NULL
-        REFERENCES skins(id) ON DELETE CASCADE,
-
-      drop_weight INTEGER NOT NULL
-        CHECK (drop_weight > 0),
-
+      case_id TEXT NOT NULL REFERENCES cases(id) ON DELETE CASCADE,
+      skin_id TEXT NOT NULL REFERENCES skins(id) ON DELETE CASCADE,
+      drop_weight INTEGER NOT NULL CHECK (drop_weight > 0),
       UNIQUE(case_id, skin_id)
     );
+
+    ALTER TABLE case_items
+      ADD COLUMN IF NOT EXISTS drop_weight INTEGER NOT NULL DEFAULT 1;
 
 
     CREATE TABLE IF NOT EXISTS user_inventory (
       id BIGSERIAL PRIMARY KEY,
-
-      steam_id TEXT NOT NULL
-        REFERENCES users(steam_id) ON DELETE CASCADE,
-
-      skin_id TEXT NOT NULL
-        REFERENCES skins(id),
-
+      steam_id TEXT NOT NULL REFERENCES users(steam_id) ON DELETE CASCADE,
+      skin_id TEXT NOT NULL REFERENCES skins(id),
       source TEXT NOT NULL DEFAULT 'case',
-
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
+
+    ALTER TABLE user_inventory
+      ADD COLUMN IF NOT EXISTS source TEXT NOT NULL DEFAULT 'case',
+      ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
 
 
     CREATE TABLE IF NOT EXISTS transactions (
       id BIGSERIAL PRIMARY KEY,
-
-      steam_id TEXT NOT NULL
-        REFERENCES users(steam_id) ON DELETE CASCADE,
-
+      steam_id TEXT NOT NULL REFERENCES users(steam_id) ON DELETE CASCADE,
       type TEXT NOT NULL,
-
       amount_cents BIGINT NOT NULL,
-
       balance_after_cents BIGINT NOT NULL,
-
       description TEXT NOT NULL DEFAULT '',
-
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
+
+    ALTER TABLE transactions
+      ADD COLUMN IF NOT EXISTS type TEXT NOT NULL DEFAULT 'unknown',
+      ADD COLUMN IF NOT EXISTS amount_cents BIGINT NOT NULL DEFAULT 0,
+      ADD COLUMN IF NOT EXISTS balance_after_cents BIGINT NOT NULL DEFAULT 0,
+      ADD COLUMN IF NOT EXISTS description TEXT NOT NULL DEFAULT '',
+      ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
 
 
     CREATE TABLE IF NOT EXISTS case_openings (
       id BIGSERIAL PRIMARY KEY,
-
-      steam_id TEXT NOT NULL
-        REFERENCES users(steam_id) ON DELETE CASCADE,
-
-      case_id TEXT NOT NULL
-        REFERENCES cases(id),
-
-      skin_id TEXT NOT NULL
-        REFERENCES skins(id),
-
+      steam_id TEXT NOT NULL REFERENCES users(steam_id) ON DELETE CASCADE,
+      case_id TEXT NOT NULL REFERENCES cases(id),
+      skin_id TEXT NOT NULL REFERENCES skins(id),
       idempotency_key TEXT NOT NULL,
-
       price_cents INTEGER NOT NULL,
-
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-
       UNIQUE(steam_id, idempotency_key)
     );
 
+    ALTER TABLE case_openings
+      ADD COLUMN IF NOT EXISTS idempotency_key TEXT,
+      ADD COLUMN IF NOT EXISTS price_cents INTEGER NOT NULL DEFAULT 0,
+      ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+
 
     CREATE INDEX IF NOT EXISTS idx_inventory_steam
-    ON user_inventory(steam_id, created_at DESC);
+      ON user_inventory(steam_id, created_at DESC);
 
     CREATE INDEX IF NOT EXISTS idx_transactions_steam
-    ON transactions(steam_id, created_at DESC);
+      ON transactions(steam_id, created_at DESC);
 
     CREATE INDEX IF NOT EXISTS idx_case_items_case
-    ON case_items(case_id);
+      ON case_items(case_id);
+
   `);
 
   // ========================================
@@ -380,98 +365,22 @@ async function initializeDatabase() {
   // ========================================
 
   const skins = [
-
-    [
-      'ak-redline',
-      'AK-47 | Redline',
-      'AK-47',
-      'Classified',
-      '',
-      1450
-    ],
-
-    [
-      'awp-asiimov',
-      'AWP | Asiimov',
-      'AWP',
-      'Covert',
-      '',
-      5200
-    ],
-
-    [
-      'm4a4-neo-noir',
-      'M4A4 | Neo-Noir',
-      'M4A4',
-      'Covert',
-      '',
-      3100
-    ],
-
-    [
-      'usp-kill-confirmed',
-      'USP-S | Kill Confirmed',
-      'USP-S',
-      'Covert',
-      '',
-      4600
-    ],
-
-    [
-      'glock-fade',
-      'Glock-18 | Fade',
-      'Glock-18',
-      'Covert',
-      '',
-      12500
-    ],
-
-    [
-      'deagle-printstream',
-      'Desert Eagle | Printstream',
-      'Desert Eagle',
-      'Covert',
-      '',
-      6900
-    ],
-
-    [
-      'karambit-blue-steel',
-      '★ Karambit | Blue Steel',
-      'Knife',
-      'Covert',
-      '',
-      28000
-    ],
-
-    [
-      'butterfly-night',
-      '★ Butterfly Knife | Night',
-      'Knife',
-      'Covert',
-      '',
-      34000
-    ],
-
-    [
-      'awp-dragon-lore',
-      'AWP | Dragon Lore',
-      'AWP',
-      'Covert',
-      '',
-      125000
-    ]
-
+    ['ak-redline', 'AK-47 | Redline', 'AK-47', 'Classified', '', 1450],
+    ['awp-asiimov', 'AWP | Asiimov', 'AWP', 'Covert', '', 5200],
+    ['m4a4-neo-noir', 'M4A4 | Neo-Noir', 'M4A4', 'Covert', '', 3100],
+    ['usp-kill-confirmed', 'USP-S | Kill Confirmed', 'USP-S', 'Covert', '', 4600],
+    ['glock-fade', 'Glock-18 | Fade', 'Glock-18', 'Covert', '', 12500],
+    ['deagle-printstream', 'Desert Eagle | Printstream', 'Desert Eagle', 'Covert', '', 6900],
+    ['karambit-blue-steel', '★ Karambit | Blue Steel', 'Knife', 'Covert', '', 28000],
+    ['butterfly-night', '★ Butterfly Knife | Night', 'Knife', 'Covert', '', 34000],
+    ['awp-dragon-lore', 'AWP | Dragon Lore', 'AWP', 'Covert', '', 125000]
   ];
 
   for (const skin of skins) {
-
     await pool.query(
       `INSERT INTO skins
         (id, name, weapon, rarity, image_url, market_price_cents)
-
        VALUES ($1, $2, $3, $4, $5, $6)
-
        ON CONFLICT (id)
        DO UPDATE SET
          name = EXCLUDED.name,
@@ -479,10 +388,8 @@ async function initializeDatabase() {
          rarity = EXCLUDED.rarity,
          image_url = EXCLUDED.image_url,
          market_price_cents = EXCLUDED.market_price_cents`,
-
       skin
     );
-
   }
 
   // ========================================
@@ -490,44 +397,16 @@ async function initializeDatabase() {
   // ========================================
 
   const cases = [
-
-    [
-      'knife-case',
-      'KNIFE CASE',
-      'Hunt for rare knife finishes.',
-      2500,
-      '',
-      true
-    ],
-
-    [
-      'weapon-case',
-      'WEAPON CASE',
-      'A selection of iconic weapon skins.',
-      1000,
-      '',
-      true
-    ],
-
-    [
-      'awp-case',
-      'AWP CASE',
-      'Only AWP drops. Take your shot.',
-      1800,
-      '',
-      true
-    ]
-
+    ['knife-case', 'KNIFE CASE', 'Hunt for rare knife finishes.', 2500, '', true],
+    ['weapon-case', 'WEAPON CASE', 'A selection of iconic weapon skins.', 1000, '', true],
+    ['awp-case', 'AWP CASE', 'Only AWP drops. Take your shot.', 1800, '', true]
   ];
 
   for (const c of cases) {
-
     await pool.query(
       `INSERT INTO cases
         (id, name, description, price_cents, image_url, active)
-
        VALUES ($1, $2, $3, $4, $5, $6)
-
        ON CONFLICT (id)
        DO UPDATE SET
          name = EXCLUDED.name,
@@ -535,10 +414,8 @@ async function initializeDatabase() {
          price_cents = EXCLUDED.price_cents,
          image_url = EXCLUDED.image_url,
          active = EXCLUDED.active`,
-
       c
     );
-
   }
 
   // ========================================
@@ -546,7 +423,6 @@ async function initializeDatabase() {
   // ========================================
 
   const mappings = {
-
     'knife-case': [
       ['karambit-blue-steel', 18],
       ['butterfly-night', 12],
@@ -566,30 +442,22 @@ async function initializeDatabase() {
       ['awp-asiimov', 250],
       ['awp-dragon-lore', 5]
     ]
-
   };
 
   for (const [caseId, items] of Object.entries(mappings)) {
-
     for (const [skinId, weight] of items) {
-
       await pool.query(
         `INSERT INTO case_items
           (case_id, skin_id, drop_weight)
-
          VALUES ($1, $2, $3)
-
          ON CONFLICT (case_id, skin_id)
-         DO UPDATE SET
-           drop_weight = EXCLUDED.drop_weight`,
-
+         DO UPDATE SET drop_weight = EXCLUDED.drop_weight`,
         [caseId, skinId, weight]
       );
-
     }
-
   }
 
+  console.log('SKiNUM database initialized successfully.');
 }
 
 // ==========================================
@@ -597,7 +465,6 @@ async function initializeDatabase() {
 // ==========================================
 
 app.get('/auth/steam', (req, res, next) => {
-
   if (!STEAM_API_KEY) {
     return res.status(503).send(
       'Steam login is not configured. Add STEAM_API_KEY.'
@@ -605,15 +472,11 @@ app.get('/auth/steam', (req, res, next) => {
   }
 
   passport.authenticate('steam')(req, res, next);
-
 });
-
 
 app.get(
   '/auth/steam/return',
-
   (req, res, next) => {
-
     if (!STEAM_API_KEY) {
       return res.redirect('/?login=not-configured');
     }
@@ -622,98 +485,72 @@ app.get(
       'steam',
       { failureRedirect: '/?login=failed' }
     )(req, res, next);
-
   },
 
   (req, res) => {
-
     req.session.save((err) => {
-
       if (err) {
         console.error('Session save error:', err);
+        return res.redirect('/?login=session-error');
       }
 
       res.redirect('/?login=success');
-
     });
-
   }
 );
-
 
 // ==========================================
 // LOGOUT
 // ==========================================
 
 app.post('/auth/logout', (req, res, next) => {
-
   req.logout((err) => {
-
     if (err) return next(err);
 
     req.session.destroy(() => {
+      res.clearCookie('skinum.sid');
 
       res.json({
         success: true
       });
-
     });
-
   });
-
 });
 
-
 app.get('/auth/logout', (req, res, next) => {
-
   req.logout((err) => {
-
     if (err) return next(err);
 
     req.session.destroy(() => {
+      res.clearCookie('skinum.sid');
       res.redirect('/');
     });
-
   });
-
 });
-
 
 // ==========================================
 // CURRENT USER
 // ==========================================
 
 app.get('/api/me', (req, res) => {
-
   if (!req.user) {
-
     return res.json({
       loggedIn: false,
       user: null
     });
-
   }
 
   res.json({
-
     loggedIn: true,
 
     user: {
-
       steamId: req.user.steamId,
-
       displayName: req.user.displayName,
-
       avatar: req.user.avatar,
-
       profileUrl: req.user.profileUrl
-
     }
-
   });
-
 });
-
 
 // ==========================================
 // WALLET
@@ -721,11 +558,9 @@ app.get('/api/me', (req, res) => {
 
 app.get(
   '/api/wallet',
-
   requireLogin,
 
   asyncRoute(async (req, res) => {
-
     const result = await pool.query(
       `SELECT demo_balance_cents
        FROM users
@@ -734,12 +569,10 @@ app.get(
     );
 
     if (!result.rows.length) {
-
       return res.status(404).json({
         success: false,
         message: 'User not found.'
       });
-
     }
 
     const balanceCents = Number(
@@ -747,21 +580,13 @@ app.get(
     );
 
     res.json({
-
       success: true,
-
       mode: 'DEMO',
-
       balanceCents,
-
       balance: centsToMoney(balanceCents)
-
     });
-
   })
-
 );
-
 
 // ==========================================
 // DEMO BALANCE TOP UP
@@ -769,40 +594,24 @@ app.get(
 
 app.post(
   '/api/demo/topup',
-
   requireLogin,
 
   asyncRoute(async (req, res) => {
+    const amountCents = Number(req.body?.amountCents);
 
-    const amountCents = Number(
-      req.body?.amountCents
-    );
-
-    const allowedAmounts = [
-      1000,
-      2500,
-      5000,
-      10000
-    ];
+    const allowedAmounts = [1000, 2500, 5000, 10000];
 
     if (!allowedAmounts.includes(amountCents)) {
-
       return res.status(400).json({
-
         success: false,
-
         error: 'INVALID_AMOUNT',
-
         message: 'Choose a valid demo top-up amount.'
-
       });
-
     }
 
     const client = await pool.connect();
 
     try {
-
       await client.query('BEGIN');
 
       const locked = await client.query(
@@ -818,25 +627,20 @@ app.post(
       }
 
       const newBalance =
-        Number(locked.rows[0].demo_balance_cents) +
-        amountCents;
+        Number(locked.rows[0].demo_balance_cents) + amountCents;
 
       await client.query(
         `UPDATE users
          SET demo_balance_cents = $1,
              updated_at = NOW()
          WHERE steam_id = $2`,
-
         [newBalance, req.user.steamId]
       );
 
       await client.query(
         `INSERT INTO transactions
-          (steam_id, type, amount_cents,
-           balance_after_cents, description)
-
+          (steam_id, type, amount_cents, balance_after_cents, description)
          VALUES ($1, 'demo_topup', $2, $3, $4)`,
-
         [
           req.user.steamId,
           amountCents,
@@ -848,35 +652,20 @@ app.post(
       await client.query('COMMIT');
 
       res.json({
-
         success: true,
-
         mode: 'DEMO',
-
         addedCents: amountCents,
-
         balanceCents: newBalance,
-
         balance: centsToMoney(newBalance)
-
       });
-
     } catch (err) {
-
       await client.query('ROLLBACK');
-
       throw err;
-
     } finally {
-
       client.release();
-
     }
-
   })
-
 );
-
 
 // ==========================================
 // CASE LIST
@@ -886,9 +675,7 @@ app.get(
   '/api/cases',
 
   asyncRoute(async (_req, res) => {
-
     const result = await pool.query(
-
       `SELECT
         c.id,
         c.name,
@@ -906,56 +693,34 @@ app.get(
               'imageUrl', s.image_url,
               'priceCents', s.market_price_cents
             )
-          )
-          FILTER (WHERE s.id IS NOT NULL),
-
+          ) FILTER (WHERE s.id IS NOT NULL),
           '[]'
         ) AS skins
 
        FROM cases c
-
-       LEFT JOIN case_items ci
-         ON ci.case_id = c.id
-
-       LEFT JOIN skins s
-         ON s.id = ci.skin_id
+       LEFT JOIN case_items ci ON ci.case_id = c.id
+       LEFT JOIN skins s ON s.id = ci.skin_id
 
        WHERE c.active = TRUE
-
        GROUP BY c.id
-
        ORDER BY c.price_cents ASC`
-
     );
 
     res.json({
-
       success: true,
 
       cases: result.rows.map((c) => ({
-
         id: c.id,
-
         name: c.name,
-
         description: c.description,
-
         priceCents: Number(c.price_cents),
-
         price: centsToMoney(c.price_cents),
-
         imageUrl: c.image_url,
-
         skins: c.skins
-
       }))
-
     });
-
   })
-
 );
-
 
 // ==========================================
 // OPEN CASE
@@ -963,14 +728,10 @@ app.get(
 
 app.post(
   '/api/cases/:caseId/open',
-
   requireLogin,
 
   asyncRoute(async (req, res) => {
-
-    const caseId = String(
-      req.params.caseId || ''
-    );
+    const caseId = String(req.params.caseId || '');
 
     const idempotencyKey = String(
       req.body?.idempotencyKey || crypto.randomUUID()
@@ -979,127 +740,77 @@ app.post(
     const client = await pool.connect();
 
     try {
-
       await client.query('BEGIN');
 
-      // Check duplicate request
-
       const previous = await client.query(
-
         `SELECT
           co.id,
           co.price_cents,
           co.created_at,
-
           s.id AS skin_id,
           s.name,
           s.weapon,
           s.rarity,
           s.image_url,
           s.market_price_cents,
-
           u.demo_balance_cents
 
          FROM case_openings co
-
-         JOIN skins s
-           ON s.id = co.skin_id
-
-         JOIN users u
-           ON u.steam_id = co.steam_id
+         JOIN skins s ON s.id = co.skin_id
+         JOIN users u ON u.steam_id = co.steam_id
 
          WHERE co.steam_id = $1
            AND co.idempotency_key = $2`,
-
-        [
-          req.user.steamId,
-          idempotencyKey
-        ]
-
+        [req.user.steamId, idempotencyKey]
       );
 
       if (previous.rows.length) {
-
         await client.query('COMMIT');
 
         const p = previous.rows[0];
 
         return res.json({
-
           success: true,
-
           replayed: true,
-
           mode: 'DEMO',
-
-          balanceCents: Number(
-            p.demo_balance_cents
-          ),
+          balanceCents: Number(p.demo_balance_cents),
 
           skin: {
-
             id: p.skin_id,
-
             name: p.name,
-
             weapon: p.weapon,
-
             rarity: p.rarity,
-
             imageUrl: p.image_url,
-
-            priceCents: Number(
-              p.market_price_cents
-            )
-
+            priceCents: Number(p.market_price_cents)
           }
-
         });
-
       }
 
-      // Find case
-
       const caseResult = await client.query(
-
         `SELECT id, name, price_cents
          FROM cases
-         WHERE id = $1
-           AND active = TRUE`,
-
+         WHERE id = $1 AND active = TRUE`,
         [caseId]
-
       );
 
       if (!caseResult.rows.length) {
-
         await client.query('ROLLBACK');
 
         return res.status(404).json({
-
           success: false,
-
           error: 'CASE_NOT_FOUND',
-
           message: 'Case not found.'
-
         });
-
       }
 
       const caseRow = caseResult.rows[0];
 
-      // Lock user balance
-
       const userResult = await client.query(
-
         `SELECT demo_balance_cents
          FROM users
          WHERE steam_id = $1
          FOR UPDATE`,
-
         [req.user.steamId]
-
       );
 
       if (!userResult.rows.length) {
@@ -1110,30 +821,19 @@ app.post(
         userResult.rows[0].demo_balance_cents
       );
 
-      const price = Number(
-        caseRow.price_cents
-      );
+      const price = Number(caseRow.price_cents);
 
       if (balance < price) {
-
         await client.query('ROLLBACK');
 
         return res.status(400).json({
-
           success: false,
-
           error: 'INSUFFICIENT_BALANCE',
-
           message: 'Not enough demo balance.'
-
         });
-
       }
 
-      // Get possible skins
-
       const itemsResult = await client.query(
-
         `SELECT
           s.id,
           s.name,
@@ -1144,112 +844,69 @@ app.post(
           ci.drop_weight
 
          FROM case_items ci
-
-         JOIN skins s
-           ON s.id = ci.skin_id
-
+         JOIN skins s ON s.id = ci.skin_id
          WHERE ci.case_id = $1`,
-
         [caseId]
-
       );
 
       if (!itemsResult.rows.length) {
         throw new Error('CASE_HAS_NO_ITEMS');
       }
 
-      // Weighted random selection
-
       const totalWeight = itemsResult.rows.reduce(
         (sum, item) => sum + Number(item.drop_weight),
         0
       );
 
-      let roll = crypto.randomInt(
-        1,
-        totalWeight + 1
-      );
-
+      let roll = crypto.randomInt(1, totalWeight + 1);
       let selected = itemsResult.rows[0];
 
       for (const item of itemsResult.rows) {
-
         roll -= Number(item.drop_weight);
 
         if (roll <= 0) {
-
           selected = item;
-
           break;
-
         }
-
       }
-
-      // Deduct balance
 
       const newBalance = balance - price;
 
       await client.query(
-
         `UPDATE users
          SET demo_balance_cents = $1,
              updated_at = NOW()
          WHERE steam_id = $2`,
-
-        [
-          newBalance,
-          req.user.steamId
-        ]
-
+        [newBalance, req.user.steamId]
       );
 
-      // Add skin to inventory
-
       await client.query(
-
         `INSERT INTO user_inventory
           (steam_id, skin_id, source)
-
          VALUES ($1, $2, $3)`,
-
         [
           req.user.steamId,
           selected.id,
           `case:${caseId}`
         ]
-
       );
 
-      // Transaction record
-
       await client.query(
-
         `INSERT INTO transactions
-          (steam_id, type, amount_cents,
-           balance_after_cents, description)
-
+          (steam_id, type, amount_cents, balance_after_cents, description)
          VALUES ($1, 'case_open', $2, $3, $4)`,
-
         [
           req.user.steamId,
           -price,
           newBalance,
           `Opened ${caseRow.name}`
         ]
-
       );
 
-      // Opening history
-
       await client.query(
-
         `INSERT INTO case_openings
-          (steam_id, case_id, skin_id,
-           idempotency_key, price_cents)
-
+          (steam_id, case_id, skin_id, idempotency_key, price_cents)
          VALUES ($1, $2, $3, $4, $5)`,
-
         [
           req.user.steamId,
           caseId,
@@ -1257,78 +914,47 @@ app.post(
           idempotencyKey,
           price
         ]
-
       );
 
       await client.query('COMMIT');
 
       res.json({
-
         success: true,
-
         mode: 'DEMO',
-
         balanceCents: newBalance,
 
         case: {
-
           id: caseId,
-
           name: caseRow.name
-
         },
 
         skin: {
-
           id: selected.id,
-
           name: selected.name,
-
           weapon: selected.weapon,
-
           rarity: selected.rarity,
-
           imageUrl: selected.image_url,
-
-          priceCents: Number(
-            selected.market_price_cents
-          )
-
+          priceCents: Number(selected.market_price_cents)
         }
-
       });
-
     } catch (err) {
-
       await client.query('ROLLBACK');
 
       if (err.code === '23505') {
-
         return res.status(409).json({
-
           success: false,
-
           error: 'DUPLICATE_REQUEST',
-
           message:
             'This opening request was already processed. Refresh your balance and inventory.'
-
         });
-
       }
 
       throw err;
-
     } finally {
-
       client.release();
-
     }
-
   })
-
 );
-
 
 // ==========================================
 // USER INVENTORY
@@ -1336,18 +962,14 @@ app.post(
 
 app.get(
   '/api/inventory',
-
   requireLogin,
 
   asyncRoute(async (req, res) => {
-
     const result = await pool.query(
-
       `SELECT
         ui.id,
         ui.source,
         ui.created_at,
-
         s.id AS skin_id,
         s.name,
         s.weapon,
@@ -1356,58 +978,34 @@ app.get(
         s.market_price_cents
 
        FROM user_inventory ui
-
-       JOIN skins s
-         ON s.id = ui.skin_id
+       JOIN skins s ON s.id = ui.skin_id
 
        WHERE ui.steam_id = $1
-
        ORDER BY ui.created_at DESC
-
        LIMIT 200`,
-
       [req.user.steamId]
-
     );
 
     res.json({
-
       success: true,
 
       inventory: result.rows.map((r) => ({
-
         id: r.id,
-
         source: r.source,
-
         createdAt: r.created_at,
 
         skin: {
-
           id: r.skin_id,
-
           name: r.name,
-
           weapon: r.weapon,
-
           rarity: r.rarity,
-
           imageUrl: r.image_url,
-
-          priceCents: Number(
-            r.market_price_cents
-          )
-
+          priceCents: Number(r.market_price_cents)
         }
-
       }))
-
     });
-
   })
-
 );
-
 
 // ==========================================
 // TRANSACTIONS
@@ -1415,13 +1013,10 @@ app.get(
 
 app.get(
   '/api/transactions',
-
   requireLogin,
 
   asyncRoute(async (req, res) => {
-
     const result = await pool.query(
-
       `SELECT
         id,
         type,
@@ -1431,47 +1026,26 @@ app.get(
         created_at
 
        FROM transactions
-
        WHERE steam_id = $1
-
        ORDER BY created_at DESC
-
        LIMIT 100`,
-
       [req.user.steamId]
-
     );
 
     res.json({
-
       success: true,
 
       transactions: result.rows.map((r) => ({
-
         id: r.id,
-
         type: r.type,
-
-        amountCents: Number(
-          r.amount_cents
-        ),
-
-        balanceAfterCents: Number(
-          r.balance_after_cents
-        ),
-
+        amountCents: Number(r.amount_cents),
+        balanceAfterCents: Number(r.balance_after_cents),
         description: r.description,
-
         createdAt: r.created_at
-
       }))
-
     });
-
   })
-
 );
-
 
 // ==========================================
 // SERVER STATUS
@@ -1481,27 +1055,17 @@ app.get(
   '/api/status',
 
   asyncRoute(async (_req, res) => {
-
     await pool.query('SELECT 1');
 
     res.json({
-
       success: true,
-
       status: 'online',
-
       database: 'connected',
-
       mode: 'DEMO',
-
-      version: '7.9.0'
-
+      version: '8.0.0'
     });
-
   })
-
 );
-
 
 // ==========================================
 // DATABASE STATUS
@@ -1511,21 +1075,14 @@ app.get(
   '/api/database',
 
   asyncRoute(async (_req, res) => {
-
     await pool.query('SELECT 1');
 
     res.json({
-
       success: true,
-
       database: 'connected'
-
     });
-
   })
-
 );
-
 
 // ==========================================
 // STATIC FRONTEND
@@ -1538,7 +1095,6 @@ app.use(
 );
 
 app.get('*', (req, res, next) => {
-
   if (
     req.path.startsWith('/api/') ||
     req.path.startsWith('/auth/')
@@ -1549,16 +1105,13 @@ app.get('*', (req, res, next) => {
   res.sendFile(
     path.join(__dirname, 'public', 'index.html')
   );
-
 });
-
 
 // ==========================================
 // ERROR HANDLER
 // ==========================================
 
 app.use((err, req, res, _next) => {
-
   console.error('Request error:', err);
 
   if (res.headersSent) {
@@ -1566,62 +1119,45 @@ app.use((err, req, res, _next) => {
   }
 
   res.status(500).json({
-
     success: false,
-
     error: 'INTERNAL_SERVER_ERROR',
 
     message: isProduction
       ? 'Something went wrong. Please try again.'
       : err.message
-
   });
-
 });
-
 
 // ==========================================
 // START SERVER
 // ==========================================
 
 initializeDatabase()
-
   .then(() => {
-
     app.listen(PORT, () => {
-
       console.log(
-        `SKiNUM v7.9.0 listening on port ${PORT}`
+        `SKiNUM v8.0.0 listening on port ${PORT}`
       );
-
     });
-
   })
-
   .catch((err) => {
-
     console.error(
       'Database initialization failed:',
       err
     );
 
     process.exit(1);
-
   });
-
 
 // ==========================================
 // GRACEFUL SHUTDOWN
 // ==========================================
 
 process.on('SIGTERM', async () => {
-
   console.log(
     'SIGTERM received. Closing PostgreSQL pool...'
   );
 
   await pool.end();
-
   process.exit(0);
-
 });
