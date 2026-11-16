@@ -12,7 +12,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 const SITE_URL = (
-  process.env.SITE_URL || `http://localhost:${PORT}`
+  process.env.SITE_URL ||
+  (process.env.NODE_ENV === "production"
+    ? "https://skinum.onrender.com"
+    : `http://localhost:${PORT}`)
 ).replace(/\/$/, "");
 
 if (!process.env.SESSION_SECRET) {
@@ -23,7 +26,10 @@ if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL is missing!");
 }
 
+// ==========================================
 // DATABASE CONNECTION
+// ==========================================
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   connectionTimeoutMillis: 10000,
@@ -37,7 +43,10 @@ pool.on("error", (error) => {
   console.error("POSTGRES ERROR:", error);
 });
 
+// ==========================================
 // SESSION STORE
+// ==========================================
+
 const sessionStore = new PgSession({
   pool,
   tableName: "user_sessions",
@@ -46,6 +55,7 @@ const sessionStore = new PgSession({
 });
 
 app.set("trust proxy", 1);
+
 app.use(express.json({ limit: "100kb" }));
 
 app.use(
@@ -55,16 +65,20 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    proxy: true,
     cookie: {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: "auto",
       sameSite: "lax"
     }
   })
 );
 
-// PASSPORT
+// ==========================================
+// PASSPORT CONFIGURATION
+// ==========================================
+
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -90,11 +104,15 @@ passport.deserializeUser(async (steamId, done) => {
       createdAt: result.rows[0].created_at
     });
   } catch (error) {
+    console.error("DESERIALIZE ERROR:", error);
     done(error);
   }
 });
 
-// STEAM OPENID
+// ==========================================
+// STEAM STRATEGY
+// ==========================================
+
 passport.use(
   new SteamStrategy(
     {
@@ -133,7 +151,10 @@ passport.use(
   )
 );
 
-// AUTH HELPERS
+// ==========================================
+// HELPERS
+// ==========================================
+
 function requireLogin(req, res, next) {
   if (!req.isAuthenticated || !req.isAuthenticated()) {
     return res.status(401).json({
@@ -152,8 +173,12 @@ function asyncRoute(handler) {
   };
 }
 
-// DATABASE TABLES AND DEMO DATA
+// ==========================================
+// DATABASE INITIALIZATION
+// ==========================================
+
 async function initializeDatabase() {
+
   await pool.query(`
     CREATE TABLE IF NOT EXISTS users (
       steam_id VARCHAR(30) PRIMARY KEY,
@@ -162,7 +187,6 @@ async function initializeDatabase() {
     )
   `);
 
-  // Demo wallet. Amounts are stored in cents, not floating point.
   await pool.query(`
     ALTER TABLE users
     ADD COLUMN IF NOT EXISTS demo_balance_cents BIGINT
@@ -260,6 +284,7 @@ async function initializeDatabase() {
   `);
 
   // DEMO SKINS
+
   const demoSkins = [
     ["demo-ak-redline", "AK-47 | Redline", "AK-47", "Classified", 1200],
     ["demo-awp-asiimov", "AWP | Asiimov", "AWP", "Covert", 3500],
@@ -284,7 +309,8 @@ async function initializeDatabase() {
     );
   }
 
-  // DEMO CASES: $25, $5 and $10
+  // DEMO CASES
+
   const demoCases = [
     ["knife-case", "Knife Case", 2500],
     ["weapon-case", "Weapon Case", 500],
@@ -300,7 +326,8 @@ async function initializeDatabase() {
     );
   }
 
-  // Demo probability weights. Each case totals 10,000 basis points.
+  // DEMO DROP PROBABILITIES
+
   const demoDrops = [
     ["knife-case", "demo-ak-redline", 7000],
     ["knife-case", "demo-awp-asiimov", 2500],
@@ -326,9 +353,11 @@ async function initializeDatabase() {
     );
   }
 
-  // Check that every active case has valid total odds.
+  // VALIDATE CASE PROBABILITIES
+
   const invalidCases = await pool.query(`
-    SELECT c.slug, COALESCE(SUM(ci.weight_bps), 0) AS total
+    SELECT c.slug,
+           COALESCE(SUM(ci.weight_bps), 0) AS total
     FROM cases c
     LEFT JOIN case_items ci ON ci.case_id = c.id
     WHERE c.active = TRUE
@@ -347,22 +376,42 @@ async function initializeDatabase() {
   console.log("DEMO CASES READY");
 }
 
+// ==========================================
 // STEAM LOGIN ROUTES
-app.get("/auth/steam", passport.authenticate("steam"));
+// ==========================================
+
+app.get(
+  "/auth/steam",
+  passport.authenticate("steam")
+);
 
 app.get(
   "/auth/steam/return",
   passport.authenticate("steam", {
     failureRedirect: "/?steam_login=failed"
   }),
-  (req, res) => {
+  (req, res, next) => {
+
     console.log("STEAM LOGIN SUCCESS:", req.user.steamId);
-    res.redirect("/?steam_login=success");
+
+    req.session.save((error) => {
+      if (error) {
+        console.error("SESSION SAVE ERROR:", error);
+        return next(error);
+      }
+
+      console.log("STEAM SESSION SAVED");
+      res.redirect("/?steam_login=success");
+    });
   }
 );
 
+// ==========================================
 // CURRENT USER
+// ==========================================
+
 app.get("/api/me", (req, res) => {
+
   if (!req.user) {
     return res.json({
       loggedIn: false,
@@ -379,81 +428,104 @@ app.get("/api/me", (req, res) => {
   });
 });
 
+// ==========================================
 // WALLET
-app.get("/api/wallet", requireLogin, asyncRoute(async (req, res) => {
-  const result = await pool.query(
-    `SELECT demo_balance_cents
-     FROM users
-     WHERE steam_id = $1`,
-    [req.user.steamId]
-  );
+// ==========================================
 
-  if (!result.rows.length) {
-    return res.status(404).json({
-      success: false,
-      error: "USER_NOT_FOUND"
+app.get(
+  "/api/wallet",
+  requireLogin,
+  asyncRoute(async (req, res) => {
+
+    const result = await pool.query(
+      `SELECT demo_balance_cents
+       FROM users
+       WHERE steam_id = $1`,
+      [req.user.steamId]
+    );
+
+    if (!result.rows.length) {
+      return res.status(404).json({
+        success: false,
+        error: "USER_NOT_FOUND"
+      });
+    }
+
+    const balanceCents = Number(
+      result.rows[0].demo_balance_cents
+    );
+
+    res.json({
+      success: true,
+      currency: "USD",
+      mode: "DEMO",
+      balanceCents,
+      balance: balanceCents / 100
     });
-  }
+  })
+);
 
-  res.json({
-    success: true,
-    currency: "USD",
-    mode: "DEMO",
-    balanceCents: Number(result.rows[0].demo_balance_cents),
-    balance: Number(result.rows[0].demo_balance_cents) / 100
-  });
-}));
-
+// ==========================================
 // LIST CASES
-app.get("/api/cases", asyncRoute(async (req, res) => {
-  const result = await pool.query(`
-    SELECT
-      c.id,
-      c.slug,
-      c.name,
-      c.price_cents,
-      json_agg(
-        json_build_object(
-          'id', s.id,
-          'name', s.display_name,
-          'weapon', s.weapon,
-          'rarity', s.rarity,
-          'image', s.image_url,
-          'valueCents', s.value_cents,
-          'chance', ci.weight_bps / 100.0
-        )
-        ORDER BY ci.weight_bps DESC
-      ) AS items
-    FROM cases c
-    JOIN case_items ci ON ci.case_id = c.id
-    JOIN skins s ON s.id = ci.skin_id
-    WHERE c.active = TRUE
-    GROUP BY c.id
-    ORDER BY c.id
-  `);
+// ==========================================
 
-  res.json({
-    success: true,
-    mode: "DEMO",
-    cases: result.rows.map((item) => ({
-      id: item.id,
-      slug: item.slug,
-      name: item.name,
-      priceCents: Number(item.price_cents),
-      price: Number(item.price_cents) / 100,
-      items: item.items
-    }))
-  });
-}));
+app.get(
+  "/api/cases",
+  asyncRoute(async (req, res) => {
 
+    const result = await pool.query(`
+      SELECT
+        c.id,
+        c.slug,
+        c.name,
+        c.price_cents,
+        json_agg(
+          json_build_object(
+            'id', s.id,
+            'name', s.display_name,
+            'weapon', s.weapon,
+            'rarity', s.rarity,
+            'image', s.image_url,
+            'valueCents', s.value_cents,
+            'chance', ci.weight_bps / 100.0
+          )
+          ORDER BY ci.weight_bps DESC
+        ) AS items
+      FROM cases c
+      JOIN case_items ci ON ci.case_id = c.id
+      JOIN skins s ON s.id = ci.skin_id
+      WHERE c.active = TRUE
+      GROUP BY c.id
+      ORDER BY c.id
+    `);
+
+    res.json({
+      success: true,
+      mode: "DEMO",
+      cases: result.rows.map((item) => ({
+        id: item.id,
+        slug: item.slug,
+        name: item.name,
+        priceCents: Number(item.price_cents),
+        price: Number(item.price_cents) / 100,
+        items: item.items
+      }))
+    });
+  })
+);
+
+// ==========================================
 // OPEN CASE
+// ==========================================
+
 app.post(
   "/api/cases/:caseId/open",
   requireLogin,
   asyncRoute(async (req, res) => {
+
     const caseId = String(req.params.caseId);
 
-    if (!/^\d+$/.test(caseId)) {
+    if (!/^(?:\d+|[a-z0-9-]+)$/i.test(caseId)) {
       return res.status(400).json({
         success: false,
         error: "INVALID_CASE_ID"
@@ -461,7 +533,7 @@ app.post(
     }
 
     const idempotencyKey =
-      String(req.body.idempotencyKey || "").trim();
+      String(req.body?.idempotencyKey || "").trim();
 
     if (
       idempotencyKey.length < 8 ||
@@ -479,44 +551,8 @@ app.post(
     try {
       await client.query("BEGIN");
 
-      // Prevent duplicate requests from charging twice.
-      const previous = await client.query(
-        `SELECT
-           o.id,
-           o.cost_cents,
-           o.created_at,
-           s.display_name,
-           s.weapon,
-           s.rarity,
-           s.value_cents
-         FROM case_openings o
-         JOIN skins s ON s.id = o.skin_id
-         WHERE o.steam_id = $1
-           AND o.idempotency_key = $2`,
-        [req.user.steamId, idempotencyKey]
-      );
+      // Lock user row to prevent concurrent wallet operations.
 
-      if (previous.rows.length) {
-        await client.query("COMMIT");
-
-        const old = previous.rows[0];
-
-        return res.json({
-          success: true,
-          repeatedRequest: true,
-          mode: "DEMO",
-          openingId: old.id,
-          chargedCents: Number(old.cost_cents),
-          skin: {
-            name: old.display_name,
-            weapon: old.weapon,
-            rarity: old.rarity,
-            valueCents: Number(old.value_cents)
-          }
-        });
-      }
-
-      // Lock user wallet during the operation.
       const userResult = await client.query(
         `SELECT demo_balance_cents
          FROM users
@@ -529,24 +565,94 @@ app.post(
         throw new Error("USER_NOT_FOUND");
       }
 
-      const caseResult = await client.query(
-        `SELECT id, name, price_cents
-         FROM cases
-         WHERE id = $1 AND active = TRUE`,
-        [caseId]
+      // Check repeated request after locking the user.
+
+      const previous = await client.query(
+        `SELECT
+           o.id,
+           o.cost_cents,
+           o.created_at,
+           s.display_name,
+           s.weapon,
+           s.rarity,
+           s.value_cents,
+           ui.id AS inventory_id
+         FROM case_openings o
+         JOIN skins s ON s.id = o.skin_id
+         LEFT JOIN user_inventory ui
+           ON ui.steam_id = o.steam_id
+           AND ui.skin_id = o.skin_id
+           AND ui.source = 'case'
+           AND ui.created_at >= o.created_at
+           AND ui.created_at <= o.created_at + INTERVAL '2 seconds'
+         WHERE o.steam_id = $1
+           AND o.idempotency_key = $2
+         LIMIT 1`,
+        [req.user.steamId, idempotencyKey]
       );
+
+      if (previous.rows.length) {
+        const old = previous.rows[0];
+
+        const currentBalance = Number(
+          userResult.rows[0].demo_balance_cents
+        );
+
+        await client.query("COMMIT");
+
+        return res.json({
+          success: true,
+          repeatedRequest: true,
+          mode: "DEMO",
+          openingId: old.id,
+          inventoryId: old.inventory_id,
+          chargedCents: Number(old.cost_cents),
+          balanceCents: currentBalance,
+          balance: currentBalance / 100,
+          skin: {
+            name: old.display_name,
+            weapon: old.weapon,
+            rarity: old.rarity,
+            valueCents: Number(old.value_cents)
+          }
+        });
+      }
+
+      // Find case by numeric ID or slug.
+
+      const isNumericId = /^\d+$/.test(caseId);
+
+      const caseResult = isNumericId
+        ? await client.query(
+            `SELECT id, name, price_cents
+             FROM cases
+             WHERE id = $1 AND active = TRUE`,
+            [caseId]
+          )
+        : await client.query(
+            `SELECT id, name, price_cents
+             FROM cases
+             WHERE slug = $1 AND active = TRUE`,
+            [caseId]
+          );
 
       if (!caseResult.rows.length) {
         throw new Error("CASE_NOT_FOUND");
       }
 
       const selectedCase = caseResult.rows[0];
+
       const price = Number(selectedCase.price_cents);
-      const balance = Number(userResult.rows[0].demo_balance_cents);
+
+      const balance = Number(
+        userResult.rows[0].demo_balance_cents
+      );
 
       if (balance < price) {
         throw new Error("INSUFFICIENT_BALANCE");
       }
+
+      // Get available skins.
 
       const dropResult = await client.query(
         `SELECT
@@ -575,8 +681,10 @@ app.post(
         throw new Error("INVALID_CASE_PROBABILITIES");
       }
 
-      // Cryptographically secure server-side random selection.
+      // Secure server-side random selection.
+
       const randomNumber = crypto.randomInt(totalWeight);
+
       let cursor = 0;
       let wonSkin = null;
 
@@ -595,12 +703,16 @@ app.post(
 
       const newBalance = balance - price;
 
+      // Deduct demo balance.
+
       await client.query(
         `UPDATE users
          SET demo_balance_cents = $1
          WHERE steam_id = $2`,
         [newBalance, req.user.steamId]
       );
+
+      // Add winning skin to inventory.
 
       const inventoryResult = await client.query(
         `INSERT INTO user_inventory
@@ -609,6 +721,8 @@ app.post(
          RETURNING id, created_at`,
         [req.user.steamId, wonSkin.id]
       );
+
+      // Save transaction.
 
       await client.query(
         `INSERT INTO transactions
@@ -621,6 +735,8 @@ app.post(
           `Opened ${selectedCase.name}`
         ]
       );
+
+      // Save opening history.
 
       const openingResult = await client.query(
         `INSERT INTO case_openings
@@ -637,6 +753,13 @@ app.post(
       );
 
       await client.query("COMMIT");
+
+      console.log(
+        "CASE OPENED:",
+        req.user.steamId,
+        selectedCase.name,
+        wonSkin.display_name
+      );
 
       res.json({
         success: true,
@@ -656,7 +779,9 @@ app.post(
           valueCents: Number(wonSkin.value_cents)
         }
       });
+
     } catch (error) {
+
       await client.query("ROLLBACK");
 
       const knownErrors = {
@@ -664,8 +789,14 @@ app.post(
         CASE_NOT_FOUND: [404, "Case not found."],
         INSUFFICIENT_BALANCE: [400, "Not enough demo balance."],
         CASE_HAS_NO_ITEMS: [400, "This case has no items."],
-        INVALID_CASE_PROBABILITIES: [500, "Case probability setup is invalid."],
-        SKIN_SELECTION_FAILED: [500, "Could not select a skin."]
+        INVALID_CASE_PROBABILITIES: [
+          500,
+          "Case probability setup is invalid."
+        ],
+        SKIN_SELECTION_FAILED: [
+          500,
+          "Could not select a skin."
+        ]
       };
 
       if (knownErrors[error.message]) {
@@ -679,17 +810,22 @@ app.post(
       }
 
       throw error;
+
     } finally {
       client.release();
     }
   })
 );
 
+// ==========================================
 // USER INVENTORY
+// ==========================================
+
 app.get(
   "/api/inventory",
   requireLogin,
   asyncRoute(async (req, res) => {
+
     const result = await pool.query(
       `SELECT
          ui.id AS inventory_id,
@@ -725,11 +861,15 @@ app.get(
   })
 );
 
+// ==========================================
 // TRANSACTION HISTORY
+// ==========================================
+
 app.get(
   "/api/transactions",
   requireLogin,
   asyncRoute(async (req, res) => {
+
     const result = await pool.query(
       `SELECT
          id,
@@ -759,61 +899,105 @@ app.get(
   })
 );
 
+// ==========================================
 // DATABASE STATUS
-app.get("/api/database", asyncRoute(async (req, res) => {
-  await pool.query("SELECT 1");
+// ==========================================
 
-  res.json({
-    success: true,
-    database: "connected",
-    sessions: "postgresql"
-  });
-}));
+app.get(
+  "/api/database",
+  asyncRoute(async (req, res) => {
 
-// SERVER STATUS
-app.get("/api/status", asyncRoute(async (req, res) => {
-  await pool.query("SELECT 1");
+    await pool.query("SELECT 1");
 
-  res.json({
-    success: true,
-    app: "SKiNUM",
-    version: "7.5",
-    status: "online",
-    steamLogin: true,
-    database: "connected",
-    sessionStore: "postgresql",
-    features: [
-      "wallet-demo",
-      "cases",
-      "inventory",
-      "transactions"
-    ]
-  });
-}));
-
-// LOGOUT
-app.get("/auth/logout", (req, res, next) => {
-  req.logout((error) => {
-    if (error) return next(error);
-
-    req.session.destroy((sessionError) => {
-      if (sessionError) return next(sessionError);
-
-      res.clearCookie("skinum-session");
-      res.redirect("/");
+    res.json({
+      success: true,
+      database: "connected",
+      sessions: "postgresql"
     });
-  });
-});
+  })
+);
 
+// ==========================================
+// SERVER STATUS
+// ==========================================
+
+app.get(
+  "/api/status",
+  asyncRoute(async (req, res) => {
+
+    await pool.query("SELECT 1");
+
+    res.json({
+      success: true,
+      app: "SKiNUM",
+      version: "7.6",
+      status: "online",
+      steamLogin: true,
+      database: "connected",
+      sessionStore: "postgresql",
+      features: [
+        "steam-login",
+        "wallet-demo",
+        "cases",
+        "inventory",
+        "transactions",
+        "postgresql-sessions"
+      ]
+    });
+  })
+);
+
+// ==========================================
+// LOGOUT
+// ==========================================
+
+app.get(
+  "/auth/logout",
+  (req, res, next) => {
+
+    req.logout((error) => {
+
+      if (error) {
+        return next(error);
+      }
+
+      req.session.destroy((sessionError) => {
+
+        if (sessionError) {
+          return next(sessionError);
+        }
+
+        res.clearCookie("skinum-session", {
+          path: "/",
+          httpOnly: true,
+          secure: "auto",
+          sameSite: "lax"
+        });
+
+        res.redirect("/");
+      });
+    });
+  }
+);
+
+// ==========================================
 // FRONTEND
+// ==========================================
+
 app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+  res.sendFile(
+    path.join(__dirname, "public", "index.html")
+  );
 });
 
+// ==========================================
 // ERROR HANDLER
+// ==========================================
+
 app.use((error, req, res, next) => {
+
   console.error("SERVER ERROR:", error);
 
   if (res.headersSent) {
@@ -827,25 +1011,36 @@ app.use((error, req, res, next) => {
   });
 });
 
-// START
+// ==========================================
+// START SERVER
+// ==========================================
+
 async function startServer() {
+
   try {
+
     await initializeDatabase();
 
     app.listen(PORT, () => {
+
       console.log("================================");
-      console.log("SKiNUM V7.5 SERVER ONLINE");
+      console.log("SKiNUM V7.6 SERVER ONLINE");
       console.log("DATABASE: CONNECTED");
       console.log("SESSION STORE: POSTGRESQL");
+      console.log("STEAM AUTH: READY");
       console.log("CASES: READY");
       console.log("INVENTORY: READY");
       console.log("WALLET: DEMO MODE");
       console.log("SITE:", SITE_URL);
       console.log("================================");
+
     });
+
   } catch (error) {
+
     console.error("STARTUP ERROR:", error);
     process.exit(1);
+
   }
 }
 
