@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#080b12">
 <title>SKiNUM | CS2 Skin Universe</title>
 
@@ -27,8 +27,8 @@ body{
   color:var(--text);
   font-family:Arial,Helvetica,sans-serif;
 }
-button,input{font:inherit}
-button{cursor:pointer}
+button{font:inherit;cursor:pointer}
+button:disabled{opacity:.5;cursor:not-allowed}
 header{
   position:sticky;
   top:0;
@@ -38,66 +38,70 @@ header{
   backdrop-filter:blur(15px);
 }
 .header-inner{
-  max-width:1250px;
+  max-width:1300px;
   margin:auto;
-  padding:15px 20px;
+  padding:14px 20px;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:15px;
+  gap:12px;
 }
 .logo{
   font-size:27px;
   font-weight:900;
   letter-spacing:2px;
   color:var(--gold);
+  white-space:nowrap;
 }
 .logo span{color:white}
 .header-right{
   display:flex;
   align-items:center;
-  gap:12px;
+  gap:9px;
 }
 .balance{
+  padding:11px 13px;
+  border-radius:9px;
+  border:1px solid rgba(229,184,75,.35);
   background:var(--panel2);
-  border:1px solid rgba(229,184,75,.3);
-  padding:10px 14px;
-  border-radius:10px;
   color:var(--gold);
   font-weight:bold;
+  white-space:nowrap;
 }
-.steam-btn,.primary-btn{
+.add-funds-btn{
+  padding:11px 14px;
   border:0;
-  background:var(--gold);
-  color:#17130a;
-  font-weight:800;
-  padding:11px 17px;
   border-radius:9px;
+  background:linear-gradient(135deg,#e5b84b,#ffda78);
+  color:#17130a;
+  font-weight:900;
+  white-space:nowrap;
 }
-.steam-btn:hover,.primary-btn:hover{background:var(--gold2)}
-.secondary-btn{
-  background:var(--panel2);
-  border:1px solid var(--border);
+.steam-btn{
+  padding:11px 14px;
+  background:#25364b;
+  border:1px solid #405775;
+  border-radius:9px;
   color:white;
-  padding:10px 15px;
-  border-radius:8px;
+  font-weight:bold;
+  white-space:nowrap;
 }
 nav{
-  max-width:1250px;
+  max-width:1300px;
   margin:auto;
-  padding:0 20px 13px;
+  padding:0 20px 12px;
   display:flex;
   gap:9px;
   overflow-x:auto;
 }
 .nav-btn{
-  background:transparent;
-  border:1px solid transparent;
-  color:var(--muted);
   padding:10px 19px;
+  background:transparent;
+  color:var(--muted);
+  border:1px solid transparent;
   border-radius:8px;
-  white-space:nowrap;
   font-weight:bold;
+  white-space:nowrap;
 }
 .nav-btn.active,.nav-btn:hover{
   color:var(--gold);
@@ -105,21 +109,23 @@ nav{
   border-color:rgba(229,184,75,.25);
 }
 main{
-  max-width:1250px;
+  max-width:1300px;
   padding:25px 20px 70px;
   margin:auto;
 }
 .page{display:none}
 .page.active{display:block}
 .hero{
-  background:
-    radial-gradient(circle at 80% 30%,rgba(229,184,75,.17),transparent 35%),
-    linear-gradient(130deg,#111927,#0b101a);
+  position:relative;
+  overflow:hidden;
+  min-height:250px;
+  padding:45px 35px;
   border:1px solid var(--border);
   border-radius:18px;
-  padding:48px 35px;
   margin-bottom:28px;
-  min-height:230px;
+  background:
+    radial-gradient(circle at 85% 40%,rgba(229,184,75,.18),transparent 35%),
+    linear-gradient(130deg,#111927,#0b101a);
 }
 .eyebrow{
   color:var(--gold);
@@ -129,7 +135,7 @@ main{
 }
 .hero h1{
   font-size:clamp(30px,5vw,48px);
-  margin:14px 0;
+  margin:15px 0;
 }
 .hero p{
   color:var(--muted);
@@ -159,39 +165,55 @@ main{
 }
 .card:hover{
   transform:translateY(-3px);
-  border-color:rgba(229,184,75,.35);
+  border-color:rgba(229,184,75,.4);
 }
 .card-image{
-  height:155px;
+  height:180px;
   display:flex;
-  justify-content:center;
   align-items:center;
+  justify-content:center;
   background:linear-gradient(145deg,#1c2a40,#101725);
-  font-size:65px;
+  padding:12px;
+  position:relative;
 }
 .card-image img{
-  width:90%;
-  height:90%;
+  width:100%;
+  height:100%;
   object-fit:contain;
 }
 .card-body{padding:17px}
-.card-body h3{margin:0 0 8px}
+.card-body h3{margin:0 0 9px;font-size:17px}
 .muted{color:var(--muted)}
 .price{
   color:var(--gold);
-  font-weight:bold;
   font-size:18px;
+  font-weight:bold;
 }
 .card-footer{
   display:flex;
-  align-items:center;
   justify-content:space-between;
+  align-items:center;
   gap:10px;
   margin-top:16px;
 }
-.case-card .card-image{height:190px;font-size:75px}
-.case-card .card-body{text-align:center}
-.case-card .primary-btn{width:100%;margin-top:13px}
+.primary-btn{
+  background:var(--gold);
+  color:#17130a;
+  border:0;
+  border-radius:9px;
+  padding:11px 17px;
+  font-weight:900;
+}
+.primary-btn:hover{background:var(--gold2)}
+.secondary-btn{
+  background:var(--panel2);
+  border:1px solid var(--border);
+  color:white;
+  border-radius:8px;
+  padding:10px 15px;
+}
+.case-card .card-image{height:210px}
+.case-card .primary-btn{width:100%;margin-top:15px}
 .content-panel{
   background:var(--panel);
   border:1px solid var(--border);
@@ -200,9 +222,9 @@ main{
   margin-top:20px;
 }
 .wallet-amount{
-  font-size:34px;
-  font-weight:900;
   color:var(--gold);
+  font-size:36px;
+  font-weight:900;
   margin:12px 0;
 }
 .topup-buttons{
@@ -213,39 +235,18 @@ main{
 }
 .topup-btn{
   background:#202d41;
-  border:1px solid rgba(229,184,75,.25);
   color:var(--gold);
+  border:1px solid rgba(229,184,75,.3);
   border-radius:10px;
   padding:15px 8px;
   font-weight:bold;
 }
 .topup-btn:hover{background:#33435b}
 .status{
+  min-height:18px;
+  margin-top:12px;
   color:var(--muted);
   font-size:13px;
-  margin-top:12px;
-  min-height:18px;
-}
-.item-list{display:grid;gap:12px}
-.item-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:15px;
-  padding:14px;
-  background:#172235;
-  border-radius:10px;
-  border:1px solid var(--border);
-}
-.item-left{display:flex;align-items:center;gap:13px}
-.item-icon{
-  width:55px;
-  height:50px;
-  border-radius:9px;
-  background:#25354c;
-  display:grid;
-  place-items:center;
-  font-size:27px;
 }
 .tabs{
   display:flex;
@@ -257,10 +258,43 @@ main{
   background:var(--panel2);
   border:1px solid var(--border);
   color:var(--muted);
-  padding:10px 15px;
   border-radius:8px;
+  padding:10px 15px;
 }
-.tab-btn.active{color:var(--gold);border-color:var(--gold)}
+.tab-btn.active{
+  color:var(--gold);
+  border-color:var(--gold);
+}
+.item-list{display:grid;gap:12px}
+.item-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  padding:14px;
+  background:#172235;
+  border:1px solid var(--border);
+  border-radius:10px;
+}
+.item-left{
+  display:flex;
+  align-items:center;
+  gap:13px;
+}
+.item-icon{
+  width:75px;
+  height:65px;
+  display:grid;
+  place-items:center;
+  background:#25354c;
+  border-radius:9px;
+  padding:5px;
+}
+.item-icon img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
 .empty{
   text-align:center;
   color:var(--muted);
@@ -273,65 +307,79 @@ main{
   position:fixed;
   inset:0;
   z-index:500;
-  background:rgba(0,0,0,.85);
+  background:rgba(0,0,0,.86);
   align-items:center;
   justify-content:center;
   padding:15px;
 }
 .modal.show{display:flex}
 .modal-box{
-  background:#111927;
-  border:1px solid rgba(229,184,75,.3);
   width:100%;
   max-width:500px;
+  background:#111927;
+  border:1px solid rgba(229,184,75,.35);
   border-radius:17px;
   padding:25px;
   text-align:center;
+  max-height:90vh;
+  overflow:auto;
 }
 .modal-box h2{color:var(--gold)}
-.winner-icon{font-size:85px;margin:20px}
-.roulette{
+.modal-image{
+  height:170px;
+  margin:15px auto;
+}
+.modal-image img{
+  height:100%;
+  max-width:100%;
+  object-fit:contain;
+}
+.modal-actions{
   display:flex;
-  overflow:hidden;
-  height:145px;
-  border:1px solid rgba(229,184,75,.4);
-  background:#0b111d;
-  border-radius:12px;
-  align-items:center;
+  gap:10px;
   justify-content:center;
+  flex-wrap:wrap;
+  margin-top:20px;
+}
+.roulette{
+  height:150px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#0b111d;
+  border:1px solid rgba(229,184,75,.4);
+  border-radius:12px;
   margin:20px 0;
 }
-.roulette-item{
-  min-width:120px;
-  height:115px;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  font-size:35px;
+.roulette img{
+  max-height:130px;
+  max-width:90%;
+  object-fit:contain;
 }
-.roulette-item small{font-size:10px;color:var(--muted)}
 footer{
-  border-top:1px solid var(--border);
   text-align:center;
-  color:var(--muted);
   padding:25px;
+  color:var(--muted);
+  border-top:1px solid var(--border);
   font-size:12px;
 }
-@media(max-width:800px){
+@media(max-width:850px){
   .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .hero{padding:30px 22px}
 }
-@media(max-width:520px){
-  .header-inner{padding:12px}
-  .logo{font-size:21px}
-  .balance{padding:9px;font-size:12px}
-  .steam-btn{padding:9px;font-size:12px}
-  nav{padding:0 12px 10px}
-  main{padding:18px 12px 50px}
+@media(max-width:560px){
+  .header-inner{padding:11px;gap:7px}
+  .logo{font-size:20px;letter-spacing:1px}
+  .header-right{gap:5px}
+  .balance{font-size:11px;padding:9px 7px}
+  .add-funds-btn{font-size:10px;padding:10px 8px}
+  .steam-btn{font-size:10px;padding:10px 8px}
+  nav{padding:0 10px 10px}
+  .nav-btn{padding:10px 14px;font-size:12px}
+  main{padding:17px 12px 45px}
+  .hero{padding:28px 20px;min-height:210px}
   .grid{grid-template-columns:1fr}
   .topup-buttons{grid-template-columns:repeat(2,1fr)}
-  .card-image{height:140px}
+  .card-image{height:170px}
   .item-row{align-items:flex-start}
 }
 </style>
@@ -342,11 +390,18 @@ footer{
 <header>
   <div class="header-inner">
     <div class="logo">SKi<span>NUM</span></div>
+
     <div class="header-right">
       <div class="balance" id="headerBalance">$0.00</div>
-      <button class="steam-btn" id="steamButton" onclick="steamLogin()">STEAM LOGIN</button>
+      <button class="add-funds-btn" onclick="openFundsModal()">
+        + ADD FUNDS
+      </button>
+      <button class="steam-btn" id="steamButton" onclick="steamLogin()">
+        STEAM LOGIN
+      </button>
     </div>
   </div>
+
   <nav>
     <button class="nav-btn active" onclick="showPage('market',this)">MARKET</button>
     <button class="nav-btn" onclick="showPage('cases',this)">CASES</button>
@@ -357,156 +412,92 @@ footer{
 
 <main>
 
-<!-- MARKET PAGE -->
+<!-- MARKET -->
 <section class="page active" id="market">
   <div class="hero">
     <div class="eyebrow">THE CS2 SKIN UNIVERSE</div>
     <h1>WELCOME TO SKiNUM</h1>
     <p>Discover rare skins. Open cases. Upgrade your collection.
     Your CS2 skin journey starts here.</p>
-    <button class="primary-btn" onclick="showPage('cases')">EXPLORE CASES</button>
-  </div>
-
-  <div class="section-title">
-    <h2>Explore the Platform</h2>
-    <span>SKINUM UNIVERSE</span>
-  </div>
-
-  <div class="grid">
-    <div class="card">
-      <div class="card-image">🛒</div>
-      <div class="card-body">
-        <h3>Skin Market</h3>
-        <p class="muted">Discover and trade CS2 skins.</p>
-        <button class="secondary-btn" onclick="showPage('market')">Explore Market</button>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-image">🎁</div>
-      <div class="card-body">
-        <h3>Cases</h3>
-        <p class="muted">Open cases and discover rare items.</p>
-        <button class="secondary-btn" onclick="showPage('cases')">Open Cases</button>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-image">⚡</div>
-      <div class="card-body">
-        <h3>Skin Upgrade</h3>
-        <p class="muted">Try upgrading your collection.</p>
-        <button class="secondary-btn" onclick="showPage('upgrade')">Upgrade</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="content-panel">
-    <h3>YOUR SKiNUM DEMO WALLET</h3>
-    <p class="muted">Your current platform balance</p>
-    <div class="wallet-amount" id="marketBalance">$0.00</div>
-    <p class="muted">Choose a demo top-up amount.</p>
-
-    <div class="topup-buttons">
-      <button class="topup-btn" onclick="demoTopUp(1000)">+$10</button>
-      <button class="topup-btn" onclick="demoTopUp(2500)">+$25</button>
-      <button class="topup-btn" onclick="demoTopUp(5000)">+$50</button>
-      <button class="topup-btn" onclick="demoTopUp(10000)">+$100</button>
-    </div>
-    <div class="status" id="topupStatus">
-      Demo balance top-up. Steam login required.
-    </div>
-    <p class="muted" style="font-size:12px">
-      Demo credits only. These buttons do not process real payments.
-    </p>
+    <button class="primary-btn" onclick="showPage('cases')">
+      EXPLORE CASES
+    </button>
   </div>
 
   <div class="section-title">
     <h2>Featured Skins</h2>
-    <span>POPULAR ITEMS</span>
+    <span>CS2 COLLECTION</span>
   </div>
-  <div class="grid" id="marketSkins"></div>
+
+  <div class="grid" id="marketSkins">
+    <div class="empty">Loading CS2 skin images...</div>
+  </div>
+
+  <div class="content-panel">
+    <h2>YOUR SKiNUM WALLET</h2>
+    <p class="muted">Your current demo balance</p>
+    <div class="wallet-amount" id="marketBalance">$0.00</div>
+    <button class="primary-btn" onclick="openFundsModal()">+ ADD FUNDS</button>
+    <p class="muted" style="font-size:12px;margin-top:14px">
+      Demo credits only. This is not a real payment service.
+    </p>
+  </div>
 </section>
 
-<!-- CASES PAGE -->
+<!-- CASES -->
 <section class="page" id="cases">
   <div class="hero">
     <div class="eyebrow">DISCOVER YOUR NEXT SKIN</div>
     <h1>CASE OPENING</h1>
-    <p>Choose your case, open it and discover what you get.</p>
+    <p>Choose a case and discover your next CS2 skin.</p>
   </div>
 
   <div class="section-title">
     <h2>Choose Your Case</h2>
-    <span>THREE CASE CATEGORIES</span>
+    <span>SKiNUM CASES</span>
   </div>
 
   <div class="grid" id="caseList">
-    <div class="card case-card">
-      <div class="card-image">🔪</div>
-      <div class="card-body">
-        <h3>Knife Case</h3>
-        <p class="muted">Discover exclusive knives.</p>
-        <div class="price">$25.00</div>
-        <button class="primary-btn" onclick="openCase('knife-case')">OPEN CASE</button>
-      </div>
-    </div>
-    <div class="card case-card">
-      <div class="card-image">🔫</div>
-      <div class="card-body">
-        <h3>Weapon Case</h3>
-        <p class="muted">Discover weapon skins.</p>
-        <div class="price">$10.00</div>
-        <button class="primary-btn" onclick="openCase('weapon-case')">OPEN CASE</button>
-      </div>
-    </div>
-    <div class="card case-card">
-      <div class="card-image">🎯</div>
-      <div class="card-body">
-        <h3>AWP Case</h3>
-        <p class="muted">Discover AWP skins.</p>
-        <div class="price">$18.00</div>
-        <button class="primary-btn" onclick="openCase('awp-case')">OPEN CASE</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="content-panel">
-    <h3>HOW IT WORKS</h3>
-    <p class="muted">1. Sign in with Steam.</p>
-    <p class="muted">2. Choose your case.</p>
-    <p class="muted">3. Open the case and receive a platform inventory item.</p>
+    <div class="empty">Loading cases...</div>
   </div>
 </section>
 
-<!-- UPGRADE PAGE -->
+<!-- UPGRADE -->
 <section class="page" id="upgrade">
   <div class="hero">
     <div class="eyebrow">TAKE YOUR COLLECTION FURTHER</div>
     <h1>SKIN UPGRADE</h1>
-    <p>Choose an eligible item from your inventory to try an upgrade.</p>
+    <p>Upgrade your collection with the SKiNUM upgrade system.</p>
   </div>
 
   <div class="content-panel">
-    <h2>Upgrade Center</h2>
-    <p class="muted">The upgrade system is currently a preview. Real upgrade functionality is not enabled yet.</p>
+    <h2>UPGRADE CENTER</h2>
+    <p class="muted">
+      The upgrade feature is being developed.
+      Your inventory items will be used when this feature is activated.
+    </p>
     <div class="empty">
-      <div style="font-size:55px">⚡</div>
-      <h3>UPGRADE SYSTEM</h3>
+      <h2>UPGRADE SYSTEM</h2>
       <p>Coming soon</p>
     </div>
   </div>
 </section>
 
-<!-- INVENTORY PAGE -->
+<!-- INVENTORY -->
 <section class="page" id="inventory">
   <div class="hero">
     <div class="eyebrow">YOUR COLLECTION</div>
     <h1>MY INVENTORY</h1>
-    <p>View your won skins and account transactions.</p>
+    <p>Manage your SKiNUM collection and transactions.</p>
   </div>
 
   <div class="tabs">
-    <button class="tab-btn active" id="inventoryTab" onclick="switchInventoryTab('items',this)">MY SKINS</button>
-    <button class="tab-btn" id="transactionsTab" onclick="switchInventoryTab('transactions',this)">TRANSACTIONS</button>
+    <button class="tab-btn active" onclick="switchInventoryTab('items',this)">
+      MY SKINS
+    </button>
+    <button class="tab-btn" onclick="switchInventoryTab('transactions',this)">
+      TRANSACTIONS
+    </button>
   </div>
 
   <div id="inventoryContent">
@@ -517,24 +508,58 @@ footer{
 </main>
 
 <footer>
-  <div style="color:var(--gold);font-weight:bold;font-size:19px;margin-bottom:8px">SKiNUM</div>
+  <div style="color:var(--gold);font-weight:900;font-size:20px">
+    SKiNUM
+  </div>
   THE CS2 SKIN UNIVERSE
-  <p>SKiNUM is an independent platform concept and is not affiliated with Valve Corporation.</p>
+  <p>Independent CS2 skin platform concept. Not affiliated with Valve Corporation.</p>
   <p>Demo balance is not real money.</p>
 </footer>
 
-<!-- CASE RESULT MODAL -->
+<!-- ADD FUNDS MODAL -->
+<div class="modal" id="fundsModal">
+  <div class="modal-box">
+    <h2>ADD FUNDS</h2>
+    <p class="muted">Choose your demo balance amount</p>
+
+    <div class="wallet-amount" id="modalBalance">$0.00</div>
+
+    <div class="topup-buttons">
+      <button class="topup-btn" onclick="demoTopUp(1000)">+$10</button>
+      <button class="topup-btn" onclick="demoTopUp(2500)">+$25</button>
+      <button class="topup-btn" onclick="demoTopUp(5000)">+$50</button>
+      <button class="topup-btn" onclick="demoTopUp(10000)">+$100</button>
+    </div>
+
+    <div class="status" id="topupStatus">
+      Steam login required.
+    </div>
+
+    <p class="muted" style="font-size:12px">
+      Demo balance only. No real payment is processed.
+    </p>
+
+    <button class="secondary-btn" onclick="closeFundsModal()">CLOSE</button>
+  </div>
+</div>
+
+<!-- CASE RESULT -->
 <div class="modal" id="resultModal">
   <div class="modal-box">
     <h2 id="resultTitle">CASE OPENING</h2>
+
     <div class="roulette" id="roulette">
-      <div class="roulette-item">🎁<small>GOOD LUCK</small></div>
+      <span>Opening...</span>
     </div>
-    <div class="winner-icon" id="winnerIcon">🔫</div>
-    <h2 id="winnerName">Your skin</h2>
+
+    <div class="modal-image" id="winnerImage"></div>
+    <h2 id="winnerName">Your item</h2>
     <div class="price" id="winnerPrice">$0.00</div>
-    <p class="muted" id="winnerMessage">Added to your inventory.</p>
-    <button class="primary-btn" onclick="closeResult()">CONTINUE</button>
+    <p class="muted" id="winnerMessage"></p>
+
+    <div class="modal-actions">
+      <button class="primary-btn" onclick="closeResult()">CONTINUE</button>
+    </div>
   </div>
 </div>
 
@@ -549,58 +574,98 @@ const state = {
   balanceCents:0,
   inventory:[],
   transactions:[],
-  cases:[],
-  opening:false,
-  inventoryTab:"items"
+  inventoryTab:"items",
+  opening:false
 };
 
-const fallbackSkins = [
-  {name:"AK-47 | Redline",price:12.50,icon:"🔫"},
-  {name:"AWP | Asiimov",price:45.00,icon:"🎯"},
-  {name:"M4A4 | Neo-Noir",price:28.00,icon:"🔫"},
-  {name:"USP-S | Kill Confirmed",price:35.00,icon:"🔫"},
-  {name:"Glock-18 | Fade",price:80.00,icon:"🔫"},
-  {name:"Desert Eagle | Printstream",price:25.00,icon:"🔫"},
-  {name:"Karambit | Blue Steel",price:250.00,icon:"🔪"},
-  {name:"Butterfly Knife | Night",price:400.00,icon:"🔪"},
-  {name:"AWP | Dragon Lore",price:1500.00,icon:"🎯"}
+/*
+  CS2 skin catalog.
+  Images are loaded from the public ByMykel CS2 API.
+*/
+const SKIN_API =
+"https://raw.githubusercontent.com/ByMykel/CSGO-API/main/public/api/en/skins.json";
+
+let skinCatalog=[];
+let skinMap={};
+
+const featuredSkins=[
+  "AK-47 | Redline",
+  "AWP | Asiimov",
+  "M4A4 | Neo-Noir",
+  "USP-S | Kill Confirmed",
+  "Glock-18 | Fade",
+  "Desert Eagle | Printstream",
+  "★ Karambit | Blue Steel",
+  "★ Butterfly Knife | Night",
+  "AWP | Dragon Lore"
+];
+
+const fallbackCases=[
+  {id:"knife-case",name:"Knife Case",priceCents:2500,skin:"★ Karambit | Blue Steel"},
+  {id:"weapon-case",name:"Weapon Case",priceCents:1000,skin:"AK-47 | Redline"},
+  {id:"awp-case",name:"AWP Case",priceCents:1800,skin:"AWP | Asiimov"}
 ];
 
 function money(cents){
-  return "$" + (Number(cents || 0) / 100).toFixed(2);
+  return "$"+(Number(cents || 0)/100).toFixed(2);
 }
 
-function showStatus(message,type){
-  const el=$("topupStatus");
-  if(!el)return;
-  el.textContent=message;
-  el.style.color=type==="error"?"var(--red)":type==="success"?"var(--green)":"var(--muted)";
+function escapeHTML(value){
+  return String(value ?? "").replace(/[&<>"']/g,c=>({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  })[c]);
 }
 
 async function api(url,options={}){
   const response=await fetch(url,{
     credentials:"include",
+    ...options,
     headers:{
       "Content-Type":"application/json",
       ...(options.headers || {})
-    },
-    ...options
+    }
   });
 
   let data={};
-  try{
-    data=await response.json();
-  }catch(e){}
+  try{data=await response.json()}catch(e){}
 
   if(!response.ok){
-    throw new Error(data.error || data.message || "Request failed ("+response.status+")");
+    throw new Error(data.error || data.message || "Request failed: "+response.status);
   }
   return data;
 }
 
+function imageFor(name){
+  const item=skinCatalog.find(s=>s.name===name);
+  return item && item.image ? item.image : "";
+}
+
+function imageHTML(name){
+  const url=imageFor(name);
+  if(!url){
+    return '<div class="muted">IMAGE NOT AVAILABLE</div>';
+  }
+
+  return `<img src="${escapeHTML(url)}"
+    alt="${escapeHTML(name)}"
+    loading="lazy"
+    onerror="this.style.display='none'">`;
+}
+
+/* NAVIGATION */
+
 function showPage(page,button){
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
+  document.querySelectorAll(".page").forEach(p=>{
+    p.classList.remove("active");
+  });
+
+  document.querySelectorAll(".nav-btn").forEach(b=>{
+    b.classList.remove("active");
+  });
 
   const target=$(page);
   if(target)target.classList.add("active");
@@ -608,34 +673,39 @@ function showPage(page,button){
   if(button){
     button.classList.add("active");
   }else{
-    const nav=document.querySelector('.nav-btn[onclick*="'+page+'"]');
+    const nav=[...document.querySelectorAll(".nav-btn")]
+      .find(b=>b.textContent.trim().toLowerCase()===page);
     if(nav)nav.classList.add("active");
   }
 
-  if(page==="inventory"){
-    loadInventory();
-  }
-  if(page==="market"){
-    loadMarket();
-  }
-  if(page==="cases"){
-    loadCases();
-  }
+  if(page==="inventory")loadInventory();
+  if(page==="market")loadWallet();
+  if(page==="cases")loadCases();
 }
+
+/* STEAM LOGIN */
 
 function steamLogin(){
   window.location.href="/auth/steam";
 }
 
+/* BALANCE */
+
 function updateHeader(){
   $("headerBalance").textContent=money(state.balanceCents);
   $("marketBalance").textContent=money(state.balanceCents);
+  $("modalBalance").textContent=money(state.balanceCents);
 
   const button=$("steamButton");
 
   if(state.loggedIn && state.user){
-    const displayName=state.user.displayName || state.user.username || "STEAM ACCOUNT";
-    button.textContent=displayName.length>15?displayName.slice(0,15)+"...":displayName;
+    const name=state.user.displayName ||
+      state.user.username || "STEAM ACCOUNT";
+
+    button.textContent=name.length>13
+      ?name.slice(0,13)+"..."
+      :name;
+
     button.onclick=()=>{
       if(confirm("Log out from Steam?")){
         window.location.href="/auth/logout";
@@ -646,6 +716,84 @@ function updateHeader(){
     button.onclick=steamLogin;
   }
 }
+
+function openFundsModal(){
+  $("fundsModal").classList.add("show");
+  $("modalBalance").textContent=money(state.balanceCents);
+
+  if(!state.loggedIn){
+    $("topupStatus").textContent="Sign in with Steam to use demo top-up.";
+  }
+}
+
+function closeFundsModal(){
+  $("fundsModal").classList.remove("show");
+}
+
+async function demoTopUp(amountCents){
+  if(!state.loggedIn){
+    $("topupStatus").textContent="Steam login required.";
+    $("topupStatus").style.color="var(--red)";
+    alert("Please sign in with Steam first.");
+    steamLogin();
+    return;
+  }
+
+  const allowed=[1000,2500,5000,10000];
+  if(!allowed.includes(amountCents))return;
+
+  const buttons=document.querySelectorAll(".topup-btn");
+  buttons.forEach(b=>b.disabled=true);
+
+  $("topupStatus").textContent="Processing...";
+  $("topupStatus").style.color="var(--muted)";
+
+  try{
+    const data=await api("/api/demo/topup",{
+      method:"POST",
+      body:JSON.stringify({amountCents})
+    });
+
+    if(data.balanceCents!==undefined){
+      state.balanceCents=Number(data.balanceCents);
+    }else{
+      await loadWallet();
+    }
+
+    updateHeader();
+
+    $("topupStatus").textContent=
+      "Successfully added "+money(amountCents)+" demo balance.";
+
+    $("topupStatus").style.color="var(--green)";
+  }catch(error){
+    $("topupStatus").textContent=error.message;
+    $("topupStatus").style.color="var(--red)";
+    alert(error.message);
+  }finally{
+    buttons.forEach(b=>b.disabled=false);
+  }
+}
+
+async function loadWallet(){
+  if(!state.loggedIn)return;
+
+  try{
+    const data=await api("/api/wallet");
+
+    if(data.balanceCents!==undefined){
+      state.balanceCents=Number(data.balanceCents);
+    }else if(data.balance!==undefined){
+      state.balanceCents=Number(data.balance);
+    }
+
+    updateHeader();
+  }catch(error){
+    console.error("Wallet:",error);
+  }
+}
+
+/* ACCOUNT */
 
 async function checkServer(){
   try{
@@ -663,65 +811,48 @@ async function checkServer(){
     }else{
       state.balanceCents=0;
     }
-
-    updateHeader();
-    return data;
   }catch(error){
-    console.error("Server check:",error);
-    updateHeader();
-    return null;
+    console.error("Account check:",error);
   }
+
+  updateHeader();
 }
 
-async function loadWallet(){
-  try{
-    const data=await api("/api/wallet");
-    state.balanceCents=Number(
-      data.balanceCents ??
-      data.balance ??
-      state.balanceCents
-    );
-    updateHeader();
-  }catch(error){
-    console.error("Wallet:",error);
-  }
-}
+/* REAL SKIN IMAGES */
 
-async function demoTopUp(amountCents){
-  if(!state.loggedIn){
-    showStatus("Please sign in with Steam first.","error");
-    alert("Steam login is required to use demo top-up.");
-    steamLogin();
-    return;
-  }
-
-  const allowed=[1000,2500,5000,10000];
-  if(!allowed.includes(amountCents))return;
-
-  const buttons=document.querySelectorAll(".topup-btn");
-  buttons.forEach(b=>b.disabled=true);
-  showStatus("Processing demo top-up...");
+async function loadSkinCatalog(){
+  const container=$("marketSkins");
 
   try{
-    const data=await api("/api/demo/topup",{
-      method:"POST",
-      body:JSON.stringify({amountCents})
-    });
+    container.innerHTML='<div class="empty">Loading real CS2 skin images...</div>';
 
-    if(data.balanceCents!==undefined){
-      state.balanceCents=Number(data.balanceCents);
-    }else{
-      await loadWallet();
+    const response=await fetch(SKIN_API);
+
+    if(!response.ok){
+      throw new Error("Skin catalog unavailable");
     }
 
-    updateHeader();
-    showStatus("Demo balance successfully added!","success");
-    alert("Demo balance added: "+money(amountCents));
+    const data=await response.json();
+
+    skinCatalog=Array.isArray(data)?data:[];
+
+    skinCatalog.forEach(item=>{
+      if(item.name){
+        skinMap[item.name]=item;
+      }
+    });
+
+    renderMarketSkins();
+    renderCases(fallbackCases);
   }catch(error){
-    showStatus(error.message || "Top-up failed.","error");
-    alert(error.message || "Demo top-up failed.");
-  }finally{
-    buttons.forEach(b=>b.disabled=false);
+    console.error("Skin catalog:",error);
+
+    container.innerHTML=`
+      <div class="empty">
+        CS2 image catalog could not be loaded.
+        Please check your internet connection.
+      </div>
+    `;
   }
 }
 
@@ -729,32 +860,50 @@ function renderMarketSkins(){
   const container=$("marketSkins");
   if(!container)return;
 
-  container.innerHTML=fallbackSkins.map(skin=>`
-    <div class="card">
-      <div class="card-image">${skin.icon}</div>
-      <div class="card-body">
-        <h3>${escapeHTML(skin.name)}</h3>
-        <div class="card-footer">
-          <span class="price">${money(Math.round(skin.price*100))}</span>
-          <span class="muted">CS2 SKIN</span>
+  container.innerHTML=featuredSkins.map(name=>{
+    const item=skinMap[name];
+    const price={
+      "AK-47 | Redline":1250,
+      "AWP | Asiimov":4500,
+      "M4A4 | Neo-Noir":2800,
+      "USP-S | Kill Confirmed":3500,
+      "Glock-18 | Fade":8000,
+      "Desert Eagle | Printstream":2500,
+      "★ Karambit | Blue Steel":25000,
+      "★ Butterfly Knife | Night":40000,
+      "AWP | Dragon Lore":150000
+    }[name] || 0;
+
+    return `
+      <div class="card">
+        <div class="card-image">
+          ${imageHTML(name)}
+        </div>
+        <div class="card-body">
+          <h3>${escapeHTML(name)}</h3>
+          <div class="card-footer">
+            <span class="price">${money(price)}</span>
+            <span class="muted">CS2 SKIN</span>
+          </div>
         </div>
       </div>
-    </div>
-  `).join("");
+    `;
+  }).join("");
 }
 
-async function loadMarket(){
-  renderMarketSkins();
-  await loadWallet();
-}
+/* CASES */
 
 async function loadCases(){
   try{
     const data=await api("/api/cases");
-    const cases=Array.isArray(data)?data:(data.cases || []);
-    if(cases.length)renderCases(cases);
+    const cases=Array.isArray(data)
+      ?data
+      :(data.cases || []);
+
+    renderCases(cases.length?cases:fallbackCases);
   }catch(error){
     console.error("Cases:",error);
+    renderCases(fallbackCases);
   }
 }
 
@@ -762,27 +911,38 @@ function renderCases(cases){
   const container=$("caseList");
   if(!container)return;
 
-  const icons={
-    "knife-case":"🔪",
-    "weapon-case":"🔫",
-    "awp-case":"🎯"
-  };
-
   container.innerHTML=cases.map(c=>{
+    const id=c.id;
+    const title=c.name || id;
     const price=Number(c.priceCents ?? c.price ?? 0);
+
+    const chosen=fallbackCases.find(x=>x.id===id);
+    const skinName=chosen
+      ?chosen.skin
+      :(id.includes("awp")?"AWP | Asiimov":
+        id.includes("knife")?"★ Karambit | Blue Steel":
+        "AK-47 | Redline");
+
     return `
       <div class="card case-card">
-        <div class="card-image">${icons[c.id] || "🎁"}</div>
+        <div class="card-image">
+          ${imageHTML(skinName)}
+        </div>
         <div class="card-body">
-          <h3>${escapeHTML(c.name || c.id)}</h3>
-          <p class="muted">${escapeHTML(c.description || "Discover your next skin.")}</p>
+          <h3>${escapeHTML(title)}</h3>
+          <p class="muted">Discover your next CS2 skin.</p>
           <div class="price">${money(price)}</div>
-          <button class="primary-btn" onclick="openCase('${escapeJS(c.id)}')">OPEN CASE</button>
+          <button class="primary-btn"
+            onclick="openCase('${escapeHTML(id)}')">
+            OPEN CASE
+          </button>
         </div>
       </div>
     `;
   }).join("");
 }
+
+/* CASE OPENING */
 
 async function openCase(caseId){
   if(state.opening)return;
@@ -798,41 +958,49 @@ async function openCase(caseId){
   const buttons=document.querySelectorAll(".case-card button");
   buttons.forEach(b=>b.disabled=true);
 
+  $("resultModal").classList.add("show");
   $("resultTitle").textContent="OPENING CASE...";
-  $("winnerIcon").textContent="🎁";
   $("winnerName").textContent="Good luck!";
   $("winnerPrice").textContent="";
   $("winnerMessage").textContent="Please wait...";
-  $("resultModal").classList.add("show");
-
-  const roulette=$("roulette");
-  roulette.innerHTML='<div class="roulette-item">🎁<small>OPENING...</small></div>';
+  $("roulette").innerHTML="<span>Opening...</span>";
+  $("winnerImage").innerHTML="";
 
   try{
-    const data=await api("/api/cases/"+encodeURIComponent(caseId)+"/open",{
-      method:"POST",
-      body:JSON.stringify({})
-    });
+    const data=await api(
+      "/api/cases/"+encodeURIComponent(caseId)+"/open",
+      {
+        method:"POST",
+        body:JSON.stringify({})
+      }
+    );
 
     const result=data.result || data.skin || data.item || data;
 
-    const name=result.name || result.skinName || "Mystery Skin";
-    const price=Number(result.priceCents ?? result.price ?? 0);
-    const icon=result.icon || "🔫";
+    const name=result.name ||
+      result.skinName ||
+      "CS2 Skin";
 
-    roulette.innerHTML=`
-      <div class="roulette-item">🎁<small>SKiNUM</small></div>
-      <div class="roulette-item">${icon}<small>YOUR ITEM</small></div>
-      <div class="roulette-item">🎁<small>SKiNUM</small></div>
-    `;
+    const price=Number(
+      result.priceCents ??
+      result.price ??
+      0
+    );
 
-    await new Promise(resolve=>setTimeout(resolve,1300));
+    const image=result.image ||
+      result.image_url ||
+      imageFor(name);
 
     $("resultTitle").textContent="CONGRATULATIONS!";
-    $("winnerIcon").textContent=icon;
+    $("roulette").innerHTML=image
+      ?`<img src="${escapeHTML(image)}" alt="${escapeHTML(name)}">`
+      :"<span>YOUR ITEM</span>";
+
+    $("winnerImage").innerHTML="";
     $("winnerName").textContent=name;
     $("winnerPrice").textContent=money(price);
-    $("winnerMessage").textContent="Your item has been added to your platform inventory.";
+    $("winnerMessage").textContent=
+      "Your item has been added to your platform inventory.";
 
     if(data.balanceCents!==undefined){
       state.balanceCents=Number(data.balanceCents);
@@ -842,12 +1010,13 @@ async function openCase(caseId){
 
     updateHeader();
     await loadInventoryData();
+
   }catch(error){
     $("resultTitle").textContent="CASE OPENING FAILED";
-    $("winnerIcon").textContent="⚠️";
     $("winnerName").textContent="Unable to open case";
     $("winnerPrice").textContent="";
     $("winnerMessage").textContent=error.message;
+    $("roulette").innerHTML="<span>Please try again.</span>";
   }finally{
     state.opening=false;
     buttons.forEach(b=>b.disabled=false);
@@ -856,16 +1025,23 @@ async function openCase(caseId){
 
 function closeResult(){
   $("resultModal").classList.remove("show");
+
   if(state.loggedIn){
     loadInventory();
   }
+
   loadWallet();
 }
+
+/* INVENTORY */
 
 async function loadInventoryData(){
   try{
     const data=await api("/api/inventory");
-    state.inventory=Array.isArray(data)?data:(data.inventory || data.items || []);
+
+    state.inventory=Array.isArray(data)
+      ?data
+      :(data.inventory || data.items || []);
   }catch(error){
     console.error("Inventory:",error);
     state.inventory=[];
@@ -875,7 +1051,10 @@ async function loadInventoryData(){
 async function loadTransactionsData(){
   try{
     const data=await api("/api/transactions");
-    state.transactions=Array.isArray(data)?data:(data.transactions || []);
+
+    state.transactions=Array.isArray(data)
+      ?data
+      :(data.transactions || []);
   }catch(error){
     console.error("Transactions:",error);
     state.transactions=[];
@@ -888,16 +1067,17 @@ async function loadInventory(){
   if(!state.loggedIn){
     container.innerHTML=`
       <div class="empty">
-        <div style="font-size:50px">🔐</div>
-        <h3>STEAM LOGIN REQUIRED</h3>
-        <p>Sign in with Steam to see your inventory.</p>
-        <button class="primary-btn" onclick="steamLogin()">STEAM LOGIN</button>
+        <h2>STEAM LOGIN REQUIRED</h2>
+        <p>Sign in to view your inventory.</p>
+        <button class="primary-btn" onclick="steamLogin()">
+          STEAM LOGIN
+        </button>
       </div>
     `;
     return;
   }
 
-  container.innerHTML='<div class="empty">Loading your items...</div>';
+  container.innerHTML='<div class="empty">Loading...</div>';
 
   if(state.inventoryTab==="items"){
     await loadInventoryData();
@@ -911,7 +1091,10 @@ async function loadInventory(){
 function switchInventoryTab(tab,button){
   state.inventoryTab=tab;
 
-  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+  document.querySelectorAll(".tab-btn").forEach(b=>{
+    b.classList.remove("active");
+  });
+
   if(button)button.classList.add("active");
 
   loadInventory();
@@ -923,10 +1106,11 @@ function renderInventory(){
   if(!state.inventory.length){
     container.innerHTML=`
       <div class="empty">
-        <div style="font-size:50px">📦</div>
-        <h3>YOUR INVENTORY IS EMPTY</h3>
+        <h2>YOUR INVENTORY IS EMPTY</h2>
         <p>Open a case to receive your first skin.</p>
-        <button class="primary-btn" onclick="showPage('cases')">EXPLORE CASES</button>
+        <button class="primary-btn" onclick="showPage('cases')">
+          EXPLORE CASES
+        </button>
       </div>
     `;
     return;
@@ -938,12 +1122,17 @@ function renderInventory(){
         const skin=item.skin || item;
         const name=skin.name || skin.skinName || "CS2 Skin";
         const price=Number(skin.priceCents ?? skin.price ?? 0);
-        const icon=skin.icon || "🔫";
+        const image=skin.image || skin.image_url || imageFor(name);
 
         return `
           <div class="item-row">
             <div class="item-left">
-              <div class="item-icon">${icon}</div>
+              <div class="item-icon">
+                ${image
+                  ?`<img src="${escapeHTML(image)}" alt="">`
+                  :""
+                }
+              </div>
               <div>
                 <strong>${escapeHTML(name)}</strong>
                 <div class="muted">SKiNUM INVENTORY</div>
@@ -951,7 +1140,7 @@ function renderInventory(){
             </div>
             <div style="text-align:right">
               <div class="price">${money(price)}</div>
-              <span class="muted">Owned</span>
+              <span class="muted">OWNED</span>
             </div>
           </div>
         `;
@@ -979,7 +1168,7 @@ function renderTransactions(){
           <div class="item-row">
             <div>
               <strong>${escapeHTML(type)}</strong>
-              <div class="muted">${escapeHTML(String(date))}</div>
+              <div class="muted">${escapeHTML(date)}</div>
             </div>
             <div class="price">${money(amount)}</div>
           </div>
@@ -989,29 +1178,22 @@ function renderTransactions(){
   `;
 }
 
-function escapeHTML(value){
-  return String(value ?? "").replace(/[&<>"']/g,char=>({
-    "&":"&amp;",
-    "<":"&lt;",
-    ">":"&gt;",
-    '"':"&quot;",
-    "'":"&#39;"
-  })[char]);
-}
-
-function escapeJS(value){
-  return String(value ?? "").replace(/\\/g,"\\\\").replace(/'/g,"\\'");
-}
+/* START */
 
 async function initialize(){
-  renderMarketSkins();
-  await checkServer();
+  updateHeader();
+
+  await Promise.all([
+    checkServer(),
+    loadSkinCatalog()
+  ]);
+
+  await loadCases();
 
   if(state.loggedIn){
     await loadInventoryData();
   }
 
-  await loadCases();
   updateHeader();
 }
 
