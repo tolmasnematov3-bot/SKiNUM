@@ -18,635 +18,270 @@
   --green:#35cf91;
   --red:#ff626f;
 }
-
 *{box-sizing:border-box;margin:0;padding:0}
-
 body{
   min-height:100vh;
   background:radial-gradient(ellipse at 50% -20%,#263955,transparent 48%),var(--bg);
   color:var(--text);
   font-family:Arial,Helvetica,sans-serif;
 }
-
 button{font:inherit;cursor:pointer}
-
 header{
-  min-height:76px;
-  padding:14px 5%;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  border-bottom:1px solid var(--border);
-  background:rgba(8,11,18,.94);
-  position:sticky;
-  top:0;
-  z-index:20;
+  min-height:76px;padding:14px 5%;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;border-bottom:1px solid var(--border);
+  background:rgba(8,11,18,.94);position:sticky;top:0;z-index:20;
   backdrop-filter:blur(14px);
 }
-
-.logo{
-  font-size:27px;
-  font-weight:900;
-  letter-spacing:3px;
-  cursor:pointer;
-}
+.logo{font-size:27px;font-weight:900;letter-spacing:3px;cursor:pointer}
 .logo span{color:var(--gold)}
-
-.header-right{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
+.header-right{display:flex;align-items:center;gap:10px}
 .balance{
-  padding:10px 13px;
-  border:1px solid rgba(229,184,75,.35);
-  border-radius:9px;
-  background:rgba(229,184,75,.08);
-  color:var(--gold);
-  font-weight:bold;
-  font-size:13px;
+  padding:10px 13px;border:1px solid rgba(229,184,75,.35);
+  border-radius:9px;background:rgba(229,184,75,.08);
+  color:var(--gold);font-weight:bold;font-size:13px;
 }
-
-.steam-btn{
-  padding:11px 15px;
-  border:0;
-  border-radius:8px;
-  background:#253448;
-  color:white;
-  font-weight:bold;
-}
+.steam-btn{padding:11px 15px;border:0;border-radius:8px;background:#253448;color:white;font-weight:bold}
 .steam-btn:hover{background:#344c69}
-
 .user-name{
-  color:var(--green);
-  font-size:12px;
-  max-width:120px;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
+  color:var(--green);font-size:12px;max-width:120px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
-
-main{
-  width:min(1100px,92%);
-  margin:auto;
-  padding:40px 0 70px;
-}
-
+main{width:min(1100px,92%);margin:auto;padding:40px 0 70px}
 .page{display:none;animation:appear .25s ease}
 .page.active{display:block}
-
-@keyframes appear{
-  from{opacity:0;transform:translateY(8px)}
-  to{opacity:1;transform:translateY(0)}
-}
-
-.hero{
-  text-align:center;
-  padding:35px 10px 40px;
-}
-
-.eyebrow{
-  color:var(--gold);
-  font-size:11px;
-  letter-spacing:5px;
-  font-weight:bold;
-  margin-bottom:16px;
-}
-
-.hero h1{
-  font-size:clamp(30px,6vw,55px);
-  font-weight:900;
-  letter-spacing:2px;
-  margin-bottom:14px;
-}
+@keyframes appear{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.hero{text-align:center;padding:35px 10px 40px}
+.eyebrow{color:var(--gold);font-size:11px;letter-spacing:5px;font-weight:bold;margin-bottom:16px}
+.hero h1{font-size:clamp(30px,6vw,55px);font-weight:900;letter-spacing:2px;margin-bottom:14px}
 .hero h1 span{color:var(--gold)}
-
-.hero p{
-  color:var(--muted);
-  font-size:14px;
-  line-height:1.8;
-}
+.hero p{color:var(--muted);font-size:14px;line-height:1.8}
 
 .menu-grid{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:20px;
-  max-width:850px;
-  margin:auto;
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:20px;max-width:850px;margin:auto;
 }
-
 .menu-card{
-  position:relative;
-  min-height:225px;
-  padding:22px;
-  border:1px solid var(--border);
-  border-radius:17px;
+  position:relative;min-height:225px;padding:22px;
+  border:1px solid var(--border);border-radius:17px;
   background:linear-gradient(145deg,#1b293d,#0d1420);
-  overflow:hidden;
-  cursor:pointer;
-  transition:.25s;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
+  overflow:hidden;cursor:pointer;transition:.3s;
+  display:flex;flex-direction:column;justify-content:space-between;
 }
-
 .menu-card:hover{
-  transform:translateY(-5px);
-  border-color:rgba(229,184,75,.65);
-  box-shadow:0 15px 40px rgba(0,0,0,.3);
+  transform:translateY(-6px);border-color:rgba(229,184,75,.65);
+  box-shadow:0 15px 40px rgba(0,0,0,.4);
 }
-
 .menu-card:before{
-  content:"";
-  position:absolute;
-  width:180px;
-  height:180px;
-  right:-65px;
-  top:-60px;
-  border-radius:50%;
-  background:var(--glow);
-  filter:blur(65px);
-  opacity:.2;
+  content:"";position:absolute;width:180px;height:180px;
+  right:-65px;top:-60px;border-radius:50%;
+  background:var(--glow);filter:blur(65px);opacity:.2;
 }
-
 .menu-art{
-  height:130px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  position:relative;
-  z-index:1;
+  height:130px;display:flex;align-items:center;
+  justify-content:center;gap:7px;position:relative;
+  z-index:1;overflow:hidden;
 }
-
-.menu-art svg{
-  width:160px;
-  height:125px;
-  filter:drop-shadow(0 12px 12px rgba(0,0,0,.5));
-  transition:.3s;
+.menu-art img{
+  width:48%;height:118px;object-fit:contain;
+  filter:drop-shadow(0 12px 13px rgba(0,0,0,.65));
+  transition:transform .35s ease;
 }
-
-.menu-card:hover .menu-art svg{
-  transform:scale(1.08) rotate(-3deg);
+.menu-art img:only-child{width:82%;height:125px}
+.menu-card:hover .menu-art img{transform:scale(1.12) translateY(-3px)}
+.art-empty{
+  color:rgba(229,184,75,.8);font-size:12px;
+  font-weight:900;letter-spacing:3px;text-align:center;
 }
-
 .menu-bottom{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  position:relative;
-  z-index:2;
+  display:flex;justify-content:space-between;
+  align-items:center;position:relative;z-index:2;
 }
-
-.menu-bottom h2{
-  font-size:19px;
-  letter-spacing:2px;
-}
+.menu-bottom h2{font-size:19px;letter-spacing:2px}
 .menu-bottom span{color:var(--gold);font-size:23px}
 
 .section-heading{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:15px;
-  margin-bottom:25px;
-  flex-wrap:wrap;
+  display:flex;justify-content:space-between;align-items:center;
+  gap:15px;margin-bottom:25px;flex-wrap:wrap;
 }
-
 .section-heading h1{font-size:29px}
 .section-heading p{color:var(--muted);margin-top:7px;font-size:13px}
-
 .back-btn{
-  padding:11px 16px;
-  color:white;
-  background:#192638;
-  border:1px solid var(--border);
-  border-radius:9px;
+  padding:11px 16px;color:white;background:#192638;
+  border:1px solid var(--border);border-radius:9px;
 }
 .back-btn:hover{border-color:var(--gold)}
-
-.case-grid{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:18px;
-}
-
+.case-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
 .case-card{
   background:linear-gradient(150deg,#1a293e,#0e1521);
-  border:1px solid var(--border);
-  border-radius:15px;
-  padding:20px;
-  text-align:center;
-  transition:.2s;
+  border:1px solid var(--border);border-radius:15px;
+  padding:20px;text-align:center;transition:.2s;
 }
-.case-card:hover{
-  transform:translateY(-4px);
-  border-color:rgba(229,184,75,.5);
-}
-
-.case-art{
-  height:150px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-.case-art svg{
-  width:155px;
-  height:145px;
-  filter:drop-shadow(0 12px 12px rgba(0,0,0,.5));
-}
-
+.case-card:hover{transform:translateY(-4px);border-color:rgba(229,184,75,.5)}
+.case-art{height:150px;display:flex;align-items:center;justify-content:center}
+.case-art svg{width:155px;height:145px;filter:drop-shadow(0 12px 12px rgba(0,0,0,.5))}
 .case-card h3{margin:10px 0 7px;font-size:18px}
 .case-card p{color:var(--muted);font-size:12px}
 .case-price{color:var(--gold);font-size:21px;font-weight:bold;margin:17px 0}
-
 .primary-btn{
-  border:0;
-  border-radius:9px;
+  border:0;border-radius:9px;
   background:linear-gradient(110deg,#d9a83b,#f0ce70);
-  color:#16120a;
-  padding:12px 18px;
-  font-weight:900;
-  width:100%;
-  transition:.2s;
+  color:#16120a;padding:12px 18px;font-weight:900;width:100%;transition:.2s;
 }
 .primary-btn:hover{filter:brightness(1.1);transform:translateY(-2px)}
 .primary-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
-
-.content-panel{
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:24px;
-}
-
-.info-text{
-  color:var(--muted);
-  line-height:1.7;
-  font-size:14px;
-  margin-top:12px;
-}
-
+.content-panel{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:24px}
+.info-text{color:var(--muted);line-height:1.7;font-size:14px;margin-top:12px}
 .notice{
-  margin:18px 0;
-  padding:13px;
-  border-radius:9px;
-  background:rgba(75,140,255,.09);
-  border:1px solid rgba(75,140,255,.2);
-  color:#a9c8ff;
-  font-size:12px;
-  line-height:1.6;
+  margin:18px 0;padding:13px;border-radius:9px;
+  background:rgba(75,140,255,.09);border:1px solid rgba(75,140,255,.2);
+  color:#a9c8ff;font-size:12px;line-height:1.6;
 }
-
 .empty-state{
-  padding:35px 15px;
-  text-align:center;
-  color:var(--muted);
-  background:var(--panel);
-  border:1px dashed var(--border);
-  border-radius:12px;
-  grid-column:1/-1;
+  padding:35px 15px;text-align:center;color:var(--muted);
+  background:var(--panel);border:1px dashed var(--border);
+  border-radius:12px;grid-column:1/-1;
 }
-
 .item-list{display:grid;gap:12px;margin-top:20px}
-
 .item-row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:15px;
-  padding:15px;
-  border:1px solid var(--border);
-  background:var(--panel2);
-  border-radius:10px;
+  display:flex;justify-content:space-between;align-items:center;
+  gap:15px;padding:15px;border:1px solid var(--border);
+  background:var(--panel2);border-radius:10px;
 }
-
 .item-row strong{display:block;margin-bottom:5px}
 .item-row small{color:var(--muted)}
 .item-price{color:var(--gold);font-weight:bold;white-space:nowrap}
-
 .tabs{display:flex;gap:9px;margin-top:25px;flex-wrap:wrap}
-
 .tab-btn{
-  padding:10px 15px;
-  border:1px solid var(--border);
-  color:var(--muted);
-  background:var(--panel2);
-  border-radius:8px;
+  padding:10px 15px;border:1px solid var(--border);
+  color:var(--muted);background:var(--panel2);border-radius:8px;
 }
 .tab-btn.active{color:var(--gold);border-color:var(--gold)}
-
 .error-message{color:var(--red);margin-top:12px;font-size:13px}
 
-/* RARITY / PRICE TIERS */
-
+/* PRICE TIERS */
 .tier-red{
   background:linear-gradient(145deg,rgba(150,25,38,.85),rgba(55,12,23,.95)) !important;
   border-color:rgba(255,75,90,.75) !important;
   box-shadow:inset 0 0 22px rgba(255,40,60,.12);
 }
-
 .tier-purple{
   background:linear-gradient(145deg,rgba(103,48,155,.85),rgba(37,18,65,.95)) !important;
   border-color:rgba(183,112,255,.7) !important;
   box-shadow:inset 0 0 22px rgba(160,80,255,.12);
 }
-
 .tier-orange{
   background:linear-gradient(145deg,rgba(156,83,26,.85),rgba(65,33,13,.95)) !important;
   border-color:rgba(255,158,62,.7) !important;
   box-shadow:inset 0 0 22px rgba(255,140,30,.12);
 }
-
 .tier-normal{
   background:linear-gradient(145deg,#26374d,#111927) !important;
   border-color:rgba(255,255,255,.13) !important;
 }
-
-.rarity-legend{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  margin:15px 0 20px;
-}
-
+.rarity-legend{display:flex;flex-wrap:wrap;gap:10px;margin:15px 0 20px}
 .legend-item{
-  display:flex;
-  align-items:center;
-  gap:7px;
-  color:var(--muted);
-  font-size:11px;
-  padding:7px 10px;
-  border:1px solid var(--border);
-  border-radius:8px;
-  background:rgba(255,255,255,.025);
+  display:flex;align-items:center;gap:7px;color:var(--muted);
+  font-size:11px;padding:7px 10px;border:1px solid var(--border);
+  border-radius:8px;background:rgba(255,255,255,.025);
 }
-
-.legend-dot{
-  width:10px;
-  height:10px;
-  border-radius:3px;
-}
+.legend-dot{width:10px;height:10px;border-radius:3px}
 .legend-red{background:#ff4b5c}
 .legend-purple{background:#ad65ff}
 .legend-orange{background:#ff9b3d}
 .legend-normal{background:#71839a}
 
-.item-row.tier-red,
-.item-row.tier-purple,
-.item-row.tier-orange,
-.item-row.tier-normal{
-  border-width:1px;
-}
-
 /* ROULETTE */
-
 .result-modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  z-index:50;
-  background:rgba(0,0,0,.91);
-  align-items:center;
-  justify-content:center;
-  padding:16px;
-  overflow-y:auto;
+  display:none;position:fixed;inset:0;z-index:50;
+  background:rgba(0,0,0,.91);align-items:center;
+  justify-content:center;padding:16px;overflow-y:auto;
 }
 .result-modal.show{display:flex}
-
 .roulette-box{
-  width:min(850px,100%);
-  padding:25px;
-  text-align:center;
-  border:1px solid rgba(229,184,75,.4);
-  border-radius:18px;
+  width:min(850px,100%);padding:25px;text-align:center;
+  border:1px solid rgba(229,184,75,.4);border-radius:18px;
   background:linear-gradient(145deg,#202f46,#0b111b);
-  box-shadow:0 20px 90px rgba(0,0,0,.65);
-  overflow:hidden;
+  box-shadow:0 20px 90px rgba(0,0,0,.65);overflow:hidden;
 }
-
 .roulette-heading{margin-bottom:20px}
-.roulette-heading h2{
-  color:var(--gold);
-  font-size:25px;
-  letter-spacing:2px;
-}
-.roulette-heading p{
-  color:var(--muted);
-  font-size:13px;
-  margin-top:8px;
-}
-
+.roulette-heading h2{color:var(--gold);font-size:25px;letter-spacing:2px}
+.roulette-heading p{color:var(--muted);font-size:13px;margin-top:8px}
 .roulette-window{
-  width:100%;
-  height:190px;
-  position:relative;
-  overflow:hidden;
-  border:1px solid rgba(255,255,255,.1);
-  border-radius:12px;
-  background:#080d16;
-  margin:20px 0;
+  width:100%;height:190px;position:relative;overflow:hidden;
+  border:1px solid rgba(255,255,255,.1);border-radius:12px;
+  background:#080d16;margin:20px 0;
 }
-
-.roulette-window:before,
-.roulette-window:after{
-  content:"";
-  position:absolute;
-  z-index:3;
-  top:0;
-  bottom:0;
-  width:65px;
-  pointer-events:none;
+.roulette-window:before,.roulette-window:after{
+  content:"";position:absolute;z-index:3;top:0;bottom:0;
+  width:65px;pointer-events:none;
 }
-.roulette-window:before{
-  left:0;
-  background:linear-gradient(90deg,#080d16,transparent);
-}
-.roulette-window:after{
-  right:0;
-  background:linear-gradient(270deg,#080d16,transparent);
-}
-
+.roulette-window:before{left:0;background:linear-gradient(90deg,#080d16,transparent)}
+.roulette-window:after{right:0;background:linear-gradient(270deg,#080d16,transparent)}
 .roulette-pointer{
-  position:absolute;
-  z-index:5;
-  top:0;
-  bottom:0;
-  left:50%;
-  width:3px;
-  transform:translateX(-50%);
-  background:var(--gold);
-  box-shadow:0 0 15px var(--gold);
+  position:absolute;z-index:5;top:0;bottom:0;left:50%;
+  width:3px;transform:translateX(-50%);
+  background:var(--gold);box-shadow:0 0 15px var(--gold);
 }
-.roulette-pointer:before{
-  content:"";
-  position:absolute;
-  top:0;
-  left:50%;
-  transform:translateX(-50%);
-  border-left:9px solid transparent;
-  border-right:9px solid transparent;
-  border-top:13px solid var(--gold);
+.roulette-pointer:before,.roulette-pointer:after{
+  content:"";position:absolute;left:50%;transform:translateX(-50%);
+  border-left:9px solid transparent;border-right:9px solid transparent;
 }
-.roulette-pointer:after{
-  content:"";
-  position:absolute;
-  bottom:0;
-  left:50%;
-  transform:translateX(-50%);
-  border-left:9px solid transparent;
-  border-right:9px solid transparent;
-  border-bottom:13px solid var(--gold);
-}
-
+.roulette-pointer:before{top:0;border-top:13px solid var(--gold)}
+.roulette-pointer:after{bottom:0;border-bottom:13px solid var(--gold)}
 .roulette-track{
-  height:100%;
-  display:flex;
-  align-items:center;
-  gap:12px;
-  width:max-content;
-  padding:0 10px;
-  transform:translateX(0);
+  height:100%;display:flex;align-items:center;gap:12px;
+  width:max-content;padding:0 10px;transform:translateX(0);
   will-change:transform;
 }
-
 .roulette-item{
-  width:145px;
-  height:150px;
-  flex:0 0 145px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  padding:10px;
-  border:1px solid rgba(255,255,255,.12);
-  border-radius:10px;
+  width:145px;height:150px;flex:0 0 145px;
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:10px;
+  border:1px solid rgba(255,255,255,.12);border-radius:10px;
   background:linear-gradient(160deg,#1e3048,#111927);
-  overflow:hidden;
-  position:relative;
+  overflow:hidden;position:relative;
 }
-
 .roulette-item img{
-  width:100%;
-  height:85px;
-  object-fit:contain;
-  display:block;
-  margin-bottom:7px;
+  width:100%;height:85px;object-fit:contain;
+  display:block;margin-bottom:7px;
 }
-
 .skin-placeholder{
-  height:85px;
-  width:100%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:35px;
-  color:#8296b1;
-  margin-bottom:7px;
+  height:85px;width:100%;display:flex;align-items:center;
+  justify-content:center;font-size:35px;color:#8296b1;margin-bottom:7px;
 }
-
 .roulette-item strong{
-  font-size:10px;
-  line-height:1.3;
-  max-width:100%;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
+  font-size:10px;line-height:1.3;max-width:100%;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
-
-.roulette-item small{
-  color:#fff;
-  font-size:10px;
-  margin-top:5px;
-  font-weight:bold;
-}
-
+.roulette-item small{color:#fff;font-size:10px;margin-top:5px;font-weight:bold}
 .roulette-item.winner{
-  outline:2px solid var(--gold);
-  outline-offset:-3px;
+  outline:2px solid var(--gold);outline-offset:-3px;
   box-shadow:inset 0 0 25px rgba(229,184,75,.2),0 0 18px rgba(229,184,75,.3);
 }
-
-.spin-status{
-  color:var(--gold);
-  font-size:13px;
-  font-weight:bold;
-  letter-spacing:2px;
-  margin:16px 0;
-}
-
-.winner-result{
-  display:none;
-  padding:20px 10px 5px;
-  animation:appear .5s ease;
-}
+.spin-status{color:var(--gold);font-size:13px;font-weight:bold;letter-spacing:2px;margin:16px 0}
+.winner-result{display:none;padding:20px 10px 5px;animation:appear .5s ease}
 .winner-result.show{display:block}
-
-.winner-result h2{
-  color:var(--gold);
-  font-size:26px;
-  margin-bottom:12px;
-}
-
+.winner-result h2{color:var(--gold);font-size:26px;margin-bottom:12px}
 .winner-image-wrap{
-  width:220px;
-  height:155px;
-  margin:10px auto 15px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border:1px solid rgba(229,184,75,.35);
-  border-radius:12px;
-  background:rgba(0,0,0,.2);
-  overflow:hidden;
+  width:220px;height:155px;margin:10px auto 15px;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid rgba(229,184,75,.35);border-radius:12px;
+  background:rgba(0,0,0,.2);overflow:hidden;
 }
-
-.winner-image-wrap img{
-  width:95%;
-  height:95%;
-  object-fit:contain;
-}
+.winner-image-wrap img{width:95%;height:95%;object-fit:contain}
 .winner-placeholder{font-size:55px}
-
-.winner-name{
-  font-size:21px;
-  font-weight:bold;
-  margin:10px 0;
-}
-
-.winner-details{
-  color:var(--muted);
-  font-size:13px;
-  line-height:1.8;
-  margin-bottom:20px;
-}
-
-.result-buttons{
-  display:flex;
-  gap:10px;
-  justify-content:center;
-}
+.winner-name{font-size:21px;font-weight:bold;margin:10px 0}
+.winner-details{color:var(--muted);font-size:13px;line-height:1.8;margin-bottom:20px}
+.result-buttons{display:flex;gap:10px;justify-content:center}
 .result-buttons button{max-width:250px}
-
 .secondary-btn{
-  border:1px solid var(--border);
-  border-radius:9px;
-  background:#26374d;
-  color:white;
-  padding:12px 18px;
-  font-weight:bold;
-  width:100%;
+  border:1px solid var(--border);border-radius:9px;
+  background:#26374d;color:white;padding:12px 18px;
+  font-weight:bold;width:100%;
 }
 .secondary-btn:hover{border-color:var(--gold)}
-
-footer{
-  text-align:center;
-  padding:25px;
-  border-top:1px solid var(--border);
-  color:#687487;
-  font-size:12px;
-}
+footer{text-align:center;padding:25px;border-top:1px solid var(--border);color:#687487;font-size:12px}
 
 @media(max-width:700px){
   header{padding:12px 4%}
@@ -657,26 +292,23 @@ footer{
   .menu-grid{gap:12px}
   .menu-card{min-height:175px;padding:14px}
   .menu-art{height:100px}
-  .menu-art svg{width:125px;height:100px}
+  .menu-art img{height:92px}
+  .menu-art img:only-child{height:98px}
   .menu-bottom h2{font-size:14px;letter-spacing:1px}
   .menu-bottom span{font-size:17px}
   .case-grid{grid-template-columns:1fr}
   main{padding-top:25px}
   .roulette-box{padding:15px 10px}
   .roulette-window{height:165px}
-  .roulette-item{
-    width:120px;
-    flex-basis:120px;
-    height:135px;
-  }
+  .roulette-item{width:120px;flex-basis:120px;height:135px}
   .roulette-item img,.skin-placeholder{height:72px}
   .winner-image-wrap{width:190px;height:135px}
 }
-
 @media(max-width:370px){
   .menu-card{min-height:155px;padding:10px}
   .menu-art{height:85px}
-  .menu-art svg{width:105px;height:85px}
+  .menu-art img{height:78px}
+  .menu-art img:only-child{height:82px}
   .menu-bottom h2{font-size:12px}
   .user-name{display:none}
 }
@@ -684,460 +316,353 @@ footer{
 </head>
 
 <body>
-
 <header>
   <div class="logo" onclick="showPage('home')">SK<span>i</span>NUM</div>
-
   <div class="header-right">
     <div class="balance" id="balanceBox">Balance: $--</div>
     <span class="user-name" id="userName"></span>
-    <button class="steam-btn" id="steamButton" onclick="steamAction()">
-      STEAM LOGIN
-    </button>
+    <button class="steam-btn" id="steamButton" onclick="steamAction()">STEAM LOGIN</button>
   </div>
 </header>
 
 <main>
-
 <section id="home" class="page active">
   <div class="hero">
     <div class="eyebrow">THE CS2 SKIN UNIVERSE</div>
     <h1>WELCOME TO <span>SKiNUM</span></h1>
-    <p>
-      Discover rare skins. Open cases. Upgrade your collection.<br>
-      Your CS2 skin journey starts here.
-    </p>
+    <p>Discover rare skins. Open cases. Upgrade your collection.<br>
+    Your CS2 skin journey starts here.</p>
   </div>
 
   <div class="menu-grid">
-
     <div class="menu-card" style="--glow:#d9a83b" onclick="showPage('market')">
-      <div class="menu-art">
-        <svg viewBox="0 0 180 130" fill="none">
-          <path d="M20 85 L105 18 L157 40 L72 108 Z" fill="#8b9caf" stroke="#d8e2f0" stroke-width="2"/>
-          <path d="M72 108 L157 40 L143 78 L91 119 Z" fill="#34465f"/>
-          <path d="M20 85 L72 108 L91 119 L39 98 Z" fill="#d9a83b"/>
-          <path d="M105 18 L157 40 L143 78 L91 56 Z" fill="#c5d0de"/>
-          <path d="M39 98 L91 56" stroke="#f4d58b" stroke-width="3"/>
-          <circle cx="112" cy="47" r="5" fill="#f4d58b"/>
-        </svg>
-      </div>
+      <div class="menu-art" id="menuArtMarket"><div class="art-empty">SKIN MARKET</div></div>
       <div class="menu-bottom"><h2>MARKET</h2><span>↗</span></div>
     </div>
-
     <div class="menu-card" style="--glow:#4b8cff" onclick="showPage('cases')">
-      <div class="menu-art">
-        <svg viewBox="0 0 180 130" fill="none">
-          <path d="M42 36 L90 12 L139 36 L90 61 Z" fill="#6e9dce" stroke="#c1ddff" stroke-width="2"/>
-          <path d="M42 36 L90 61 L90 119 L42 92 Z" fill="#243e63" stroke="#8bb9f2" stroke-width="2"/>
-          <path d="M90 61 L139 36 L139 92 L90 119 Z" fill="#395e89" stroke="#8bb9f2" stroke-width="2"/>
-          <path d="M65 47 L90 34 L115 47 L90 60 Z" fill="#f0c75e"/>
-          <path d="M90 60 V119" stroke="#9cc8ff" stroke-width="2"/>
-          <path d="M74 71 L90 79 L106 71" stroke="#d7e8ff" stroke-width="3"/>
-        </svg>
-      </div>
+      <div class="menu-art" id="menuArtCases"><div class="art-empty">PREMIUM CASES</div></div>
       <div class="menu-bottom"><h2>CASES</h2><span>↗</span></div>
     </div>
-
     <div class="menu-card" style="--glow:#9a5cff" onclick="showPage('upgrade')">
-      <div class="menu-art">
-        <svg viewBox="0 0 180 130" fill="none">
-          <path d="M90 10 L105 51 L149 35 L126 75 L169 91 L121 98 L126 125 L90 105 L54 125 L59 98 L11 91 L54 75 L31 35 L75 51 Z" fill="#7551bc" stroke="#c6aaff" stroke-width="2"/>
-          <path d="M90 35 L100 68 L132 68 L106 88 L116 111 L90 96 L64 111 L74 88 L48 68 L80 68 Z" fill="#e0c8ff"/>
-          <circle cx="90" cy="76" r="12" fill="#fff1b9"/>
-        </svg>
-      </div>
+      <div class="menu-art" id="menuArtUpgrade"><div class="art-empty">SKIN UPGRADE</div></div>
       <div class="menu-bottom"><h2>UPGRADE</h2><span>↗</span></div>
     </div>
-
     <div class="menu-card" style="--glow:#35cf91" onclick="showPage('inventory')">
-      <div class="menu-art">
-        <svg viewBox="0 0 180 130" fill="none">
-          <path d="M35 42 L90 15 L145 42 L90 69 Z" fill="#5d9e88" stroke="#a9f2d4" stroke-width="2"/>
-          <path d="M35 42 V94 L90 120 V69 Z" fill="#205847" stroke="#8ce2bc" stroke-width="2"/>
-          <path d="M145 42 V94 L90 120 V69 Z" fill="#327b61" stroke="#8ce2bc" stroke-width="2"/>
-          <path d="M67 54 L90 42 L113 54 L90 67 Z" fill="#f0c75e"/>
-          <path d="M90 67 V120" stroke="#b2f7d9" stroke-width="2"/>
-        </svg>
-      </div>
+      <div class="menu-art" id="menuArtInventory"><div class="art-empty">MY COLLECTION</div></div>
       <div class="menu-bottom"><h2>INVENTORY</h2><span>↗</span></div>
     </div>
-
   </div>
 </section>
 
 <section id="market" class="page">
   <div class="section-heading">
-    <div>
-      <h1>MARKET</h1>
-      <p>Buy and sell your CS2 skins</p>
-    </div>
+    <div><h1>MARKET</h1><p>Buy and sell your CS2 skins</p></div>
     <button class="back-btn" onclick="showPage('home')">← HOME</button>
   </div>
-
   <div class="content-panel">
     <h2>SKiNUM Marketplace</h2>
-    <p class="info-text">
-      Marketplace is being prepared. Skin listings, buying and selling
-      will be connected to the database in the next development stage.
-    </p>
+    <p class="info-text">Marketplace is being prepared. Skin listings, buying and selling will be connected to the database in the next development stage.</p>
     <div class="notice">Marketplace transactions are not active yet.</div>
   </div>
 </section>
 
 <section id="cases" class="page">
   <div class="section-heading">
-    <div>
-      <h1>CASE COLLECTION</h1>
-      <p>Choose your case and discover your next skin</p>
-    </div>
+    <div><h1>CASE COLLECTION</h1><p>Choose your case and discover your next skin</p></div>
     <button class="back-btn" onclick="showPage('home')">← HOME</button>
   </div>
-
-  <div class="notice">
-    Case openings currently use demo credits. The server determines
-    the result. These are not real-money purchases or guaranteed market values.
-  </div>
-
+  <div class="notice">Case openings currently use demo credits. The server determines the result. These are not real-money purchases or guaranteed market values.</div>
   <div class="rarity-legend">
     <div class="legend-item"><span class="legend-dot legend-red"></span> $50+ RED</div>
     <div class="legend-item"><span class="legend-dot legend-purple"></span> $25+ PURPLE</div>
     <div class="legend-item"><span class="legend-dot legend-orange"></span> $10+ ORANGE</div>
     <div class="legend-item"><span class="legend-dot legend-normal"></span> UNDER $10</div>
   </div>
-
-  <div id="caseGrid" class="case-grid">
-    <div class="empty-state">Loading cases...</div>
-  </div>
-
+  <div id="caseGrid" class="case-grid"><div class="empty-state">Loading cases...</div></div>
   <div id="caseError" class="error-message"></div>
 </section>
 
 <section id="upgrade" class="page">
   <div class="section-heading">
-    <div>
-      <h1>SKIN UPGRADE</h1>
-      <p>Upgrade your collection</p>
-    </div>
+    <div><h1>SKIN UPGRADE</h1><p>Upgrade your collection</p></div>
     <button class="back-btn" onclick="showPage('home')">← HOME</button>
   </div>
-
   <div class="content-panel">
     <h2>Upgrade System</h2>
-    <p class="info-text">
-      The upgrade engine is under development. It will connect your
-      inventory, target skin selection, probability calculation
-      and server-side upgrade results.
-    </p>
-    <div class="notice">
-      Upgrade is not active yet. No skins will be consumed on this page.
-    </div>
+    <p class="info-text">The upgrade engine is under development. It will connect your inventory, target skin selection, probability calculation and server-side upgrade results.</p>
+    <div class="notice">Upgrade is not active yet. No skins will be consumed on this page.</div>
   </div>
 </section>
 
 <section id="inventory" class="page">
   <div class="section-heading">
-    <div>
-      <h1>MY INVENTORY</h1>
-      <p>Your skins and account transactions</p>
-    </div>
+    <div><h1>MY INVENTORY</h1><p>Your skins and account transactions</p></div>
     <button class="back-btn" onclick="showPage('home')">← HOME</button>
   </div>
-
-  <div id="inventoryContent">
-    <div class="empty-state">Checking Steam account...</div>
-  </div>
+  <div id="inventoryContent"><div class="empty-state">Checking Steam account...</div></div>
 </section>
-
 </main>
 
 <footer>SKiNUM © 2026 — THE CS2 SKIN UNIVERSE</footer>
 
 <div class="result-modal" id="resultModal">
   <div class="roulette-box">
-
     <div class="roulette-heading">
       <h2 id="rouletteTitle">OPENING CASE</h2>
       <p id="rouletteSubtitle">Good luck! Your next skin is waiting.</p>
     </div>
-
     <div class="roulette-window" id="rouletteWindow">
       <div class="roulette-pointer"></div>
       <div class="roulette-track" id="rouletteTrack"></div>
     </div>
-
     <div class="spin-status" id="spinStatus">ROLLING...</div>
-
     <div class="winner-result" id="winnerResult">
       <h2>CONGRATULATIONS!</h2>
-
-      <div class="winner-image-wrap" id="winnerImageWrap">
-        <div class="winner-placeholder">🎁</div>
-      </div>
-
+      <div class="winner-image-wrap" id="winnerImageWrap"><div class="winner-placeholder">🎁</div></div>
       <div class="winner-name" id="winnerName"></div>
       <div class="winner-details" id="winnerDetails"></div>
-
       <div class="result-buttons">
         <button class="primary-btn" onclick="closeResult()">CONTINUE</button>
       </div>
     </div>
-
   </div>
 </div>
 
 <script>
-const state = {
-  user:null,
-  loggedIn:false,
-  balance:null,
-  cases:[],
-  inventory:[],
-  transactions:[],
-  opening:false,
-  lastResult:null
+const state={
+  user:null,loggedIn:false,balance:null,cases:[],
+  inventory:[],transactions:[],opening:false,lastResult:null
 };
 
-const $ = id => document.getElementById(id);
+const $=id=>document.getElementById(id);
 
-async function api(url,options={}) {
-  const response = await fetch(url,{
+async function api(url,options={}){
+  const response=await fetch(url,{
     credentials:"same-origin",
     ...options,
     headers:{
       "Content-Type":"application/json",
-      ...(options.headers || {})
+      ...(options.headers||{})
     }
   });
-
   let data;
-
-  try {
-    data = await response.json();
-  } catch {
-    throw new Error("Server returned an invalid response.");
-  }
-
-  if (!response.ok) {
-    throw new Error(data.error || data.message || "Request failed.");
-  }
-
+  try{data=await response.json()}
+  catch{throw new Error("Server returned an invalid response.")}
+  if(!response.ok)throw new Error(data.error||data.message||"Request failed.");
   return data;
 }
 
-function money(cents) {
-  return "$" + (Number(cents || 0)/100).toFixed(2);
-}
+function money(cents){return "$"+(Number(cents||0)/100).toFixed(2)}
 
-function escapeHTML(value) {
-  return String(value ?? "").replace(/[&<>"']/g,char => ({
-    "&":"&amp;",
-    "<":"&lt;",
-    ">":"&gt;",
-    '"':"&quot;",
-    "'":"&#39;"
+function escapeHTML(value){
+  return String(value??"").replace(/[&<>"']/g,char=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
   })[char]);
 }
 
-/* PRICE-BASED SKIN COLOR */
-
-function skinTier(skin) {
-  const value = Number(skin?.valueCents ?? skin?.value_cents ?? 0);
-
-  if (value >= 5000) return "tier-red";
-  if (value >= 2500) return "tier-purple";
-  if (value >= 1000) return "tier-orange";
-
+function skinTier(skin){
+  const value=Number(skin?.valueCents??skin?.value_cents??0);
+  if(value>=5000)return "tier-red";
+  if(value>=2500)return "tier-purple";
+  if(value>=1000)return "tier-orange";
   return "tier-normal";
 }
 
-function getSkinImage(skin) {
-  return skin?.imageUrl ||
-         skin?.image_url ||
-         skin?.image ||
-         skin?.icon ||
-         "";
+function getSkinImage(skin){
+  return skin?.imageUrl||skin?.image_url||skin?.image||skin?.icon||"";
 }
 
-function skinImageHTML(skin) {
-  const image = getSkinImage(skin);
+function skinImageHTML(skin){
+  const image=getSkinImage(skin);
+  if(!image)return '<div class="skin-placeholder">🔫</div>';
+  return `<img src="${escapeHTML(image)}" alt="${escapeHTML(skin.name||"CS2 skin")}" onerror="this.outerHTML='<div class=&quot;skin-placeholder&quot;>🔫</div>'">`;
+}
 
-  if (!image) {
-    return '<div class="skin-placeholder">🔫</div>';
+/* HOME MENU SKIN ART */
+
+function setMenuArtwork(elementId,skins,fallback){
+  const element=$(elementId);
+  if(!element)return;
+
+  const valid=(skins||[]).filter(skin=>getSkinImage(skin));
+
+  if(!valid.length){
+    element.innerHTML=`<div class="art-empty">${fallback}</div>`;
+    return;
   }
 
-  return `
-    <img
-      src="${escapeHTML(image)}"
-      alt="${escapeHTML(skin.name || "CS2 skin")}"
-      onerror="this.outerHTML='<div class=&quot;skin-placeholder&quot;>🔫</div>'"
-    >
-  `;
+  element.innerHTML=valid.slice(0,3).map(skin=>`
+    <img src="${escapeHTML(getSkinImage(skin))}"
+      alt="${escapeHTML(skin.name||"CS2 skin")}"
+      loading="lazy"
+      onerror="this.remove()">
+  `).join("");
 }
 
-function showPage(pageId) {
-  document.querySelectorAll(".page").forEach(page => {
-    page.classList.remove("active");
-  });
+function updateHomeArtwork(cases){
+  const allSkins=(cases||[]).flatMap(item=>item.items||[]);
 
-  const target = $(pageId);
-  if (target) target.classList.add("active");
+  if(!allSkins.length)return;
 
-  if (pageId === "cases") loadCases();
-  if (pageId === "inventory") loadInventory();
+  const findWeapon=keyword=>allSkins.filter(skin=>
+    String(skin.weapon||"").toLowerCase().includes(keyword)
+  );
 
+  const valuable=allSkins.slice().sort((a,b)=>
+    Number(b.valueCents||0)-Number(a.valueCents||0)
+  );
+
+  const market=[...findWeapon("ak-47"),...findWeapon("awp")];
+
+  setMenuArtwork("menuArtMarket",market.length?market:valuable.slice(0,2),"SKIN MARKET");
+  setMenuArtwork("menuArtCases",valuable.slice(0,1),"PREMIUM CASES");
+  setMenuArtwork("menuArtUpgrade",valuable.slice(0,2),"SKIN UPGRADE");
+  setMenuArtwork("menuArtInventory",valuable.slice(0,3),"MY COLLECTION");
+}
+
+async function loadHomeArtwork(){
+  try{
+    const data=await api("/api/cases");
+    state.cases=data.cases||[];
+    updateHomeArtwork(state.cases);
+  }catch(error){
+    console.error("Home artwork:",error);
+  }
+}
+
+function showPage(pageId){
+  document.querySelectorAll(".page").forEach(page=>page.classList.remove("active"));
+  const target=$(pageId);
+  if(target)target.classList.add("active");
+  if(pageId==="cases")loadCases();
+  if(pageId==="inventory")loadInventory();
   window.scrollTo({top:0,behavior:"smooth"});
 }
 
-function steamAction() {
-  if (state.loggedIn) {
-    if (confirm("Do you want to log out of SKiNUM?")) {
-      window.location.href="/auth/logout";
-    }
-  } else {
+function steamAction(){
+  if(state.loggedIn){
+    if(confirm("Do you want to log out of SKiNUM?"))window.location.href="/auth/logout";
+  }else{
     window.location.href="/auth/steam";
   }
 }
 
-async function loadMe() {
-  try {
-    const data = await api("/api/me");
+async function loadMe(){
+  try{
+    const data=await api("/api/me");
+    state.loggedIn=Boolean(data.loggedIn);
+    state.user=data.user||null;
 
-    state.loggedIn = Boolean(data.loggedIn);
-    state.user = data.user || null;
-
-    if (state.loggedIn) {
+    if(state.loggedIn){
       $("steamButton").textContent="LOG OUT";
-      $("userName").textContent =
-        state.user?.displayName ||
-        state.user?.username ||
-        "STEAM USER";
-
+      $("userName").textContent=state.user?.displayName||state.user?.username||"STEAM USER";
       await loadWallet();
-    } else {
+    }else{
       $("steamButton").textContent="STEAM LOGIN";
       $("userName").textContent="";
       $("balanceBox").textContent="Balance: $--";
       state.balance=null;
     }
-  } catch(error) {
+  }catch(error){
     console.error("Account check:",error);
     $("steamButton").textContent="STEAM LOGIN";
     $("balanceBox").textContent="Balance: --";
   }
 }
 
-async function loadWallet() {
-  if (!state.loggedIn) return;
-
-  try {
-    const data = await api("/api/wallet");
+async function loadWallet(){
+  if(!state.loggedIn)return;
+  try{
+    const data=await api("/api/wallet");
     state.balance=Number(data.balanceCents);
     $("balanceBox").textContent="Balance: "+money(data.balanceCents);
-  } catch(error) {
+  }catch(error){
     console.error("Wallet:",error);
     $("balanceBox").textContent="Balance: --";
   }
 }
 
-function caseArtwork() {
+function caseArtwork(){
   return `
   <svg viewBox="0 0 180 150" fill="none">
-    <path d="M30 43 L90 13 L150 43 L90 75 Z"
-      fill="#7298c4" stroke="#d4e8ff" stroke-width="2"/>
-    <path d="M30 43 V108 L90 139 V75 Z"
-      fill="#294568" stroke="#9dc7f6" stroke-width="2"/>
-    <path d="M150 43 V108 L90 139 V75 Z"
-      fill="#3c6390" stroke="#9dc7f6" stroke-width="2"/>
+    <path d="M30 43 L90 13 L150 43 L90 75 Z" fill="#7298c4" stroke="#d4e8ff" stroke-width="2"/>
+    <path d="M30 43 V108 L90 139 V75 Z" fill="#294568" stroke="#9dc7f6" stroke-width="2"/>
+    <path d="M150 43 V108 L90 139 V75 Z" fill="#3c6390" stroke="#9dc7f6" stroke-width="2"/>
     <path d="M62 59 L90 44 L118 59 L90 74 Z" fill="#e8bd59"/>
     <path d="M90 75 V139" stroke="#b9d9ff" stroke-width="2"/>
-    <path d="M74 88 L90 97 L106 88"
-      stroke="#f5d68a" stroke-width="3"/>
+    <path d="M74 88 L90 97 L106 88" stroke="#f5d68a" stroke-width="3"/>
   </svg>`;
 }
 
-async function loadCases() {
+async function loadCases(){
   const grid=$("caseGrid");
   const errorBox=$("caseError");
-
   errorBox.textContent="";
 
-  try {
+  try{
     const data=await api("/api/cases");
-    state.cases=data.cases || [];
+    state.cases=data.cases||[];
+    updateHomeArtwork(state.cases);
 
-    if (!state.cases.length) {
+    if(!state.cases.length){
       grid.innerHTML='<div class="empty-state">No cases available.</div>';
       return;
     }
 
-    grid.innerHTML=state.cases.map(item => `
+    grid.innerHTML=state.cases.map(item=>`
       <article class="case-card">
         <div class="case-art">${caseArtwork()}</div>
         <h3>${escapeHTML(item.name)}</h3>
         <p>Discover your next CS2 skin</p>
         <div class="case-price">${money(item.priceCents)}</div>
-        <button class="primary-btn"
-          onclick="openCase('${escapeHTML(item.slug)}')">
-          OPEN CASE
-        </button>
+        <button class="primary-btn" onclick="openCase('${escapeHTML(item.slug)}')">OPEN CASE</button>
       </article>
     `).join("");
-
-  } catch(error) {
+  }catch(error){
     grid.innerHTML='<div class="empty-state">Unable to load cases.</div>';
     errorBox.textContent=error.message;
   }
 }
 
-function createIdempotencyKey() {
-  if (window.crypto && crypto.randomUUID) {
-    return crypto.randomUUID();
-  }
-
-  return "skinum-" + Date.now() + "-" +
-    Math.random().toString(36).slice(2);
+function createIdempotencyKey(){
+  if(window.crypto&&crypto.randomUUID)return crypto.randomUUID();
+  return "skinum-"+Date.now()+"-"+Math.random().toString(36).slice(2);
 }
 
 /* ROULETTE */
 
-function randomItem(items) {
-  if (!items || !items.length) return null;
+function randomItem(items){
+  if(!items||!items.length)return null;
   return items[Math.floor(Math.random()*items.length)];
 }
 
-function buildRouletteItems(caseData,winner) {
-  const available = (caseData?.items || []).filter(item => item && item.name);
-  const pool = available.length ? available : [winner];
+function buildRouletteItems(caseData,winner){
+  const available=(caseData?.items||[]).filter(item=>item&&item.name);
+  const pool=available.length?available:[winner];
+  const total=48;
+  const winnerIndex=39;
+  const result=[];
 
-  const total = 48;
-  const winnerIndex = 39;
-  const result = [];
-
-  for (let i=0;i<total;i++) {
-    if (i === winnerIndex) {
+  for(let i=0;i<total;i++){
+    if(i===winnerIndex){
       result.push({...winner,_isWinner:true});
-    } else {
-      const random = randomItem(pool) || winner;
-      result.push({...random,_isWinner:false});
+    }else{
+      result.push({...randomItem(pool),_isWinner:false});
     }
   }
-
   return {items:result,winnerIndex};
 }
 
-function renderRouletteItem(item,index) {
+function renderRouletteItem(item,index){
   return `
-    <div class="roulette-item ${skinTier(item)} ${item._isWinner ? "winner" : ""}"
-         data-index="${index}">
+    <div class="roulette-item ${skinTier(item)} ${item._isWinner?"winner":""}" data-index="${index}">
       ${skinImageHTML(item)}
-      <strong>${escapeHTML(item.name || "Unknown Skin")}</strong>
+      <strong>${escapeHTML(item.name||"Unknown Skin")}</strong>
       <small>${money(item.valueCents)}</small>
-    </div>
-  `;
+    </div>`;
 }
 
-function resetRoulette() {
+function resetRoulette(){
   $("rouletteTrack").style.transition="none";
   $("rouletteTrack").style.transform="translateX(0)";
   $("rouletteTrack").innerHTML="";
@@ -1149,20 +674,14 @@ function resetRoulette() {
   $("rouletteSubtitle").textContent="Good luck! Your next skin is waiting.";
 }
 
-function wait(ms) {
-  return new Promise(resolve=>setTimeout(resolve,ms));
-}
+function wait(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
 
-async function animateRoulette(caseData,winner) {
+async function animateRoulette(caseData,winner){
   resetRoulette();
-
   const built=buildRouletteItems(caseData,winner);
   const track=$("rouletteTrack");
 
-  track.innerHTML=built.items
-    .map((item,index)=>renderRouletteItem(item,index))
-    .join("");
-
+  track.innerHTML=built.items.map((item,index)=>renderRouletteItem(item,index)).join("");
   $("resultModal").classList.add("show");
 
   await new Promise(resolve=>requestAnimationFrame(resolve));
@@ -1171,30 +690,20 @@ async function animateRoulette(caseData,winner) {
   const winnerCard=cards[built.winnerIndex];
   const windowElement=$("rouletteWindow");
 
-  if (!winnerCard) {
-    throw new Error("Roulette could not locate the winning skin.");
-  }
+  if(!winnerCard)throw new Error("Roulette could not locate the winning skin.");
 
   const cardWidth=winnerCard.getBoundingClientRect().width;
-  const trackStyle=getComputedStyle(track);
-  const gap=parseFloat(trackStyle.gap) || 12;
-
-  const winnerCenter =
-    built.winnerIndex*(cardWidth+gap)+cardWidth/2;
-
+  const gap=parseFloat(getComputedStyle(track).gap)||12;
+  const winnerCenter=built.winnerIndex*(cardWidth+gap)+cardWidth/2;
   const viewportCenter=windowElement.clientWidth/2;
   const targetX=viewportCenter-winnerCenter;
 
   track.style.transition="none";
   track.style.transform="translateX(0px)";
-
   await new Promise(resolve=>requestAnimationFrame(resolve));
   await new Promise(resolve=>requestAnimationFrame(resolve));
 
-  /* 8.5 SECOND SPIN */
-  track.style.transition=
-    "transform 8.5s cubic-bezier(.08,.72,.08,1)";
-
+  track.style.transition="transform 8.5s cubic-bezier(.08,.72,.08,1)";
   track.style.transform=`translateX(${targetX}px)`;
 
   await wait(8700);
@@ -1207,185 +716,148 @@ async function animateRoulette(caseData,winner) {
   $("rouletteSubtitle").textContent="Your new skin has been added to inventory.";
 
   await wait(450);
-
   showWinner(winner);
 }
 
-function showWinner(skin) {
+function showWinner(skin){
   $("spinStatus").style.display="none";
-
   const image=getSkinImage(skin);
-  const tier=skinTier(skin);
+  $("winnerImageWrap").className="winner-image-wrap "+skinTier(skin);
 
-  $("winnerImageWrap").className="winner-image-wrap "+tier;
+  $("winnerImageWrap").innerHTML=image
+    ?`<img src="${escapeHTML(image)}" alt="${escapeHTML(skin.name)}" onerror="this.outerHTML='<div class=&quot;winner-placeholder&quot;>🔫</div>'">`
+    :'<div class="winner-placeholder">🔫</div>';
 
-  $("winnerImageWrap").innerHTML = image
-    ? `<img src="${escapeHTML(image)}"
-         alt="${escapeHTML(skin.name)}"
-         onerror="this.outerHTML='<div class=&quot;winner-placeholder&quot;>🔫</div>'">`
-    : '<div class="winner-placeholder">🔫</div>';
-
-  $("winnerName").textContent=skin.name || "Unknown Skin";
-
-  $("winnerDetails").innerHTML =
-    escapeHTML(skin.weapon || "CS2 Skin")+
-    "<br>Rarity: "+escapeHTML(skin.rarity || "Unknown")+
+  $("winnerName").textContent=skin.name||"Unknown Skin";
+  $("winnerDetails").innerHTML=
+    escapeHTML(skin.weapon||"CS2 Skin")+
+    "<br>Rarity: "+escapeHTML(skin.rarity||"Unknown")+
     "<br>Demo value: "+money(skin.valueCents);
 
   $("winnerResult").style.display="block";
   $("winnerResult").classList.add("show");
 }
 
-async function openCase(caseId) {
-  if (state.opening) return;
+async function openCase(caseId){
+  if(state.opening)return;
 
-  if (!state.loggedIn) {
+  if(!state.loggedIn){
     alert("Please login with Steam first.");
     window.location.href="/auth/steam";
     return;
   }
 
   state.opening=true;
-
   const buttons=document.querySelectorAll(".case-card button");
   buttons.forEach(button=>button.disabled=true);
-
   $("caseError").textContent="";
 
-  const caseData=state.cases.find(item =>
-    String(item.slug)===String(caseId)
-  );
+  const caseData=state.cases.find(item=>String(item.slug)===String(caseId));
 
-  try {
-    const result=await api(
-      "/api/cases/"+encodeURIComponent(caseId)+"/open",
-      {
-        method:"POST",
-        body:JSON.stringify({
-          idempotencyKey:createIdempotencyKey()
-        })
-      }
-    );
+  try{
+    const result=await api("/api/cases/"+encodeURIComponent(caseId)+"/open",{
+      method:"POST",
+      body:JSON.stringify({idempotencyKey:createIdempotencyKey()})
+    });
 
-    if (!result.success || !result.skin) {
-      throw new Error("The server did not return a valid case result.");
-    }
+    if(!result.success||!result.skin)throw new Error("The server did not return a valid case result.");
 
     state.lastResult=result.skin;
 
-    if (result.balanceCents !== undefined) {
+    if(result.balanceCents!==undefined){
       state.balance=Number(result.balanceCents);
       $("balanceBox").textContent="Balance: "+money(result.balanceCents);
-    } else {
+    }else{
       await loadWallet();
     }
 
     await animateRoulette(caseData,result.skin);
-
-  } catch(error) {
+  }catch(error){
     console.error("Case opening:",error);
     $("resultModal").classList.remove("show");
     $("caseError").textContent=error.message;
     await loadWallet();
-
-  } finally {
+  }finally{
     state.opening=false;
     buttons.forEach(button=>button.disabled=false);
   }
 }
 
-function closeResult() {
+function closeResult(){
   $("resultModal").classList.remove("show");
   $("winnerResult").classList.remove("show");
   $("winnerResult").style.display="none";
   loadWallet();
-
-  if (state.loggedIn) {
-    loadInventory();
-  }
+  if(state.loggedIn)loadInventory();
 }
 
-async function loadInventory() {
+async function loadInventory(){
   const container=$("inventoryContent");
 
-  if (!state.loggedIn) {
+  if(!state.loggedIn){
     container.innerHTML=`
       <div class="content-panel" style="text-align:center;padding:45px 15px">
         <h2>STEAM LOGIN REQUIRED</h2>
         <p class="info-text">Login with Steam to view your inventory.</p>
-        <button class="primary-btn" style="max-width:220px;margin-top:20px"
-          onclick="steamAction()">LOGIN WITH STEAM</button>
+        <button class="primary-btn" style="max-width:220px;margin-top:20px" onclick="steamAction()">LOGIN WITH STEAM</button>
       </div>`;
     return;
   }
 
   container.innerHTML='<div class="empty-state">Loading inventory...</div>';
 
-  try {
+  try{
     const [inventoryData,transactionData]=await Promise.all([
       api("/api/inventory"),
       api("/api/transactions")
     ]);
 
-    state.inventory=inventoryData.inventory || [];
-    state.transactions=transactionData.transactions || [];
-
+    state.inventory=inventoryData.inventory||[];
+    state.transactions=transactionData.transactions||[];
     renderInventory("skins");
-
-  } catch(error) {
-    container.innerHTML=
-      '<div class="empty-state">'+escapeHTML(error.message)+'</div>';
+  }catch(error){
+    container.innerHTML='<div class="empty-state">'+escapeHTML(error.message)+'</div>';
   }
 }
 
-function renderInventory(tab) {
+function renderInventory(tab){
   const container=$("inventoryContent");
 
   let html=`
     <div class="content-panel">
       <h2>MY COLLECTION</h2>
-      <p class="info-text">
-        Your account's skins and transaction history.
-      </p>
+      <p class="info-text">Your account's skins and transaction history.</p>
       <div class="tabs">
-        <button class="tab-btn ${tab==="skins"?"active":""}"
-          onclick="renderInventory('skins')">MY SKINS</button>
-        <button class="tab-btn ${tab==="transactions"?"active":""}"
-          onclick="renderInventory('transactions')">TRANSACTIONS</button>
+        <button class="tab-btn ${tab==="skins"?"active":""}" onclick="renderInventory('skins')">MY SKINS</button>
+        <button class="tab-btn ${tab==="transactions"?"active":""}" onclick="renderInventory('transactions')">TRANSACTIONS</button>
       </div>
-      <div class="item-list">
-  `;
+      <div class="item-list">`;
 
-  if (tab==="skins") {
-    if (!state.inventory.length) {
+  if(tab==="skins"){
+    if(!state.inventory.length){
       html+='<div class="empty-state">Your inventory is empty. Open a case to get your first skin.</div>';
-    } else {
+    }else{
       html+=state.inventory.map(item=>`
         <div class="item-row ${skinTier(item)}">
           <div>
             <strong>${escapeHTML(item.name)}</strong>
-            <small>
-              ${escapeHTML(item.weapon || "")} ·
-              ${escapeHTML(item.rarity || "")}
-            </small>
+            <small>${escapeHTML(item.weapon||"")} · ${escapeHTML(item.rarity||"")}</small>
           </div>
           <div class="item-price">${money(item.valueCents)}</div>
-        </div>
-      `).join("");
+        </div>`).join("");
     }
-  } else {
-    if (!state.transactions.length) {
+  }else{
+    if(!state.transactions.length){
       html+='<div class="empty-state">No transactions yet.</div>';
-    } else {
+    }else{
       html+=state.transactions.map(item=>`
         <div class="item-row">
           <div>
-            <strong>${escapeHTML(item.description || item.type)}</strong>
+            <strong>${escapeHTML(item.description||item.type)}</strong>
             <small>${formatDate(item.createdAt)}</small>
           </div>
           <div class="item-price">${money(item.amountCents)}</div>
-        </div>
-      `).join("");
+        </div>`).join("");
     }
   }
 
@@ -1393,19 +865,19 @@ function renderInventory(tab) {
   container.innerHTML=html;
 }
 
-function formatDate(value) {
-  if (!value) return "";
+function formatDate(value){
+  if(!value)return "";
   const date=new Date(value);
-  if (Number.isNaN(date.getTime())) return "";
+  if(Number.isNaN(date.getTime()))return "";
   return date.toLocaleString();
 }
 
-async function initialize() {
+async function initialize(){
   await loadMe();
+  await loadHomeArtwork();
 }
 
 initialize();
 </script>
-
 </body>
 </html>
