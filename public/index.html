@@ -351,32 +351,259 @@ main{
 
 .error-message{color:var(--red);margin-top:12px;font-size:13px}
 
+/* ROULETTE MODAL */
+
 .result-modal{
   display:none;
   position:fixed;
   inset:0;
   z-index:50;
-  background:rgba(0,0,0,.84);
+  background:rgba(0,0,0,.91);
   align-items:center;
   justify-content:center;
-  padding:20px;
+  padding:16px;
+  overflow-y:auto;
 }
 
 .result-modal.show{display:flex}
 
-.result-box{
-  width:min(430px,100%);
-  padding:30px;
+.roulette-box{
+  width:min(850px,100%);
+  padding:25px;
   text-align:center;
-  border:1px solid rgba(229,184,75,.5);
-  border-radius:17px;
-  background:linear-gradient(145deg,#202f46,#0d131e);
-  box-shadow:0 20px 80px rgba(0,0,0,.5);
+  border:1px solid rgba(229,184,75,.4);
+  border-radius:18px;
+  background:linear-gradient(145deg,#202f46,#0b111b);
+  box-shadow:0 20px 90px rgba(0,0,0,.65);
+  overflow:hidden;
 }
 
-.trophy{font-size:55px;margin-bottom:15px}
-.result-box h2{color:var(--gold);margin-bottom:10px}
-.result-box p{color:var(--muted);line-height:1.7;margin:10px 0 22px}
+.roulette-heading{
+  margin-bottom:20px;
+}
+
+.roulette-heading h2{
+  color:var(--gold);
+  font-size:25px;
+  letter-spacing:2px;
+}
+
+.roulette-heading p{
+  color:var(--muted);
+  font-size:13px;
+  margin-top:8px;
+}
+
+.roulette-window{
+  width:100%;
+  height:190px;
+  position:relative;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:12px;
+  background:#080d16;
+  margin:20px 0;
+}
+
+.roulette-window:before,
+.roulette-window:after{
+  content:"";
+  position:absolute;
+  z-index:3;
+  top:0;
+  bottom:0;
+  width:65px;
+  pointer-events:none;
+}
+
+.roulette-window:before{
+  left:0;
+  background:linear-gradient(90deg,#080d16,transparent);
+}
+
+.roulette-window:after{
+  right:0;
+  background:linear-gradient(270deg,#080d16,transparent);
+}
+
+.roulette-pointer{
+  position:absolute;
+  z-index:5;
+  top:0;
+  bottom:0;
+  left:50%;
+  width:3px;
+  transform:translateX(-50%);
+  background:var(--gold);
+  box-shadow:0 0 15px var(--gold);
+}
+
+.roulette-pointer:before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:50%;
+  transform:translateX(-50%);
+  border-left:9px solid transparent;
+  border-right:9px solid transparent;
+  border-top:13px solid var(--gold);
+}
+
+.roulette-pointer:after{
+  content:"";
+  position:absolute;
+  bottom:0;
+  left:50%;
+  transform:translateX(-50%);
+  border-left:9px solid transparent;
+  border-right:9px solid transparent;
+  border-bottom:13px solid var(--gold);
+}
+
+.roulette-track{
+  height:100%;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  width:max-content;
+  padding:0 10px;
+  transform:translateX(0);
+  will-change:transform;
+}
+
+.roulette-item{
+  width:145px;
+  height:150px;
+  flex:0 0 145px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:10px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:10px;
+  background:linear-gradient(160deg,#1e3048,#111927);
+  overflow:hidden;
+  position:relative;
+}
+
+.roulette-item img{
+  width:100%;
+  height:85px;
+  object-fit:contain;
+  display:block;
+  margin-bottom:7px;
+}
+
+.skin-placeholder{
+  height:85px;
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:35px;
+  color:#8296b1;
+  margin-bottom:7px;
+}
+
+.roulette-item strong{
+  font-size:10px;
+  line-height:1.3;
+  max-width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.roulette-item small{
+  color:var(--gold);
+  font-size:10px;
+  margin-top:5px;
+}
+
+.roulette-item.winner{
+  border-color:var(--gold);
+  box-shadow:inset 0 0 25px rgba(229,184,75,.15);
+}
+
+.spin-status{
+  color:var(--gold);
+  font-size:13px;
+  font-weight:bold;
+  letter-spacing:2px;
+  margin:16px 0;
+}
+
+.winner-result{
+  display:none;
+  padding:20px 10px 5px;
+  animation:appear .5s ease;
+}
+
+.winner-result.show{display:block}
+
+.winner-result h2{
+  color:var(--gold);
+  font-size:26px;
+  margin-bottom:12px;
+}
+
+.winner-image-wrap{
+  width:220px;
+  height:155px;
+  margin:10px auto 15px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid rgba(229,184,75,.35);
+  border-radius:12px;
+  background:rgba(0,0,0,.2);
+}
+
+.winner-image-wrap img{
+  width:95%;
+  height:95%;
+  object-fit:contain;
+}
+
+.winner-placeholder{
+  font-size:55px;
+}
+
+.winner-name{
+  font-size:21px;
+  font-weight:bold;
+  margin:10px 0;
+}
+
+.winner-details{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.8;
+  margin-bottom:20px;
+}
+
+.result-buttons{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+}
+
+.result-buttons button{
+  max-width:250px;
+}
+
+.secondary-btn{
+  border:1px solid var(--border);
+  border-radius:9px;
+  background:#26374d;
+  color:white;
+  padding:12px 18px;
+  font-weight:bold;
+  width:100%;
+}
+
+.secondary-btn:hover{border-color:var(--gold)}
 
 footer{
   text-align:center;
@@ -400,6 +627,15 @@ footer{
   .menu-bottom span{font-size:17px}
   .case-grid{grid-template-columns:1fr}
   main{padding-top:25px}
+  .roulette-box{padding:15px 10px}
+  .roulette-window{height:165px}
+  .roulette-item{
+    width:120px;
+    flex-basis:120px;
+    height:135px;
+  }
+  .roulette-item img,.skin-placeholder{height:72px}
+  .winner-image-wrap{width:190px;height:135px}
 }
 
 @media(max-width:370px){
@@ -408,6 +644,13 @@ footer{
   .menu-art svg{width:105px;height:85px}
   .menu-bottom h2{font-size:12px}
   .user-name{display:none}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms!important;
+    transition-duration:.01ms!important;
+  }
 }
 </style>
 </head>
@@ -513,9 +756,7 @@ footer{
       Marketplace is being prepared. Skin listings, buying and selling
       will be connected to the database in the next development stage.
     </p>
-    <div class="notice">
-      Marketplace transactions are not active yet.
-    </div>
+    <div class="notice">Marketplace transactions are not active yet.</div>
   </div>
 </section>
 
@@ -583,13 +824,37 @@ footer{
 
 <footer>SKiNUM © 2026 — THE CS2 SKIN UNIVERSE</footer>
 
-<!-- RESULT MODAL -->
+<!-- ROULETTE MODAL -->
 <div class="result-modal" id="resultModal">
-  <div class="result-box">
-    <div class="trophy">🏆</div>
-    <h2>CONGRATULATIONS!</h2>
-    <p id="resultText">Your skin has been added to inventory.</p>
-    <button class="primary-btn" onclick="closeResult()">CONTINUE</button>
+  <div class="roulette-box">
+
+    <div class="roulette-heading">
+      <h2 id="rouletteTitle">OPENING CASE</h2>
+      <p id="rouletteSubtitle">Good luck! Your next skin is waiting.</p>
+    </div>
+
+    <div class="roulette-window" id="rouletteWindow">
+      <div class="roulette-pointer"></div>
+      <div class="roulette-track" id="rouletteTrack"></div>
+    </div>
+
+    <div class="spin-status" id="spinStatus">ROLLING...</div>
+
+    <div class="winner-result" id="winnerResult">
+      <h2>CONGRATULATIONS!</h2>
+
+      <div class="winner-image-wrap" id="winnerImageWrap">
+        <div class="winner-placeholder">🎁</div>
+      </div>
+
+      <div class="winner-name" id="winnerName"></div>
+      <div class="winner-details" id="winnerDetails"></div>
+
+      <div class="result-buttons">
+        <button class="primary-btn" onclick="closeResult()">CONTINUE</button>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -600,7 +865,9 @@ const state = {
   balance:null,
   cases:[],
   inventory:[],
-  transactions:[]
+  transactions:[],
+  opening:false,
+  lastResult:null
 };
 
 const $ = id => document.getElementById(id);
@@ -632,6 +899,40 @@ async function api(url,options={}) {
 
 function money(cents) {
   return "$" + (Number(cents || 0)/100).toFixed(2);
+}
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g,char => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  })[char]);
+}
+
+function getSkinImage(skin) {
+  return skin?.imageUrl ||
+         skin?.image_url ||
+         skin?.image ||
+         skin?.icon ||
+         "";
+}
+
+function skinImageHTML(skin) {
+  const image = getSkinImage(skin);
+
+  if (!image) {
+    return '<div class="skin-placeholder">🔫</div>';
+  }
+
+  return `
+    <img
+      src="${escapeHTML(image)}"
+      alt="${escapeHTML(skin.name || "CS2 skin")}"
+      onerror="this.outerHTML='<div class=&quot;skin-placeholder&quot;>🔫</div>'"
+    >
+  `;
 }
 
 function showPage(pageId) {
@@ -749,16 +1050,6 @@ async function loadCases() {
   }
 }
 
-function escapeHTML(value) {
-  return String(value ?? "").replace(/[&<>"']/g,char => ({
-    "&":"&amp;",
-    "<":"&lt;",
-    ">":"&gt;",
-    '"':"&quot;",
-    "'":"&#39;"
-  })[char]);
-}
-
 function createIdempotencyKey() {
   if (window.crypto && crypto.randomUUID) {
     return crypto.randomUUID();
@@ -768,19 +1059,173 @@ function createIdempotencyKey() {
     Math.random().toString(36).slice(2);
 }
 
+/* ROULETTE HELPERS */
+
+function randomItem(items) {
+  if (!items || !items.length) return null;
+  return items[Math.floor(Math.random()*items.length)];
+}
+
+function buildRouletteItems(caseData,winner) {
+  const available = (caseData?.items || []).filter(item => item && item.name);
+
+  const pool = available.length
+    ? available
+    : [winner];
+
+  const total = 48;
+  const winnerIndex = 39;
+  const result = [];
+
+  for (let i=0;i<total;i++) {
+    if (i === winnerIndex) {
+      result.push({...winner,_isWinner:true});
+    } else {
+      const random = randomItem(pool) || winner;
+      result.push({...random,_isWinner:false});
+    }
+  }
+
+  return {items:result,winnerIndex};
+}
+
+function renderRouletteItem(item,index) {
+  return `
+    <div class="roulette-item ${item._isWinner ? "winner" : ""}"
+         data-index="${index}">
+      ${skinImageHTML(item)}
+      <strong>${escapeHTML(item.name || "Unknown Skin")}</strong>
+      <small>${money(item.valueCents)}</small>
+    </div>
+  `;
+}
+
+function resetRoulette() {
+  $("rouletteTrack").style.transition="none";
+  $("rouletteTrack").style.transform="translateX(0)";
+  $("rouletteTrack").innerHTML="";
+  $("winnerResult").classList.remove("show");
+  $("winnerResult").style.display="none";
+  $("spinStatus").style.display="block";
+  $("spinStatus").textContent="ROLLING...";
+  $("rouletteTitle").textContent="OPENING CASE";
+  $("rouletteSubtitle").textContent="Good luck! Your next skin is waiting.";
+}
+
+function wait(ms) {
+  return new Promise(resolve=>setTimeout(resolve,ms));
+}
+
+async function animateRoulette(caseData,winner) {
+  resetRoulette();
+
+  const built=buildRouletteItems(caseData,winner);
+  const track=$("rouletteTrack");
+
+  track.innerHTML=built.items
+    .map((item,index)=>renderRouletteItem(item,index))
+    .join("");
+
+  $("resultModal").classList.add("show");
+
+  // Browser layout hisob-kitobi uchun
+  await new Promise(resolve=>requestAnimationFrame(resolve));
+
+  const cards=track.querySelectorAll(".roulette-item");
+  const winnerCard=cards[built.winnerIndex];
+  const windowElement=$("rouletteWindow");
+
+  if (!winnerCard) {
+    throw new Error("Roulette could not locate the winning skin.");
+  }
+
+  const cardWidth=winnerCard.getBoundingClientRect().width;
+  const trackStyle=getComputedStyle(track);
+  const gap=parseFloat(trackStyle.gap) || 12;
+
+  const winnerCenter =
+    built.winnerIndex*(cardWidth+gap)+cardWidth/2;
+
+  const viewportCenter=windowElement.clientWidth/2;
+  const targetX=viewportCenter-winnerCenter;
+
+  const reducedMotion=window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
+
+  // Start position
+  track.style.transition="none";
+  track.style.transform="translateX(0px)";
+
+  await new Promise(resolve=>requestAnimationFrame(resolve));
+  await new Promise(resolve=>requestAnimationFrame(resolve));
+
+  // Spin
+  track.style.transition=reducedMotion
+    ? "transform .2s ease-out"
+    : "transform 6.5s cubic-bezier(.08,.72,.08,1)";
+
+  track.style.transform=`translateX(${targetX}px)`;
+
+  await wait(reducedMotion ? 300 : 6700);
+
+  // Mark exact winning card
+  cards.forEach(card=>card.classList.remove("winner"));
+  winnerCard.classList.add("winner");
+
+  $("spinStatus").textContent="YOU WON!";
+  $("rouletteTitle").textContent="CASE OPENED";
+  $("rouletteSubtitle").textContent="Your new skin has been added to inventory.";
+
+  await wait(450);
+
+  showWinner(winner);
+}
+
+function showWinner(skin) {
+  $("spinStatus").style.display="none";
+
+  const image=getSkinImage(skin);
+
+  $("winnerImageWrap").innerHTML = image
+    ? `<img src="${escapeHTML(image)}"
+         alt="${escapeHTML(skin.name)}"
+         onerror="this.outerHTML='<div class=&quot;winner-placeholder&quot;>🔫</div>'">`
+    : '<div class="winner-placeholder">🔫</div>';
+
+  $("winnerName").textContent=skin.name || "Unknown Skin";
+
+  $("winnerDetails").innerHTML =
+    escapeHTML(skin.weapon || "CS2 Skin")+
+    "<br>Rarity: "+escapeHTML(skin.rarity || "Unknown")+
+    "<br>Demo value: "+money(skin.valueCents);
+
+  $("winnerResult").style.display="block";
+  $("winnerResult").classList.add("show");
+}
+
 async function openCase(caseId) {
+  if (state.opening) return;
+
   if (!state.loggedIn) {
     alert("Please login with Steam first.");
     window.location.href="/auth/steam";
     return;
   }
 
+  state.opening=true;
+
   const buttons=document.querySelectorAll(".case-card button");
-  buttons.forEach(button => button.disabled=true);
+  buttons.forEach(button=>button.disabled=true);
 
   $("caseError").textContent="";
 
+  const caseData=state.cases.find(item =>
+    String(item.slug)===String(caseId)
+  );
+
   try {
+    // First: server chooses and saves the winning skin.
     const result=await api(
       "/api/cases/"+encodeURIComponent(caseId)+"/open",
       {
@@ -795,13 +1240,7 @@ async function openCase(caseId) {
       throw new Error("The server did not return a valid case result.");
     }
 
-    $("resultText").innerHTML =
-      "<strong>"+escapeHTML(result.skin.name)+"</strong><br>" +
-      escapeHTML(result.skin.weapon || "")+"<br>" +
-      "Rarity: "+escapeHTML(result.skin.rarity || "Unknown")+
-      "<br>Demo value: "+money(result.skin.valueCents);
-
-    $("resultModal").classList.add("show");
+    state.lastResult=result.skin;
 
     if (result.balanceCents !== undefined) {
       state.balance=Number(result.balanceCents);
@@ -810,17 +1249,31 @@ async function openCase(caseId) {
       await loadWallet();
     }
 
+    // Second: animation stops on the server-selected skin.
+    await animateRoulette(caseData,result.skin);
+
   } catch(error) {
+    console.error("Case opening:",error);
+    $("resultModal").classList.remove("show");
     $("caseError").textContent=error.message;
     await loadWallet();
+
   } finally {
-    buttons.forEach(button => button.disabled=false);
+    state.opening=false;
+    buttons.forEach(button=>button.disabled=false);
   }
 }
 
 function closeResult() {
   $("resultModal").classList.remove("show");
+  $("winnerResult").classList.remove("show");
+  $("winnerResult").style.display="none";
   loadWallet();
+
+  // Refresh inventory after a successful case opening.
+  if (state.loggedIn) {
+    loadInventory();
+  }
 }
 
 async function loadInventory() {
