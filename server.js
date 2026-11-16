@@ -5,6 +5,7 @@ const passport = require("passport");
 const SteamStrategy = require("passport-steam").Strategy;
 const session = require("express-session");
 const { Pool } = require("pg");
+const PgSession = require("connect-pg-simple")(session);
 
 const app = express();
 
@@ -22,15 +23,26 @@ if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL is missing!");
 }
 
-// PostgreSQL connection
+// POSTGRESQL
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   connectionTimeoutMillis: 10000,
-  max: 5
+  max: 5,
+  ssl: process.env.DATABASE_URL.includes("localhost")
+    ? false
+    : { rejectUnauthorized: false }
 });
 
 pool.on("error", (error) => {
-  console.error("POSTGRES POOL ERROR:", error);
+  console.error("POSTGRES ERROR:", error);
+});
+
+// POSTGRES SESSION STORE
+const sessionStore = new PgSession({
+  pool,
+  tableName: "user_sessions",
+  createTableIfMissing: true,
+  pruneSessionInterval: 15 * 60
 });
 
 app.set("trust proxy", 1);
@@ -40,6 +52,7 @@ app.use(express.json());
 app.use(
   session({
     name: "skinum-session",
+    store: sessionStore,
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
@@ -63,7 +76,9 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser(async (steamId, done) => {
   try {
     const result = await pool.query(
-      "SELECT steam_id, created_at FROM users WHERE steam_id = $1",
+      `SELECT steam_id, created_at
+       FROM users
+       WHERE steam_id = $1`,
       [steamId]
     );
 
@@ -112,7 +127,7 @@ passport.use(
           createdAt: result.rows[0].created_at
         });
       } catch (error) {
-        console.error("STEAM USER DATABASE ERROR:", error);
+        console.error("STEAM DATABASE ERROR:", error);
         return done(error);
       }
     }
@@ -160,7 +175,8 @@ app.get("/api/database", async (req, res) => {
 
     res.json({
       success: true,
-      database: "connected"
+      database: "connected",
+      sessions: "postgresql"
     });
   } catch (error) {
     console.error("DATABASE CHECK ERROR:", error);
@@ -200,10 +216,11 @@ app.get("/api/status", async (req, res) => {
   res.json({
     success: true,
     app: "SKiNUM",
-    version: "7.3",
+    version: "7.4",
     status: "online",
     steamLogin: true,
-    database
+    database,
+    sessionStore: "postgresql"
   });
 });
 
@@ -217,11 +234,10 @@ app.get("/", (req, res) => {
 // ERROR HANDLER
 app.use((error, req, res, next) => {
   console.error("SERVER ERROR:", error);
-
   res.status(500).send("Internal Server Error");
 });
 
-// CREATE DATABASE TABLES AND START
+// START SERVER
 async function startServer() {
   try {
     await pool.query(`
@@ -232,15 +248,18 @@ async function startServer() {
       )
     `);
 
+    await pool.query("SELECT 1");
+
     console.log("POSTGRES CONNECTED");
     console.log("USERS TABLE READY");
+    console.log("SESSION STORE: POSTGRESQL");
 
     app.listen(PORT, () => {
       console.log(`SKiNUM server running on port ${PORT}`);
       console.log(`SITE_URL: ${SITE_URL}`);
     });
   } catch (error) {
-    console.error("DATABASE STARTUP ERROR:", error);
+    console.error("STARTUP ERROR:", error);
     process.exit(1);
   }
 }
