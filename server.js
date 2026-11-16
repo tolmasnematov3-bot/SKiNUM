@@ -55,7 +55,6 @@ const sessionStore = new PgSession({
 });
 
 app.set("trust proxy", 1);
-
 app.use(express.json({ limit: "100kb" }));
 
 app.use(
@@ -76,7 +75,7 @@ app.use(
 );
 
 // ==========================================
-// PASSPORT CONFIGURATION
+// PASSPORT
 // ==========================================
 
 app.use(passport.initialize());
@@ -173,6 +172,248 @@ function asyncRoute(handler) {
   };
 }
 
+function normalizeName(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+function isValidImageUrl(value) {
+  if (typeof value !== "string") return false;
+
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+// ==========================================
+// TAKE.SKIN IMAGE LOOKUP
+// ==========================================
+
+const TAKE_SKIN_API =
+  "https://take.skin/api/public/v1";
+
+const TAKE_SKIN_MOBILE =
+  "https://take.skin/api/mobile";
+
+async function fetchJson(url) {
+  const response = await fetch(url, {
+    headers: {
+      Accept: "application/json",
+      "User-Agent": "SKiNUM-CS2-Platform/1.0"
+    },
+    signal: AbortSignal.timeout(8000)
+  });
+
+  if (!response.ok) {
+    throw new Error(`Image API HTTP ${response.status}`);
+  }
+
+  return response.json();
+}
+
+function findImageUrl(data, depth = 0) {
+  if (!data || depth > 6) return null;
+
+  if (Array.isArray(data)) {
+    for (const item of data) {
+      const found = findImageUrl(item, depth + 1);
+      if (found) return found;
+    }
+    return null;
+  }
+
+  if (typeof data !== "object") return null;
+
+  const preferredKeys = [
+    "image",
+    "imageUrl",
+    "image_url",
+    "render",
+    "renderUrl",
+    "render_url",
+    "preview",
+    "previewUrl",
+    "preview_url",
+    "icon",
+    "thumbnail"
+  ];
+
+  for (const key of preferredKeys) {
+    const value = data[key];
+
+    if (isValidImageUrl(value)) {
+      return value;
+    }
+  }
+
+  for (const value of Object.values(data)) {
+    if (value && typeof value === "object") {
+      const found = findImageUrl(value, depth + 1);
+      if (found) return found;
+    }
+  }
+
+  return null;
+}
+
+function findSkinSlug(data, targetName, depth = 0) {
+  if (!data || depth > 5) return null;
+
+  if (Array.isArray(data)) {
+    for (const item of data) {
+      const found = findSkinSlug(item, targetName, depth + 1);
+      if (found) return found;
+    }
+    return null;
+  }
+
+  if (typeof data !== "object") return null;
+
+  const target = normalizeName(targetName);
+
+  const candidates = [
+    data.marketHashName,
+    data.market_hash_name,
+    data.name,
+    data.displayName,
+    data.display_name
+  ].filter(Boolean);
+
+  const matches = candidates.some((name) => {
+    const normalized = normalizeName(name);
+
+    return normalized === target ||
+      normalized.includes(target) ||
+      target.includes(normalized);
+  });
+
+  if (matches && typeof data.slug === "string") {
+    return data.slug;
+  }
+
+  for (const value of Object.values(data)) {
+    if (value && typeof value === "object") {
+      const found = findSkinSlug(value, targetName, depth + 1);
+      if (found) return found;
+    }
+  }
+
+  return null;
+}
+
+async function lookupSkinImage(skin) {
+  try {
+    const searchText = `${skin.weapon} ${skin.display_name
+      .split("|")
+      .slice(1)
+      .join("|")
+      .trim()}`;
+
+    const searchUrl =
+      `${TAKE_SKIN_API}/skins?search=${encodeURIComponent(searchText)}&limit=20`;
+
+    const searchData = await fetchJson(searchUrl);
+
+    let imageUrl = findImageUrl(searchData);
+
+    const slug = findSkinSlug(
+      searchData,
+      skin.display_name
+    );
+
+    if (imageUrl) {
+      return imageUrl;
+    }
+
+    if (slug) {
+      const detailUrl =
+        `${TAKE_SKIN_MOBILE}/skins/${encodeURIComponent(slug)}`;
+
+      const detailData = await fetchJson(detailUrl);
+      imageUrl = findImageUrl(detailData);
+
+      if (imageUrl) {
+        return imageUrl;
+      }
+    }
+
+    console.log("IMAGE NOT FOUND:", skin.display_name);
+    return null;
+
+  } catch (error) {
+    console.error(
+      "IMAGE LOOKUP FAILED:",
+      skin.display_name,
+      error.message
+    );
+
+    return null;
+  }
+}
+
+let imageSyncRunning = false;
+
+async function syncSkinImages() {
+  if (imageSyncRunning) return;
+
+  imageSyncRunning = true;
+
+  try {
+    const result = await pool.query(
+      `SELECT id, slug, display_name, weapon
+       FROM skins
+       WHERE image_url IS NULL OR image_url = ''
+       ORDER BY id`
+    );
+
+    if (!result.rows.length) {
+      console.log("SKIN IMAGES: ALL READY");
+      return;
+    }
+
+    console.log(
+      `SKIN IMAGE SYNC: ${result.rows.length} skins`
+    );
+
+    // Three parallel requests at a time.
+    for (let i = 0; i < result.rows.length; i += 3) {
+      const batch = result.rows.slice(i, i + 3);
+
+      await Promise.all(
+        batch.map(async (skin) => {
+          const imageUrl = await lookupSkinImage(skin);
+
+          if (!imageUrl) return;
+
+          await pool.query(
+            `UPDATE skins
+             SET image_url = $1
+             WHERE id = $2`,
+            [imageUrl, skin.id]
+          );
+
+          console.log(
+            "SKIN IMAGE SAVED:",
+            skin.display_name
+          );
+        })
+      );
+    }
+
+    console.log("SKIN IMAGE SYNC FINISHED");
+
+  } catch (error) {
+    console.error("IMAGE SYNC ERROR:", error);
+  } finally {
+    imageSyncRunning = false;
+  }
+}
+
 // ==========================================
 // DATABASE INITIALIZATION
 // ==========================================
@@ -205,6 +446,12 @@ async function initializeDatabase() {
       created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
       CHECK (value_cents >= 0)
     )
+  `);
+
+  // Upgrade existing database safely.
+  await pool.query(`
+    ALTER TABLE skins
+    ADD COLUMN IF NOT EXISTS image_url TEXT
   `);
 
   await pool.query(`
@@ -283,7 +530,9 @@ async function initializeDatabase() {
     ON transactions(steam_id, created_at DESC)
   `);
 
+  // ========================================
   // DEMO SKINS
+  // ========================================
 
   const demoSkins = [
     ["demo-ak-redline", "AK-47 | Redline", "AK-47", "Classified", 1200],
@@ -304,12 +553,19 @@ async function initializeDatabase() {
       `INSERT INTO skins
         (slug, display_name, weapon, rarity, value_cents)
        VALUES ($1, $2, $3, $4, $5)
-       ON CONFLICT (slug) DO NOTHING`,
+       ON CONFLICT (slug)
+       DO UPDATE SET
+         display_name = EXCLUDED.display_name,
+         weapon = EXCLUDED.weapon,
+         rarity = EXCLUDED.rarity,
+         value_cents = EXCLUDED.value_cents`,
       skin
     );
   }
 
+  // ========================================
   // DEMO CASES
+  // ========================================
 
   const demoCases = [
     ["knife-case", "Knife Case", 2500],
@@ -326,7 +582,9 @@ async function initializeDatabase() {
     );
   }
 
-  // DEMO DROP PROBABILITIES
+  // ========================================
+  // DROP PROBABILITIES
+  // ========================================
 
   const demoDrops = [
     ["knife-case", "demo-ak-redline", 7000],
@@ -348,12 +606,15 @@ async function initializeDatabase() {
        SELECT c.id, s.id, $3
        FROM cases c, skins s
        WHERE c.slug = $1 AND s.slug = $2
-       ON CONFLICT (case_id, skin_id) DO NOTHING`,
+       ON CONFLICT (case_id, skin_id)
+       DO UPDATE SET weight_bps = EXCLUDED.weight_bps`,
       drop
     );
   }
 
-  // VALIDATE CASE PROBABILITIES
+  // ========================================
+  // VALIDATE PROBABILITIES
+  // ========================================
 
   const invalidCases = await pool.query(`
     SELECT c.slug,
@@ -391,7 +652,6 @@ app.get(
     failureRedirect: "/?steam_login=failed"
   }),
   (req, res, next) => {
-
     console.log("STEAM LOGIN SUCCESS:", req.user.steamId);
 
     req.session.save((error) => {
@@ -411,7 +671,6 @@ app.get(
 // ==========================================
 
 app.get("/api/me", (req, res) => {
-
   if (!req.user) {
     return res.json({
       loggedIn: false,
@@ -436,7 +695,6 @@ app.get(
   "/api/wallet",
   requireLogin,
   asyncRoute(async (req, res) => {
-
     const result = await pool.query(
       `SELECT demo_balance_cents
        FROM users
@@ -472,28 +730,31 @@ app.get(
 app.get(
   "/api/cases",
   asyncRoute(async (req, res) => {
-
     const result = await pool.query(`
       SELECT
         c.id,
         c.slug,
         c.name,
         c.price_cents,
-        json_agg(
-          json_build_object(
-            'id', s.id,
-            'name', s.display_name,
-            'weapon', s.weapon,
-            'rarity', s.rarity,
-            'image', s.image_url,
-            'valueCents', s.value_cents,
-            'chance', ci.weight_bps / 100.0
-          )
-          ORDER BY ci.weight_bps DESC
+        COALESCE(
+          json_agg(
+            json_build_object(
+              'id', s.id,
+              'name', s.display_name,
+              'weapon', s.weapon,
+              'rarity', s.rarity,
+              'image', s.image_url,
+              'imageUrl', s.image_url,
+              'valueCents', s.value_cents,
+              'chance', ci.weight_bps / 100.0
+            )
+            ORDER BY ci.weight_bps DESC
+          ) FILTER (WHERE s.id IS NOT NULL),
+          '[]'::json
         ) AS items
       FROM cases c
-      JOIN case_items ci ON ci.case_id = c.id
-      JOIN skins s ON s.id = ci.skin_id
+      LEFT JOIN case_items ci ON ci.case_id = c.id
+      LEFT JOIN skins s ON s.id = ci.skin_id
       WHERE c.active = TRUE
       GROUP BY c.id
       ORDER BY c.id
@@ -522,7 +783,6 @@ app.post(
   "/api/cases/:caseId/open",
   requireLogin,
   asyncRoute(async (req, res) => {
-
     const caseId = String(req.params.caseId);
 
     if (!/^(?:\d+|[a-z0-9-]+)$/i.test(caseId)) {
@@ -551,8 +811,6 @@ app.post(
     try {
       await client.query("BEGIN");
 
-      // Lock user row to prevent concurrent wallet operations.
-
       const userResult = await client.query(
         `SELECT demo_balance_cents
          FROM users
@@ -565,16 +823,17 @@ app.post(
         throw new Error("USER_NOT_FOUND");
       }
 
-      // Check repeated request after locking the user.
-
+      // Prevent duplicate case opening requests.
       const previous = await client.query(
         `SELECT
            o.id,
            o.cost_cents,
            o.created_at,
+           s.id AS skin_id,
            s.display_name,
            s.weapon,
            s.rarity,
+           s.image_url,
            s.value_cents,
            ui.id AS inventory_id
          FROM case_openings o
@@ -610,15 +869,16 @@ app.post(
           balanceCents: currentBalance,
           balance: currentBalance / 100,
           skin: {
+            id: old.skin_id,
             name: old.display_name,
             weapon: old.weapon,
             rarity: old.rarity,
+            image: old.image_url,
+            imageUrl: old.image_url,
             valueCents: Number(old.value_cents)
           }
         });
       }
-
-      // Find case by numeric ID or slug.
 
       const isNumericId = /^\d+$/.test(caseId);
 
@@ -641,7 +901,6 @@ app.post(
       }
 
       const selectedCase = caseResult.rows[0];
-
       const price = Number(selectedCase.price_cents);
 
       const balance = Number(
@@ -652,14 +911,13 @@ app.post(
         throw new Error("INSUFFICIENT_BALANCE");
       }
 
-      // Get available skins.
-
       const dropResult = await client.query(
         `SELECT
            s.id,
            s.display_name,
            s.weapon,
            s.rarity,
+           s.image_url,
            s.value_cents,
            ci.weight_bps
          FROM case_items ci
@@ -681,8 +939,7 @@ app.post(
         throw new Error("INVALID_CASE_PROBABILITIES");
       }
 
-      // Secure server-side random selection.
-
+      // Server-side random selection.
       const randomNumber = crypto.randomInt(totalWeight);
 
       let cursor = 0;
@@ -703,16 +960,12 @@ app.post(
 
       const newBalance = balance - price;
 
-      // Deduct demo balance.
-
       await client.query(
         `UPDATE users
          SET demo_balance_cents = $1
          WHERE steam_id = $2`,
         [newBalance, req.user.steamId]
       );
-
-      // Add winning skin to inventory.
 
       const inventoryResult = await client.query(
         `INSERT INTO user_inventory
@@ -721,8 +974,6 @@ app.post(
          RETURNING id, created_at`,
         [req.user.steamId, wonSkin.id]
       );
-
-      // Save transaction.
 
       await client.query(
         `INSERT INTO transactions
@@ -735,8 +986,6 @@ app.post(
           `Opened ${selectedCase.name}`
         ]
       );
-
-      // Save opening history.
 
       const openingResult = await client.query(
         `INSERT INTO case_openings
@@ -776,12 +1025,13 @@ app.post(
           name: wonSkin.display_name,
           weapon: wonSkin.weapon,
           rarity: wonSkin.rarity,
+          image: wonSkin.image_url,
+          imageUrl: wonSkin.image_url,
           valueCents: Number(wonSkin.value_cents)
         }
       });
 
     } catch (error) {
-
       await client.query("ROLLBACK");
 
       const knownErrors = {
@@ -825,7 +1075,6 @@ app.get(
   "/api/inventory",
   requireLogin,
   asyncRoute(async (req, res) => {
-
     const result = await pool.query(
       `SELECT
          ui.id AS inventory_id,
@@ -852,6 +1101,7 @@ app.get(
         weapon: item.weapon,
         rarity: item.rarity,
         image: item.image_url,
+        imageUrl: item.image_url,
         status: item.status,
         source: item.source,
         valueCents: Number(item.value_cents),
@@ -869,7 +1119,6 @@ app.get(
   "/api/transactions",
   requireLogin,
   asyncRoute(async (req, res) => {
-
     const result = await pool.query(
       `SELECT
          id,
@@ -900,13 +1149,60 @@ app.get(
 );
 
 // ==========================================
+// IMAGE SYNC STATUS / MANUAL SYNC
+// ==========================================
+
+app.get(
+  "/api/images/status",
+  asyncRoute(async (req, res) => {
+    const result = await pool.query(`
+      SELECT
+        COUNT(*)::int AS total,
+        COUNT(image_url)::int AS with_images
+      FROM skins
+    `);
+
+    const total = result.rows[0].total;
+    const withImages = result.rows[0].with_images;
+
+    res.json({
+      success: true,
+      total,
+      withImages,
+      missingImages: total - withImages,
+      syncRunning: imageSyncRunning
+    });
+  })
+);
+
+app.post(
+  "/api/images/sync",
+  requireLogin,
+  (req, res) => {
+    if (imageSyncRunning) {
+      return res.json({
+        success: true,
+        message: "Image sync is already running."
+      });
+    }
+
+    // Run in background.
+    syncSkinImages();
+
+    res.json({
+      success: true,
+      message: "Image sync started."
+    });
+  }
+);
+
+// ==========================================
 // DATABASE STATUS
 // ==========================================
 
 app.get(
   "/api/database",
   asyncRoute(async (req, res) => {
-
     await pool.query("SELECT 1");
 
     res.json({
@@ -924,13 +1220,12 @@ app.get(
 app.get(
   "/api/status",
   asyncRoute(async (req, res) => {
-
     await pool.query("SELECT 1");
 
     res.json({
       success: true,
       app: "SKiNUM",
-      version: "7.6",
+      version: "7.7",
       status: "online",
       steamLogin: true,
       database: "connected",
@@ -941,6 +1236,7 @@ app.get(
         "cases",
         "inventory",
         "transactions",
+        "skin-image-sync",
         "postgresql-sessions"
       ]
     });
@@ -954,15 +1250,12 @@ app.get(
 app.get(
   "/auth/logout",
   (req, res, next) => {
-
     req.logout((error) => {
-
       if (error) {
         return next(error);
       }
 
       req.session.destroy((sessionError) => {
-
         if (sessionError) {
           return next(sessionError);
         }
@@ -997,7 +1290,6 @@ app.get("/", (req, res) => {
 // ==========================================
 
 app.use((error, req, res, next) => {
-
   console.error("SERVER ERROR:", error);
 
   if (res.headersSent) {
@@ -1016,31 +1308,34 @@ app.use((error, req, res, next) => {
 // ==========================================
 
 async function startServer() {
-
   try {
-
     await initializeDatabase();
 
     app.listen(PORT, () => {
-
       console.log("================================");
-      console.log("SKiNUM V7.6 SERVER ONLINE");
+      console.log("SKiNUM V7.7 SERVER ONLINE");
       console.log("DATABASE: CONNECTED");
       console.log("SESSION STORE: POSTGRESQL");
       console.log("STEAM AUTH: READY");
       console.log("CASES: READY");
       console.log("INVENTORY: READY");
+      console.log("SKIN IMAGE SYNC: ENABLED");
       console.log("WALLET: DEMO MODE");
       console.log("SITE:", SITE_URL);
       console.log("================================");
 
+      // Do not block server startup if image API is unavailable.
+      syncSkinImages();
+
+      // Retry missing images every 12 hours.
+      setInterval(() => {
+        syncSkinImages();
+      }, 12 * 60 * 60 * 1000);
     });
 
   } catch (error) {
-
     console.error("STARTUP ERROR:", error);
     process.exit(1);
-
   }
 }
 
