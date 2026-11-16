@@ -1,12 +1,13 @@
 
 {
   "name": "skinum",
-  "version": "7.3.0",
+  "version": "7.4.0",
   "private": true,
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
+    "connect-pg-simple": "^10.0.0",
     "express": "^5.1.0",
     "express-session": "^1.18.2",
     "passport": "^0.7.0",
