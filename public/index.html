@@ -1,104 +1,1477 @@
 
-button.disabled=false);
-}
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080b12">
+<title>SKiNUM | CS2 Skin Universe</title>
 
-function closeResult(){
-$("resultModal").classList.remove("show");
-$("winnerResult").classList.remove("show");
-$("winnerResult").style.display="none";
-loadWallet();
-if(state.loggedIn)loadInventory();
-}
-
-async function loadInventory(){
-const container=$("inventoryContent");
-
-if(!state.loggedIn){
-container.innerHTML=`
-<div class="content-panel" style="text-align:center;padding:45px 15px">
-<h2>STEAM LOGIN REQUIRED</h2>
-<p class="info-text">Login with Steam to view your inventory.</p>
-<button class="primary-btn" style="max-width:220px;margin-top:20px" onclick="steamAction()">LOGIN WITH STEAM</button>
-</div>`;
-return;
+<style>
+:root {
+  --bg:#080b12;
+  --panel:#111927;
+  --panel2:#192437;
+  --gold:#e5b84b;
+  --gold2:#f7d982;
+  --text:#f5f6fa;
+  --muted:#8995a8;
+  --border:rgba(255,255,255,.08);
+  --green:#42d392;
+  --red:#ff6474;
 }
 
-container.innerHTML='<div class="empty-state">Loading inventory...</div>';
-
-try{
-const [inventoryData,transactionData]=await Promise.all([
-api("/api/inventory"),
-api("/api/transactions")
-]);
-
-state.inventory=inventoryData.inventory||[];
-state.transactions=transactionData.transactions||[];
-renderInventory("skins");
-
-}catch(error){
-container.innerHTML='<div class="empty-state">'+escapeHTML(error.message)+'</div>';
-}
+* {
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
 }
 
-function renderInventory(tab){
-const container=$("inventoryContent");
+body {
+  background:
+    radial-gradient(ellipse at 50% -20%,rgba(229,184,75,.12),transparent 50%),
+    var(--bg);
+  color:var(--text);
+  font-family:Arial,Helvetica,sans-serif;
+  min-height:100vh;
+}
 
-let html=`
-<div class="content-panel">
-<h2>MY COLLECTION</h2>
-<p class="info-text">Your account's skins and transaction history.</p>
-<div class="tabs">
-<button class="tab-btn ${tab==="skins"?"active":""}" onclick="renderInventory('skins')">MY SKINS</button>
-<button class="tab-btn ${tab==="transactions"?"active":""}" onclick="renderInventory('transactions')">TRANSACTIONS</button>
+button {
+  font-family:inherit;
+  cursor:pointer;
+}
+
+button:disabled {
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+header {
+  height:76px;
+  padding:0 5%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-bottom:1px solid var(--border);
+  background:rgba(8,11,18,.94);
+  position:sticky;
+  top:0;
+  z-index:50;
+  backdrop-filter:blur(15px);
+}
+
+.logo {
+  color:var(--gold);
+  font-size:29px;
+  font-weight:1000;
+  letter-spacing:2px;
+  cursor:pointer;
+}
+
+.logo span {
+  color:white;
+}
+
+.header-right {
+  display:flex;
+  align-items:center;
+  gap:13px;
+}
+
+.balance-box {
+  background:var(--panel);
+  border:1px solid rgba(229,184,75,.3);
+  padding:10px 15px;
+  border-radius:10px;
+  color:var(--gold);
+  font-weight:bold;
+}
+
+.steam-btn {
+  border:0;
+  border-radius:9px;
+  padding:12px 18px;
+  background:var(--gold);
+  color:#17120a;
+  font-weight:900;
+  transition:.2s;
+}
+
+.steam-btn:hover,
+.primary-btn:hover {
+  background:var(--gold2);
+  transform:translateY(-2px);
+}
+
+.logout-btn {
+  background:var(--panel2);
+  border:1px solid var(--border);
+  color:white;
+  border-radius:8px;
+  padding:10px 13px;
+}
+
+main {
+  width:92%;
+  max-width:1250px;
+  margin:auto;
+  min-height:75vh;
+  padding:35px 0 70px;
+}
+
+.hero {
+  text-align:center;
+  padding:65px 15px 50px;
+}
+
+.hero-label {
+  color:var(--gold);
+  letter-spacing:5px;
+  font-size:12px;
+  font-weight:bold;
+  margin-bottom:17px;
+}
+
+.hero h1 {
+  font-size:clamp(34px,6vw,65px);
+  font-weight:1000;
+  margin-bottom:15px;
+}
+
+.hero h1 span {
+  color:var(--gold);
+}
+
+.hero p {
+  color:var(--muted);
+  line-height:1.7;
+  max-width:600px;
+  margin:0 auto 27px;
+}
+
+.primary-btn {
+  background:var(--gold);
+  color:#17120a;
+  border:0;
+  border-radius:9px;
+  padding:14px 24px;
+  font-weight:900;
+  transition:.2s;
+}
+
+.secondary-btn {
+  background:var(--panel2);
+  color:white;
+  border:1px solid var(--border);
+  padding:13px 20px;
+  border-radius:9px;
+  font-weight:bold;
+}
+
+.section-heading {
+  margin:35px 0 20px;
+}
+
+.section-heading h2 {
+  font-size:25px;
+  margin-bottom:8px;
+}
+
+.section-heading p {
+  color:var(--muted);
+  font-size:14px;
+}
+
+.menu-grid {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:17px;
+  margin-top:25px;
+}
+
+.menu-card {
+  background:linear-gradient(145deg,#182337,#0e1521);
+  border:1px solid var(--border);
+  border-radius:15px;
+  min-height:185px;
+  padding:25px 18px;
+  text-align:center;
+  cursor:pointer;
+  transition:.25s;
+}
+
+.menu-card:hover {
+  transform:translateY(-6px);
+  border-color:var(--gold);
+  box-shadow:0 12px 35px rgba(0,0,0,.3);
+}
+
+.menu-icon {
+  font-size:43px;
+  margin-bottom:15px;
+}
+
+.menu-card h3 {
+  margin-bottom:8px;
+  font-size:18px;
+}
+
+.menu-card p {
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.5;
+}
+
+.content-panel {
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:15px;
+  padding:24px;
+  margin-top:25px;
+}
+
+.back-btn {
+  background:transparent;
+  color:var(--gold);
+  border:1px solid rgba(229,184,75,.35);
+  border-radius:8px;
+  padding:10px 15px;
+  margin-bottom:22px;
+}
+
+.case-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:20px;
+}
+
+.case-card {
+  background:linear-gradient(145deg,#1a263a,#101725);
+  border:1px solid var(--border);
+  border-radius:15px;
+  padding:20px;
+  text-align:center;
+  transition:.2s;
+}
+
+.case-card:hover {
+  border-color:var(--gold);
+  transform:translateY(-4px);
+}
+
+.case-art {
+  height:170px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  overflow:hidden;
+  margin-bottom:15px;
+  background:radial-gradient(circle,rgba(229,184,75,.12),transparent 70%);
+  border-radius:12px;
+}
+
+.case-art img {
+  width:43%;
+  height:125px;
+  object-fit:contain;
+  filter:drop-shadow(0 8px 10px rgba(0,0,0,.5));
+}
+
+.case-art img:only-child {
+  width:75%;
+  height:145px;
+}
+
+.case-card h3 {
+  margin-bottom:8px;
+}
+
+.case-price {
+  color:var(--gold);
+  font-weight:bold;
+  margin:12px 0;
+}
+
+.case-open-btn {
+  width:100%;
+  padding:12px;
+  border:0;
+  border-radius:8px;
+  background:var(--gold);
+  color:#17120a;
+  font-weight:900;
+}
+
+.skin-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-top:20px;
+}
+
+.skin-card {
+  background:#0c1420;
+  border:1px solid var(--border);
+  padding:12px;
+  border-radius:10px;
+  text-align:center;
+}
+
+.skin-card img {
+  width:100%;
+  height:105px;
+  object-fit:contain;
+}
+
+.skin-card h4 {
+  font-size:13px;
+  margin:8px 0;
+}
+
+.skin-card small {
+  color:var(--muted);
+}
+
+.roulette-wrap {
+  overflow:hidden;
+  background:#080e18;
+  border:1px solid rgba(229,184,75,.35);
+  border-radius:13px;
+  padding:18px 0;
+  margin:22px 0;
+  position:relative;
+}
+
+.roulette-wrap:before {
+  content:"";
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:50%;
+  width:3px;
+  background:var(--gold);
+  z-index:5;
+  box-shadow:0 0 15px var(--gold);
+}
+
+.roulette-track {
+  display:flex;
+  gap:10px;
+  width:max-content;
+  transform:translateX(0);
+}
+
+.roulette-item {
+  width:130px;
+  height:125px;
+  flex-shrink:0;
+  border:1px solid var(--border);
+  background:#141f30;
+  border-radius:9px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:8px;
+}
+
+.roulette-item img {
+  width:100%;
+  height:80px;
+  object-fit:contain;
+}
+
+.roulette-item span {
+  font-size:10px;
+  text-align:center;
+  margin-top:5px;
+  color:#dce2ed;
+}
+
+.result-modal {
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:100;
+  background:rgba(0,0,0,.85);
+  align-items:center;
+  justify-content:center;
+  padding:15px;
+}
+
+.result-modal.show {
+  display:flex;
+}
+
+.result-box {
+  width:100%;
+  max-width:430px;
+  background:#131e2e;
+  border:1px solid var(--gold);
+  border-radius:16px;
+  padding:28px;
+  text-align:center;
+  animation:pop .3s ease;
+}
+
+@keyframes pop {
+  from {transform:scale(.8);opacity:0}
+  to {transform:scale(1);opacity:1}
+}
+
+.result-box img {
+  width:100%;
+  height:190px;
+  object-fit:contain;
+  margin:15px 0;
+}
+
+.result-box h2 {
+  color:var(--gold);
+  margin-bottom:10px;
+}
+
+.inventory-grid {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+}
+
+.inventory-card {
+  background:#0d1623;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:13px;
+  text-align:center;
+}
+
+.inventory-card img {
+  width:100%;
+  height:115px;
+  object-fit:contain;
+}
+
+.inventory-card h4 {
+  font-size:13px;
+  margin:8px 0;
+}
+
+.inventory-card p {
+  font-size:12px;
+  color:var(--gold);
+}
+
+.tabs {
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin:20px 0;
+}
+
+.tab-btn {
+  padding:10px 15px;
+  background:var(--panel2);
+  color:white;
+  border:1px solid var(--border);
+  border-radius:8px;
+}
+
+.tab-btn.active {
+  background:var(--gold);
+  color:#17120a;
+}
+
+.transaction {
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  border-bottom:1px solid var(--border);
+  padding:15px 5px;
+  font-size:13px;
+}
+
+.positive {
+  color:var(--green);
+}
+
+.negative {
+  color:var(--red);
+}
+
+.notice {
+  border:1px solid rgba(229,184,75,.25);
+  background:rgba(229,184,75,.06);
+  padding:14px;
+  border-radius:9px;
+  color:#d7c58e;
+  font-size:13px;
+  line-height:1.6;
+  margin:15px 0;
+}
+
+.empty {
+  text-align:center;
+  color:var(--muted);
+  padding:40px 15px;
+}
+
+.status {
+  color:var(--muted);
+  font-size:12px;
+  text-align:center;
+  margin-top:20px;
+}
+
+footer {
+  border-top:1px solid var(--border);
+  padding:25px 5%;
+  text-align:center;
+  color:var(--muted);
+  font-size:12px;
+}
+
+footer span {
+  color:var(--gold);
+}
+
+@media(max-width:850px) {
+  .menu-grid {grid-template-columns:repeat(2,1fr)}
+  .case-grid {grid-template-columns:repeat(2,1fr)}
+  .inventory-grid {grid-template-columns:repeat(3,1fr)}
+}
+
+@media(max-width:550px) {
+  header {padding:0 4%;height:68px}
+  .logo {font-size:23px}
+  .balance-box {padding:8px;font-size:12px}
+  .steam-btn {padding:10px;font-size:12px}
+  .logout-btn {padding:9px;font-size:11px}
+  main {width:94%;padding-top:15px}
+  .hero {padding:48px 5px 35px}
+  .menu-grid {gap:10px}
+  .menu-card {min-height:155px;padding:18px 10px}
+  .menu-icon {font-size:35px}
+  .case-grid {grid-template-columns:1fr}
+  .skin-grid {grid-template-columns:repeat(2,1fr)}
+  .inventory-grid {grid-template-columns:repeat(2,1fr)}
+  .content-panel {padding:15px}
+  .roulette-item {width:105px}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo" onclick="showPage('home')">SK<span>i</span>NUM</div>
+
+  <div class="header-right">
+    <div class="balance-box" id="balanceBox">$0.00</div>
+    <button class="steam-btn" id="steamButton" onclick="steamLogin()">
+      STEAM LOGIN
+    </button>
+    <button class="logout-btn" id="logoutButton"
+      onclick="logout()" style="display:none">
+      LOGOUT
+    </button>
+  </div>
+</header>
+
+<main>
+
+<section id="homePage">
+
+  <div class="hero">
+    <div class="hero-label">THE CS2 SKIN UNIVERSE</div>
+    <h1>WELCOME TO <span>SKiNUM</span></h1>
+    <p>
+      Discover rare skins. Open cases. Upgrade your collection.
+      Your CS2 skin journey starts here.
+    </p>
+    <button class="primary-btn" onclick="showPage('cases')">
+      EXPLORE CASES
+    </button>
+  </div>
+
+  <div class="section-heading">
+    <h2>Explore the Platform</h2>
+    <p>Choose your destination</p>
+  </div>
+
+  <div class="menu-grid">
+
+    <div class="menu-card" onclick="showPage('market')">
+      <div class="menu-icon">🛒</div>
+      <h3>MARKET</h3>
+      <p>Buy and sell CS2 skins</p>
+    </div>
+
+    <div class="menu-card" onclick="showPage('cases')">
+      <div class="menu-icon">🎁</div>
+      <h3>CASES</h3>
+      <p>Open cases and discover skins</p>
+    </div>
+
+    <div class="menu-card" onclick="showPage('upgrade')">
+      <div class="menu-icon">⚡</div>
+      <h3>UPGRADE</h3>
+      <p>Upgrade your skin collection</p>
+    </div>
+
+    <div class="menu-card" onclick="showPage('inventory')">
+      <div class="menu-icon">🎒</div>
+      <h3>INVENTORY</h3>
+      <p>Your skins and transactions</p>
+    </div>
+
+  </div>
+
+  <div class="content-panel">
+    <h3>Welcome to SKiNUM</h3>
+    <p style="color:var(--muted);margin-top:10px;line-height:1.7">
+      Open cases, collect skins and manage your inventory.
+      Sign in with Steam to access your account.
+    </p>
+    <div class="notice">
+      DEMO MODE: The current wallet uses demo credits.
+      No real-money deposits or withdrawals are available yet.
+    </div>
+  </div>
+
+</section>
+
+<section id="casesPage" style="display:none">
+  <button class="back-btn" onclick="showPage('home')">← HOME</button>
+
+  <div class="section-heading">
+    <h2>CASE COLLECTION</h2>
+    <p>Choose a case and try your luck</p>
+  </div>
+
+  <div class="notice">
+    Each case has its own drop probabilities. The server selects the winning
+    skin and the roulette displays that same result.
+  </div>
+
+  <div id="casesContainer" class="case-grid">
+    <div class="empty">Loading cases...</div>
+  </div>
+</section>
+
+<section id="openCasePage" style="display:none">
+  <button class="back-btn" onclick="showPage('cases')">← BACK TO CASES</button>
+
+  <div class="section-heading">
+    <h2 id="openingCaseName">CASE OPENING</h2>
+    <p id="openingCasePrice"></p>
+  </div>
+
+  <div class="content-panel">
+    <div class="roulette-wrap">
+      <div class="roulette-track" id="rouletteTrack"></div>
+    </div>
+
+    <div style="text-align:center">
+      <button class="primary-btn" id="openCaseButton"
+        onclick="openSelectedCase()">
+        OPEN CASE
+      </button>
+    </div>
+
+    <div class="status" id="openingStatus">
+      Ready to open
+    </div>
+  </div>
+
+  <div class="section-heading">
+    <h2>Possible Rewards</h2>
+    <p>Items available in this case</p>
+  </div>
+
+  <div id="possibleRewards" class="skin-grid"></div>
+</section>
+
+<section id="marketPage" style="display:none">
+  <button class="back-btn" onclick="showPage('home')">← HOME</button>
+
+  <div class="section-heading">
+    <h2>SKiNUM MARKET</h2>
+    <p>Buy and sell CS2 skins</p>
+  </div>
+
+  <div class="content-panel">
+    <div class="empty">
+      <div style="font-size:45px;margin-bottom:15px">🛒</div>
+      <h3>Marketplace Coming Soon</h3>
+      <p style="margin-top:10px">
+        The marketplace interface is being prepared.
+      </p>
+    </div>
+    <div class="notice">
+      Buying and selling are not enabled in the current backend.
+      No real transactions can be made here yet.
+    </div>
+  </div>
+</section>
+
+<section id="upgradePage" style="display:none">
+  <button class="back-btn" onclick="showPage('home')">← HOME</button>
+
+  <div class="section-heading">
+    <h2>SKIN UPGRADE</h2>
+    <p>Upgrade your collection</p>
+  </div>
+
+  <div class="content-panel">
+    <div class="empty">
+      <div style="font-size:45px;margin-bottom:15px">⚡</div>
+      <h3>Upgrade System Coming Soon</h3>
+      <p style="margin-top:10px">
+        The upgrade engine is not connected to the backend yet.
+      </p>
+    </div>
+    <div class="notice">
+      Upgrade functionality will be enabled after server-side
+      probability, inventory and transaction logic is implemented.
+    </div>
+  </div>
+</section>
+
+<section id="inventoryPage" style="display:none">
+  <button class="back-btn" onclick="showPage('home')">← HOME</button>
+
+  <div class="section-heading">
+    <h2>MY INVENTORY</h2>
+    <p>Your collected CS2 skins</p>
+  </div>
+
+  <div id="inventoryLogin" class="content-panel" style="display:none">
+    <div class="empty">
+      <h3>Steam Login Required</h3>
+      <p style="margin:10px 0 20px">
+        Sign in with Steam to view your inventory.
+      </p>
+      <button class="primary-btn" onclick="steamLogin()">
+        LOGIN WITH STEAM
+      </button>
+    </div>
+  </div>
+
+  <div id="inventoryMain">
+    <div class="tabs">
+      <button class="tab-btn active" id="skinsTab"
+        onclick="switchInventoryTab('skins')">
+        SKINS
+      </button>
+      <button class="tab-btn" id="historyTab"
+        onclick="switchInventoryTab('history')">
+        TRANSACTIONS
+      </button>
+    </div>
+
+    <div id="inventoryContent">
+      <div class="empty">Loading inventory...</div>
+    </div>
+  </div>
+</section>
+
+<div class="status" id="globalStatus"></div>
+
+</main>
+
+<footer>
+  <div class="logo" style="font-size:22px;margin-bottom:10px">
+    SK<span>i</span>NUM
+  </div>
+  <p>THE CS2 SKIN UNIVERSE</p>
+  <p style="margin-top:8px">© 2026 <span>SKiNUM</span>. All rights reserved.</p>
+  <p style="margin-top:8px">Demo platform. Not affiliated with Valve Corporation.</p>
+</footer>
+
+<div class="result-modal" id="resultModal">
+  <div class="result-box">
+    <h2>CONGRATULATIONS!</h2>
+    <p style="color:var(--muted)">You received</p>
+    <img id="winnerImage" src="" alt="Winning skin">
+    <h3 id="winnerName">Skin name</h3>
+    <p id="winnerValue" style="color:var(--gold);margin:10px 0"></p>
+    <button class="primary-btn" onclick="closeResult()">
+      CONTINUE
+    </button>
+  </div>
 </div>
-<div class="item-list">`;
 
-if(tab==="skins"){
-if(!state.inventory.length){
-html+='<div class="empty-state">Your inventory is empty. Open a case to get your first skin.</div>';
-}else{
-html+=state.inventory.map(item=>`
-<div class="item-row ${skinTier(item)}">
-<div>
-<strong>${escapeHTML(item.name)}</strong>
-<small>${escapeHTML(item.weapon||"")} · ${escapeHTML(item.rarity||"")}</small>
-</div>
-<div class="item-price">${money(item.valueCents)}</div>
-</div>`).join("");
-}
-}else{
-if(!state.transactions.length){
-html+='<div class="empty-state">No transactions yet.</div>';
-}else{
-html+=state.transactions.map(item=>`
-<div class="item-row">
-<div>
-<strong>${escapeHTML(item.description||item.type)}</strong>
-<small>${formatDate(item.createdAt)}</small>
-</div>
-<div class="item-price">${money(item.amountCents)}</div>
-</div>`).join("");
-}
-}
+<script>
+"use strict";
 
-html+="</div></div>";
-container.innerHTML=html;
+// ==========================================
+// SKINUM FRONTEND V7.8
+// Connected to existing server.js API
+// ==========================================
+
+const $ = (id) => document.getElementById(id);
+
+const state = {
+  loggedIn:false,
+  user:null,
+  balance:0,
+  cases:[],
+  selectedCase:null,
+  inventory:[],
+  transactions:[],
+  inventoryTab:"skins",
+  opening:false,
+  lastResult:null
+};
+
+const FALLBACK_IMAGE =
+  "https://placehold.co/400x250/111927/e5b84b?text=CS2+SKIN";
+
+function money(cents) {
+  return "$" + (Number(cents || 0) / 100).toFixed(2);
 }
 
-function formatDate(value){
-if(!value)return "";
-const date=new Date(value);
-if(Number.isNaN(date.getTime()))return "";
-return date.toLocaleString();
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  })[char]);
 }
 
-async function initialize(){
-await loadMe();
-await loadHomeArtwork();
+function imageSource(item) {
+  const url = item?.imageUrl || item?.image || "";
+  if (typeof url === "string" && /^https:\/\//i.test(url)) {
+    return url;
+  }
+  return FALLBACK_IMAGE;
+}
+
+function imageHTML(item, alt = "") {
+  return `<img src="${escapeHTML(imageSource(item))}"
+    alt="${escapeHTML(alt || item?.name || "CS2 skin")}"
+    loading="lazy"
+    onerror="this.onerror=null;this.src='${FALLBACK_IMAGE}'">`;
+}
+
+async function api(url, options = {}) {
+  const response = await fetch(url, {
+    credentials:"same-origin",
+    ...options,
+    headers:{
+      ...(options.body ? {"Content-Type":"application/json"} : {}),
+      ...(options.headers || {})
+    }
+  });
+
+  let data = {};
+
+  try {
+    data = await response.json();
+  } catch {
+    throw new Error("Server returned an invalid response.");
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      data.message || data.error || `Request failed (${response.status})`
+    );
+  }
+
+  return data;
+}
+
+function setStatus(message) {
+  $("globalStatus").textContent = message || "";
+}
+
+// ==========================================
+// PAGE NAVIGATION
+// ==========================================
+
+const pages = {
+  home:"homePage",
+  cases:"casesPage",
+  openCase:"openCasePage",
+  market:"marketPage",
+  upgrade:"upgradePage",
+  inventory:"inventoryPage"
+};
+
+function showPage(page) {
+  Object.values(pages).forEach((id) => {
+    $(id).style.display = "none";
+  });
+
+  $(pages[page] || pages.home).style.display = "block";
+
+  window.scrollTo({top:0,behavior:"smooth"});
+
+  if (page === "cases") {
+    loadCases();
+  }
+
+  if (page === "inventory") {
+    loadInventoryPage();
+  }
+}
+
+// ==========================================
+// STEAM LOGIN
+// ==========================================
+
+function steamLogin() {
+  window.location.href = "/auth/steam";
+}
+
+async function logout() {
+  window.location.href = "/auth/logout";
+}
+
+function updateHeader() {
+  $("steamButton").style.display =
+    state.loggedIn ? "none" : "block";
+
+  $("logoutButton").style.display =
+    state.loggedIn ? "block" : "none";
+
+  $("balanceBox").textContent =
+    state.loggedIn ? money(state.balance) : "GUEST";
+}
+
+async function loadMe() {
+  try {
+    const data = await api("/api/me");
+
+    state.loggedIn = Boolean(data.loggedIn);
+    state.user = data.user || null;
+
+    if (state.loggedIn) {
+      await loadWallet();
+    } else {
+      state.balance = 0;
+    }
+
+    updateHeader();
+  } catch (error) {
+    console.error("USER LOAD ERROR:",error);
+    state.loggedIn = false;
+    state.user = null;
+    updateHeader();
+  }
+}
+
+// ==========================================
+// WALLET
+// ==========================================
+
+async function loadWallet() {
+  if (!state.loggedIn) return;
+
+  try {
+    const data = await api("/api/wallet");
+    state.balance = Number(data.balanceCents || 0);
+    updateHeader();
+  } catch (error) {
+    console.error("WALLET ERROR:",error);
+  }
+}
+
+// ==========================================
+// CASES
+// ==========================================
+
+async function loadCases() {
+  const container = $("casesContainer");
+
+  container.innerHTML =
+    '<div class="empty">Loading cases...</div>';
+
+  try {
+    const data = await api("/api/cases");
+
+    state.cases = data.cases || [];
+
+    if (!state.cases.length) {
+      container.innerHTML =
+        '<div class="empty">No active cases available.</div>';
+      return;
+    }
+
+    renderCases();
+  } catch (error) {
+    container.innerHTML =
+      `<div class="empty">${escapeHTML(error.message)}</div>`;
+  }
+}
+
+function renderCases() {
+  const container = $("casesContainer");
+
+  container.innerHTML = state.cases.map((item) => {
+    const skins = item.items || [];
+
+    const preview = skins.slice(0,3).map((skin) =>
+      imageHTML(skin,skin.name)
+    ).join("");
+
+    return `
+      <div class="case-card">
+        <div class="case-art">${preview || "🎁"}</div>
+        <h3>${escapeHTML(item.name)}</h3>
+        <div class="case-price">${money(item.priceCents)}</div>
+        <p style="color:var(--muted);font-size:12px;margin-bottom:14px">
+          ${skins.length} possible rewards
+        </p>
+        <button class="case-open-btn"
+          onclick="selectCase('${escapeHTML(item.slug)}')">
+          VIEW CASE
+        </button>
+      </div>
+    `;
+  }).join("");
+}
+
+function selectCase(slug) {
+  const selected = state.cases.find(
+    item => item.slug === slug
+  );
+
+  if (!selected) return;
+
+  state.selectedCase = selected;
+
+  $("openingCaseName").textContent =
+    selected.name.toUpperCase();
+
+  $("openingCasePrice").textContent =
+    "Case price: " + money(selected.priceCents);
+
+  $("openingStatus").textContent = "Ready to open";
+
+  $("rouletteTrack").innerHTML = "";
+
+  renderPossibleRewards();
+
+  $("openCaseButton").disabled = false;
+  $("openCaseButton").textContent = "OPEN CASE";
+
+  showPage("openCase");
+}
+
+function renderPossibleRewards() {
+  const items = state.selectedCase?.items || [];
+
+  $("possibleRewards").innerHTML = items.map((item) => `
+    <div class="skin-card">
+      ${imageHTML(item,item.name)}
+      <h4>${escapeHTML(item.name)}</h4>
+      <small>${escapeHTML(item.rarity)}</small>
+      <p style="color:var(--gold);margin-top:7px">
+        ${money(item.valueCents)}
+      </p>
+      <small>Chance: ${Number(item.chance || 0).toFixed(2)}%</small>
+    </div>
+  `).join("");
+}
+
+// ==========================================
+// ROULETTE
+// ==========================================
+
+function buildRouletteItems(winner) {
+  const possible = state.selectedCase?.items || [];
+
+  if (!possible.length) {
+    return [winner];
+  }
+
+  const result = [];
+
+  // 48 roulette positions.
+  // Position 39 is always the server-selected winner.
+  for (let i = 0; i < 48; i++) {
+    if (i === 39) {
+      result.push(winner);
+    } else {
+      const randomIndex = Math.floor(
+        Math.random() * possible.length
+      );
+      result.push(possible[randomIndex]);
+    }
+  }
+
+  return result;
+}
+
+function renderRoulette(winner) {
+  const items = buildRouletteItems(winner);
+
+  $("rouletteTrack").innerHTML = items.map((item,index) => `
+    <div class="roulette-item" data-index="${index}">
+      ${imageHTML(item,item.name)}
+      <span>${escapeHTML(item.name)}</span>
+    </div>
+  `).join("");
+
+  return items;
+}
+
+function animateRoulette() {
+  return new Promise((resolve) => {
+    const track = $("rouletteTrack");
+    const winnerIndex = 39;
+    const winnerElement =
+      track.querySelector(`[data-index="${winnerIndex}"]`);
+
+    if (!winnerElement) {
+      resolve();
+      return;
+    }
+
+    const wrap = track.parentElement;
+    const center = wrap.clientWidth / 2;
+
+    const target =
+      winnerElement.offsetLeft +
+      winnerElement.offsetWidth / 2 -
+      center;
+
+    track.style.transition = "none";
+    track.style.transform = "translateX(0px)";
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        track.style.transition =
+          "transform 8.5s cubic-bezier(.08,.75,.12,1)";
+
+        track.style.transform =
+          `translateX(-${target}px)`;
+
+        setTimeout(resolve,8600);
+      });
+    });
+  });
+}
+
+// ==========================================
+// OPEN CASE
+// ==========================================
+
+function createIdempotencyKey() {
+  if (window.crypto?.randomUUID) {
+    return window.crypto.randomUUID();
+  }
+
+  return "skinum-" +
+    Date.now() + "-" +
+    Math.random().toString(36).slice(2);
+}
+
+async function openSelectedCase() {
+  if (state.opening) return;
+
+  if (!state.loggedIn) {
+    alert("Please sign in with Steam first.");
+    steamLogin();
+    return;
+  }
+
+  const selected = state.selectedCase;
+
+  if (!selected) return;
+
+  if (state.balance < Number(selected.priceCents)) {
+    alert("Not enough demo balance.");
+    return;
+  }
+
+  state.opening = true;
+
+  const button = $("openCaseButton");
+
+  button.disabled = true;
+  button.textContent = "OPENING...";
+
+  $("openingStatus").textContent =
+    "Contacting server...";
+
+  try {
+    // The server chooses the actual winning skin.
+    // The frontend never chooses the prize.
+
+    const data = await api(
+      `/api/cases/${encodeURIComponent(selected.slug)}/open`,
+      {
+        method:"POST",
+        body:JSON.stringify({
+          idempotencyKey:createIdempotencyKey()
+        })
+      }
+    );
+
+    if (!data.success || !data.skin) {
+      throw new Error("Invalid case opening response.");
+    }
+
+    state.balance = Number(data.balanceCents || 0);
+    updateHeader();
+
+    state.lastResult = data.skin;
+
+    $("openingStatus").textContent =
+      "The winning skin has been selected. Rolling...";
+
+    renderRoulette(data.skin);
+
+    await animateRoulette();
+
+    showWinner(data.skin);
+
+    await loadInventoryData();
+
+  } catch (error) {
+    console.error("CASE OPEN ERROR:",error);
+
+    alert(error.message || "Could not open case.");
+
+    await loadWallet();
+
+    $("openingStatus").textContent =
+      "Case opening failed. Please try again.";
+
+  } finally {
+    state.opening = false;
+
+    button.disabled = false;
+    button.textContent = "OPEN CASE";
+  }
+}
+
+function showWinner(skin) {
+  $("winnerImage").src = imageSource(skin);
+  $("winnerImage").onerror = function() {
+    this.onerror = null;
+    this.src = FALLBACK_IMAGE;
+  };
+
+  $("winnerName").textContent = skin.name;
+  $("winnerValue").textContent =
+    "Estimated demo value: " + money(skin.valueCents);
+
+  $("resultModal").classList.add("show");
+}
+
+async function closeResult() {
+  $("resultModal").classList.remove("show");
+
+  await loadWallet();
+  await loadInventoryData();
+
+  $("openingStatus").textContent =
+    "You can open another case.";
+}
+
+// ==========================================
+// INVENTORY
+// ==========================================
+
+async function loadInventoryPage() {
+  if (!state.loggedIn) {
+    $("inventoryLogin").style.display = "block";
+    $("inventoryMain").style.display = "none";
+    return;
+  }
+
+  $("inventoryLogin").style.display = "none";
+  $("inventoryMain").style.display = "block";
+
+  await loadInventoryData();
+
+  if (state.inventoryTab === "history") {
+    await loadTransactions();
+  } else {
+    renderInventory();
+  }
+}
+
+async function loadInventoryData() {
+  if (!state.loggedIn) return;
+
+  try {
+    const data = await api("/api/inventory");
+
+    state.inventory = data.inventory || [];
+
+    if ($("inventoryPage").style.display !== "none" &&
+        state.inventoryTab === "skins") {
+      renderInventory();
+    }
+  } catch (error) {
+    console.error("INVENTORY ERROR:",error);
+  }
+}
+
+function renderInventory() {
+  const container = $("inventoryContent");
+
+  if (!state.loggedIn) {
+    container.innerHTML =
+      '<div class="empty">Please sign in with Steam.</div>';
+    return;
+  }
+
+  if (!state.inventory.length) {
+    container.innerHTML = `
+      <div class="empty">
+        <div style="font-size:40px">🎒</div>
+        <h3>Your inventory is empty</h3>
+        <p style="margin-top:10px">
+          Open a case to receive your first skin.
+        </p>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="inventory-grid">
+      ${state.inventory.map((item) => `
+        <div class="inventory-card">
+          ${imageHTML(item,item.name)}
+          <h4>${escapeHTML(item.name)}</h4>
+          <p>${money(item.valueCents)}</p>
+          <small style="color:var(--muted)">
+            ${escapeHTML(item.rarity || "")}
+          </small>
+          <p style="margin-top:8px">
+            ${escapeHTML(item.status)}
+          </p>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+// ==========================================
+// TRANSACTIONS
+// ==========================================
+
+async function loadTransactions() {
+  const container = $("inventoryContent");
+
+  if (!state.loggedIn) return;
+
+  container.innerHTML =
+    '<div class="empty">Loading transactions...</div>';
+
+  try {
+    const data = await api("/api/transactions");
+
+    state.transactions = data.transactions || [];
+
+    renderTransactions();
+
+  } catch (error) {
+    container.innerHTML =
+      `<div class="empty">${escapeHTML(error.message)}</div>`;
+  }
+}
+
+function renderTransactions() {
+  const container = $("inventoryContent");
+
+  if (!state.transactions.length) {
+    container.innerHTML =
+      '<div class="empty">No transactions yet.</div>';
+    return;
+  }
+
+  container.innerHTML = state.transactions.map((item) => {
+    const amount = Number(item.amountCents || 0);
+    const date = item.createdAt
+      ? new Date(item.createdAt).toLocaleString()
+      : "";
+
+    return `
+      <div class="transaction">
+        <div>
+          <strong>${escapeHTML(item.description || item.type)}</strong>
+          <div style="color:var(--muted);margin-top:5px">
+            ${escapeHTML(date)}
+          </div>
+        </div>
+        <div style="text-align:right">
+          <strong class="${amount >= 0 ? "positive" : "negative"}">
+            ${amount >= 0 ? "+" : "-"}${money(Math.abs(amount))}
+          </strong>
+          <div style="color:var(--muted);margin-top:5px">
+            Balance: ${money(item.balanceAfterCents)}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function switchInventoryTab(tab) {
+  state.inventoryTab = tab;
+
+  $("skinsTab").classList.toggle("active",tab === "skins");
+  $("historyTab").classList.toggle("active",tab === "history");
+
+  if (tab === "skins") {
+    renderInventory();
+  } else {
+    loadTransactions();
+  }
+}
+
+// ==========================================
+// INITIALIZATION
+// ==========================================
+
+async function initialize() {
+  setStatus("Connecting to SKiNUM server...");
+
+  await loadMe();
+
+  try {
+    const status = await api("/api/status");
+
+    if (status.status === "online") {
+      setStatus("SKiNUM server connected | DEMO MODE");
+    } else {
+      setStatus("Server status unavailable.");
+    }
+  } catch (error) {
+    console.error("SERVER STATUS ERROR:",error);
+    setStatus("Could not verify server connection.");
+  }
+
+  await loadCases();
+
+  const params = new URLSearchParams(window.location.search);
+
+  if (params.get("steam_login") === "success") {
+    alert("Steam login successful!");
+    window.history.replaceState({},document.title,"/");
+  }
+
+  if (params.get("steam_login") === "failed") {
+    alert("Steam login failed. Please try again.");
+    window.history.replaceState({},document.title,"/");
+  }
+
+  updateHeader();
 }
 
 initialize();
+
 </script>
+
 </body>
 </html>
