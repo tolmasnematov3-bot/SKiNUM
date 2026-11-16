@@ -5,7 +5,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#080b12">
-
 <title>SKiNUM | CS2 Skin Universe</title>
 
 <style>
@@ -15,637 +14,325 @@
   --panel2:#192437;
   --gold:#e5b84b;
   --gold2:#ffda78;
-  --text:#f5f6fa;
-  --muted:#8b98aa;
-  --green:#45d69b;
-  --red:#ff626e;
+  --text:#f4f6fb;
+  --muted:#8d9ab0;
+  --green:#42d392;
+  --red:#ff6262;
   --border:rgba(255,255,255,.08);
 }
-
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-}
-
+*{box-sizing:border-box}
 body{
+  margin:0;
   background:var(--bg);
   color:var(--text);
   font-family:Arial,Helvetica,sans-serif;
-  min-height:100vh;
 }
-
-button{
-  font-family:inherit;
-  cursor:pointer;
-}
-
-button:disabled{
-  opacity:.5;
-  cursor:not-allowed;
-}
-
-a{
-  color:inherit;
-  text-decoration:none;
-}
-
+button,input{font:inherit}
+button{cursor:pointer}
 header{
-  width:100%;
-  background:#0c121e;
-  border-bottom:1px solid var(--border);
   position:sticky;
   top:0;
   z-index:100;
+  background:rgba(8,11,18,.97);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(15px);
 }
-
 .header-inner{
   max-width:1250px;
   margin:auto;
   padding:15px 20px;
   display:flex;
-  justify-content:space-between;
   align-items:center;
+  justify-content:space-between;
   gap:15px;
 }
-
 .logo{
   font-size:27px;
   font-weight:900;
   letter-spacing:2px;
   color:var(--gold);
 }
-
-.logo span{
-  color:white;
-}
-
+.logo span{color:white}
 .header-right{
   display:flex;
   align-items:center;
   gap:12px;
 }
-
 .balance{
-  background:#172235;
-  border:1px solid var(--border);
-  border-radius:10px;
+  background:var(--panel2);
+  border:1px solid rgba(229,184,75,.3);
   padding:10px 14px;
+  border-radius:10px;
   color:var(--gold);
   font-weight:bold;
 }
-
-.login-btn,
-.primary-btn{
-  background:linear-gradient(135deg,var(--gold),#b88929);
-  color:#10131a;
-  border:none;
-  padding:11px 17px;
-  border-radius:8px;
+.steam-btn,.primary-btn{
+  border:0;
+  background:var(--gold);
+  color:#17130a;
   font-weight:800;
+  padding:11px 17px;
+  border-radius:9px;
 }
-
+.steam-btn:hover,.primary-btn:hover{background:var(--gold2)}
 .secondary-btn{
   background:var(--panel2);
-  color:white;
   border:1px solid var(--border);
-  padding:11px 16px;
+  color:white;
+  padding:10px 15px;
   border-radius:8px;
 }
-
-.logout-btn{
-  background:#2a1820;
-  color:#ff929a;
-  border:1px solid #63313a;
-  padding:9px 12px;
-  border-radius:8px;
-}
-
-.user-info{
-  display:flex;
-  align-items:center;
-  gap:9px;
-}
-
-.user-info img{
-  width:36px;
-  height:36px;
-  border-radius:50%;
-  object-fit:cover;
-  background:#263247;
-}
-
-.user-name{
-  font-size:13px;
-  max-width:110px;
-  overflow:hidden;
-  white-space:nowrap;
-  text-overflow:ellipsis;
-}
-
 nav{
   max-width:1250px;
   margin:auto;
-  padding:0 20px;
+  padding:0 20px 13px;
   display:flex;
-  gap:8px;
+  gap:9px;
+  overflow-x:auto;
 }
-
 .nav-btn{
-  padding:15px 20px;
+  background:transparent;
+  border:1px solid transparent;
   color:var(--muted);
-  background:none;
-  border:none;
-  border-bottom:3px solid transparent;
-  font-weight:800;
-  letter-spacing:.5px;
+  padding:10px 19px;
+  border-radius:8px;
+  white-space:nowrap;
+  font-weight:bold;
 }
-
-.nav-btn.active{
+.nav-btn.active,.nav-btn:hover{
   color:var(--gold);
-  border-bottom-color:var(--gold);
+  background:rgba(229,184,75,.09);
+  border-color:rgba(229,184,75,.25);
 }
-
 main{
   max-width:1250px;
+  padding:25px 20px 70px;
   margin:auto;
-  padding:30px 20px 60px;
 }
-
-.page{
-  display:none;
-}
-
-.page.active{
-  display:block;
-}
-
+.page{display:none}
+.page.active{display:block}
 .hero{
-  min-height:270px;
-  padding:45px 35px;
-  border:1px solid rgba(229,184,75,.2);
-  border-radius:18px;
   background:
-    radial-gradient(circle at 85% 30%,rgba(229,184,75,.18),transparent 35%),
-    linear-gradient(135deg,#182338,#0d1420);
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  margin-bottom:30px;
+    radial-gradient(circle at 80% 30%,rgba(229,184,75,.17),transparent 35%),
+    linear-gradient(130deg,#111927,#0b101a);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:48px 35px;
+  margin-bottom:28px;
+  min-height:230px;
 }
-
-.hero-label{
+.eyebrow{
   color:var(--gold);
+  letter-spacing:4px;
   font-size:12px;
-  font-weight:900;
-  letter-spacing:3px;
-  margin-bottom:14px;
+  font-weight:bold;
 }
-
 .hero h1{
-  font-size:clamp(32px,5vw,54px);
-  margin-bottom:15px;
+  font-size:clamp(30px,5vw,48px);
+  margin:14px 0;
 }
-
 .hero p{
   color:var(--muted);
-  max-width:600px;
   line-height:1.7;
+  max-width:600px;
 }
-
 .section-title{
-  font-size:23px;
-  margin-bottom:18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin:28px 0 17px;
 }
-
-.content-panel{
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:13px;
-  padding:22px;
-  margin-bottom:20px;
-}
-
-.content-panel h3{
-  margin-bottom:12px;
-}
-
-.muted{
-  color:var(--muted);
-  line-height:1.6;
-}
-
-.notice{
-  background:rgba(229,184,75,.08);
-  border:1px solid rgba(229,184,75,.2);
-  color:#eacb80;
-  padding:12px;
-  border-radius:8px;
-  font-size:12px;
-  line-height:1.6;
-  margin-top:15px;
-}
-
-.case-grid{
+.section-title h2{margin:0;font-size:23px}
+.section-title span{color:var(--gold);font-size:12px}
+.grid{
   display:grid;
   grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:18px;
+  gap:17px;
 }
-
-.case-card{
+.card{
   background:var(--panel);
   border:1px solid var(--border);
   border-radius:14px;
-  padding:20px;
-  text-align:center;
+  overflow:hidden;
   transition:.2s;
 }
-
-.case-card:hover{
-  transform:translateY(-4px);
-  border-color:rgba(229,184,75,.5);
+.card:hover{
+  transform:translateY(-3px);
+  border-color:rgba(229,184,75,.35);
 }
-
-.case-art{
+.card-image{
   height:155px;
-  border-radius:10px;
-  background:
-    radial-gradient(circle,rgba(229,184,75,.18),transparent 65%),
-    #192437;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:linear-gradient(145deg,#1c2a40,#101725);
+  font-size:65px;
+}
+.card-image img{
+  width:90%;
+  height:90%;
+  object-fit:contain;
+}
+.card-body{padding:17px}
+.card-body h3{margin:0 0 8px}
+.muted{color:var(--muted)}
+.price{
+  color:var(--gold);
+  font-weight:bold;
+  font-size:18px;
+}
+.card-footer{
   display:flex;
   align-items:center;
-  justify-content:center;
-  font-size:65px;
-  margin-bottom:17px;
+  justify-content:space-between;
+  gap:10px;
+  margin-top:16px;
 }
-
-.case-card h3{
+.case-card .card-image{height:190px;font-size:75px}
+.case-card .card-body{text-align:center}
+.case-card .primary-btn{width:100%;margin-top:13px}
+.content-panel{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:22px;
+  margin-top:20px;
+}
+.wallet-amount{
+  font-size:34px;
+  font-weight:900;
   color:var(--gold);
-  margin-bottom:8px;
+  margin:12px 0;
 }
-
-.case-card p{
-  color:var(--muted);
-  font-size:13px;
-  min-height:40px;
-  line-height:1.5;
-}
-
-.case-price{
-  margin:15px 0;
-  font-size:19px;
-  font-weight:bold;
-}
-
-.case-card .primary-btn{
-  width:100%;
-}
-
-.skin-grid{
+.topup-buttons{
   display:grid;
   grid-template-columns:repeat(4,minmax(0,1fr));
   gap:12px;
   margin-top:18px;
 }
-
-.skin-card{
-  background:#172235;
-  border:1px solid var(--border);
-  padding:13px;
+.topup-btn{
+  background:#202d41;
+  border:1px solid rgba(229,184,75,.25);
+  color:var(--gold);
   border-radius:10px;
-  min-width:0;
-}
-
-.skin-image{
-  height:90px;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  font-size:35px;
-  background:#202e42;
-  border-radius:8px;
-  margin-bottom:10px;
-  overflow:hidden;
-}
-
-.skin-image img{
-  width:100%;
-  height:100%;
-  object-fit:contain;
-}
-
-.skin-card h4{
-  font-size:12px;
-  line-height:1.5;
-  margin-bottom:5px;
-}
-
-.skin-card p{
-  color:var(--muted);
-  font-size:11px;
-}
-
-.skin-price{
-  color:var(--gold);
+  padding:15px 8px;
   font-weight:bold;
-  margin-top:8px;
-  font-size:13px;
 }
-
-.back-btn{
-  margin-bottom:20px;
-}
-
-.roulette-wrap{
-  background:#0d1522;
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:20px;
-  overflow:hidden;
-  margin:20px 0;
-}
-
-.roulette{
-  display:flex;
-  gap:10px;
-  width:max-content;
-  transition:transform 5s cubic-bezier(.12,.75,.12,1);
-}
-
-.roulette-item{
-  width:130px;
-  height:125px;
-  background:#192437;
-  border:1px solid var(--border);
-  border-radius:10px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  padding:8px;
-  text-align:center;
-  flex-shrink:0;
-}
-
-.roulette-item strong{
-  font-size:11px;
-  margin-top:9px;
-}
-
-.roulette-item span{
-  font-size:25px;
-}
-
-.roulette-window{
-  overflow:hidden;
-  position:relative;
-}
-
-.roulette-pointer{
-  height:4px;
-  background:var(--gold);
-  width:100%;
-  margin-bottom:10px;
-  box-shadow:0 0 15px var(--gold);
-}
-
-.result-modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  z-index:300;
-  background:rgba(0,0,0,.85);
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-}
-
-.result-modal.show{
-  display:flex;
-}
-
-.result-box{
-  background:#131e2e;
-  border:1px solid rgba(229,184,75,.5);
-  padding:30px;
-  border-radius:16px;
-  width:100%;
-  max-width:430px;
-  text-align:center;
-}
-
-.result-box h2{
-  color:var(--gold);
-  margin-bottom:15px;
-}
-
-.result-skin{
-  font-size:65px;
-  padding:25px;
-}
-
-.result-name{
-  font-size:20px;
-  font-weight:bold;
-  margin-bottom:8px;
-}
-
-.result-price{
-  color:var(--gold);
-  margin-bottom:20px;
-}
-
-.result-actions{
-  display:flex;
-  gap:10px;
-  justify-content:center;
-  flex-wrap:wrap;
-}
-
-.inventory-tabs{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin-bottom:20px;
-}
-
-.inventory-tab{
-  background:var(--panel2);
-  color:white;
-  border:1px solid var(--border);
-  padding:10px 15px;
-  border-radius:8px;
-}
-
-.inventory-tab.active{
-  color:var(--gold);
-  border-color:var(--gold);
-}
-
-.empty-state{
-  text-align:center;
-  padding:45px 15px;
-  color:var(--muted);
-}
-
-.empty-state .symbol{
-  font-size:45px;
-  margin-bottom:15px;
-}
-
+.topup-btn:hover{background:#33435b}
 .status{
   color:var(--muted);
   font-size:13px;
   margin-top:12px;
   min-height:18px;
 }
-
-.status.error{
-  color:var(--red);
-}
-
-.status.success{
-  color:var(--green);
-}
-
-.topup-buttons{
+.item-list{display:grid;gap:12px}
+.item-row{
   display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-}
-
-.transaction-row{
-  display:flex;
+  align-items:center;
   justify-content:space-between;
-  gap:12px;
-  border-bottom:1px solid var(--border);
-  padding:14px 0;
-  font-size:13px;
+  gap:15px;
+  padding:14px;
+  background:#172235;
+  border-radius:10px;
+  border:1px solid var(--border);
 }
-
-.transaction-row:last-child{
-  border-bottom:none;
+.item-left{display:flex;align-items:center;gap:13px}
+.item-icon{
+  width:55px;
+  height:50px;
+  border-radius:9px;
+  background:#25354c;
+  display:grid;
+  place-items:center;
+  font-size:27px;
 }
-
-.positive{
-  color:var(--green);
+.tabs{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin:20px 0;
 }
-
-.negative{
-  color:var(--red);
+.tab-btn{
+  background:var(--panel2);
+  border:1px solid var(--border);
+  color:var(--muted);
+  padding:10px 15px;
+  border-radius:8px;
 }
-
+.tab-btn.active{color:var(--gold);border-color:var(--gold)}
+.empty{
+  text-align:center;
+  color:var(--muted);
+  padding:40px 15px;
+  background:var(--panel);
+  border-radius:12px;
+}
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:500;
+  background:rgba(0,0,0,.85);
+  align-items:center;
+  justify-content:center;
+  padding:15px;
+}
+.modal.show{display:flex}
+.modal-box{
+  background:#111927;
+  border:1px solid rgba(229,184,75,.3);
+  width:100%;
+  max-width:500px;
+  border-radius:17px;
+  padding:25px;
+  text-align:center;
+}
+.modal-box h2{color:var(--gold)}
+.winner-icon{font-size:85px;margin:20px}
+.roulette{
+  display:flex;
+  overflow:hidden;
+  height:145px;
+  border:1px solid rgba(229,184,75,.4);
+  background:#0b111d;
+  border-radius:12px;
+  align-items:center;
+  justify-content:center;
+  margin:20px 0;
+}
+.roulette-item{
+  min-width:120px;
+  height:115px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  font-size:35px;
+}
+.roulette-item small{font-size:10px;color:var(--muted)}
 footer{
   border-top:1px solid var(--border);
-  padding:25px 20px;
   text-align:center;
   color:var(--muted);
+  padding:25px;
   font-size:12px;
-  line-height:1.8;
 }
-
-.loading{
-  text-align:center;
-  color:var(--muted);
-  padding:30px;
+@media(max-width:800px){
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .hero{padding:30px 22px}
 }
-
-@media(max-width:850px){
-
-  .case-grid{
-    grid-template-columns:repeat(2,minmax(0,1fr));
-  }
-
-  .skin-grid{
-    grid-template-columns:repeat(3,minmax(0,1fr));
-  }
-
-}
-
-@media(max-width:600px){
-
-  .header-inner{
-    padding:12px;
-    flex-wrap:wrap;
-  }
-
-  .logo{
-    font-size:23px;
-  }
-
-  .header-right{
-    gap:7px;
-    flex-wrap:wrap;
-  }
-
-  .balance{
-    padding:8px 10px;
-    font-size:12px;
-  }
-
-  .login-btn{
-    padding:9px 11px;
-    font-size:12px;
-  }
-
-  .user-name{
-    display:none;
-  }
-
-  nav{
-    padding:0 8px;
-    gap:0;
-    justify-content:space-around;
-  }
-
-  .nav-btn{
-    padding:14px 8px;
-    font-size:11px;
-  }
-
-  main{
-    padding:20px 12px 45px;
-  }
-
-  .hero{
-    padding:30px 20px;
-    min-height:230px;
-  }
-
-  .case-grid{
-    grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:10px;
-  }
-
-  .case-card{
-    padding:12px;
-  }
-
-  .case-art{
-    height:110px;
-    font-size:48px;
-  }
-
-  .case-card h3{
-    font-size:13px;
-  }
-
-  .case-card p{
-    font-size:11px;
-  }
-
-  .case-price{
-    font-size:16px;
-  }
-
-  .skin-grid{
-    grid-template-columns:repeat(2,minmax(0,1fr));
-  }
-
-  .content-panel{
-    padding:16px;
-  }
-
+@media(max-width:520px){
+  .header-inner{padding:12px}
+  .logo{font-size:21px}
+  .balance{padding:9px;font-size:12px}
+  .steam-btn{padding:9px;font-size:12px}
+  nav{padding:0 12px 10px}
+  main{padding:18px 12px 50px}
+  .grid{grid-template-columns:1fr}
+  .topup-buttons{grid-template-columns:repeat(2,1fr)}
+  .card-image{height:140px}
+  .item-row{align-items:flex-start}
 }
 </style>
 </head>
@@ -653,1660 +340,682 @@ footer{
 <body>
 
 <header>
-
   <div class="header-inner">
-
-    <div class="logo">
-      SKi<span>NUM</span>
-    </div>
-
+    <div class="logo">SKi<span>NUM</span></div>
     <div class="header-right">
-
-      <div class="balance" id="balanceBox">
-        DEMO $0.00
-      </div>
-
-      <div id="authArea">
-        <button class="login-btn" onclick="steamLogin()">
-          STEAM LOGIN
-        </button>
-      </div>
-
+      <div class="balance" id="headerBalance">$0.00</div>
+      <button class="steam-btn" id="steamButton" onclick="steamLogin()">STEAM LOGIN</button>
     </div>
-
   </div>
-
   <nav>
-
-    <button class="nav-btn active"
-      data-page="marketPage"
-      onclick="showPage('marketPage',this)">
-      MARKET
-    </button>
-
-    <button class="nav-btn"
-      data-page="casesPage"
-      onclick="showPage('casesPage',this)">
-      CASES
-    </button>
-
-    <button class="nav-btn"
-      data-page="upgradePage"
-      onclick="showPage('upgradePage',this)">
-      UPGRADE
-    </button>
-
-    <button class="nav-btn"
-      data-page="inventoryPage"
-      onclick="showPage('inventoryPage',this)">
-      INVENTORY
-    </button>
-
+    <button class="nav-btn active" onclick="showPage('market',this)">MARKET</button>
+    <button class="nav-btn" onclick="showPage('cases',this)">CASES</button>
+    <button class="nav-btn" onclick="showPage('upgrade',this)">UPGRADE</button>
+    <button class="nav-btn" onclick="showPage('inventory',this)">INVENTORY</button>
   </nav>
-
 </header>
-
 
 <main>
 
-  <!-- HOME / MARKET -->
+<!-- MARKET PAGE -->
+<section class="page active" id="market">
+  <div class="hero">
+    <div class="eyebrow">THE CS2 SKIN UNIVERSE</div>
+    <h1>WELCOME TO SKiNUM</h1>
+    <p>Discover rare skins. Open cases. Upgrade your collection.
+    Your CS2 skin journey starts here.</p>
+    <button class="primary-btn" onclick="showPage('cases')">EXPLORE CASES</button>
+  </div>
 
-  <section class="page active" id="marketPage">
+  <div class="section-title">
+    <h2>Explore the Platform</h2>
+    <span>SKINUM UNIVERSE</span>
+  </div>
 
-    <div class="hero">
-
-      <div class="hero-label">
-        THE CS2 SKIN UNIVERSE
+  <div class="grid">
+    <div class="card">
+      <div class="card-image">🛒</div>
+      <div class="card-body">
+        <h3>Skin Market</h3>
+        <p class="muted">Discover and trade CS2 skins.</p>
+        <button class="secondary-btn" onclick="showPage('market')">Explore Market</button>
       </div>
-
-      <h1>WELCOME TO SKiNUM</h1>
-
-      <p>
-        Discover rare skins. Open cases.
-        Upgrade your collection.
-        Your CS2 skin journey starts here.
-      </p>
-
-      <div style="margin-top:22px">
-
-        <button class="primary-btn"
-          onclick="showPage('casesPage')">
-          EXPLORE CASES
-        </button>
-
-      </div>
-
     </div>
-
-    <h2 class="section-title">
-      EXPLORE THE PLATFORM
-    </h2>
-
-    <div class="case-grid">
-
-      <div class="case-card">
-
-        <div class="case-art">🛒</div>
-
-        <h3>MARKET</h3>
-
-        <p>
-          Buy and sell CS2 skins.
-        </p>
-
-        <div class="case-price">COMING SOON</div>
-
-        <button class="secondary-btn" disabled>
-          MARKET
-        </button>
-
+    <div class="card">
+      <div class="card-image">🎁</div>
+      <div class="card-body">
+        <h3>Cases</h3>
+        <p class="muted">Open cases and discover rare items.</p>
+        <button class="secondary-btn" onclick="showPage('cases')">Open Cases</button>
       </div>
-
-      <div class="case-card">
-
-        <div class="case-art">🎁</div>
-
-        <h3>CASES</h3>
-
-        <p>
-          Open cases and discover skins.
-        </p>
-
-        <div class="case-price">AVAILABLE</div>
-
-        <button class="primary-btn"
-          onclick="showPage('casesPage')">
-          OPEN CASES
-        </button>
-
-      </div>
-
-      <div class="case-card">
-
-        <div class="case-art">⚡</div>
-
-        <h3>UPGRADE</h3>
-
-        <p>
-          Upgrade your skins.
-        </p>
-
-        <div class="case-price">COMING SOON</div>
-
-        <button class="secondary-btn" disabled>
-          UPGRADE
-        </button>
-
-      </div>
-
     </div>
-
-    <div class="content-panel" style="margin-top:25px">
-
-      <h3 style="color:var(--gold)">
-        DEMO BALANCE TOP UP
-      </h3>
-
-      <p class="muted" style="margin-bottom:15px">
-        Add free demo credits to test SKiNUM.
-      </p>
-
-      <div class="topup-buttons">
-
-        <button class="primary-btn"
-          onclick="demoTopUp(1000)">
-          +$10
-        </button>
-
-        <button class="primary-btn"
-          onclick="demoTopUp(2500)">
-          +$25
-        </button>
-
-        <button class="primary-btn"
-          onclick="demoTopUp(5000)">
-          +$50
-        </button>
-
-        <button class="primary-btn"
-          onclick="demoTopUp(10000)">
-          +$100
-        </button>
-
+    <div class="card">
+      <div class="card-image">⚡</div>
+      <div class="card-body">
+        <h3>Skin Upgrade</h3>
+        <p class="muted">Try upgrading your collection.</p>
+        <button class="secondary-btn" onclick="showPage('upgrade')">Upgrade</button>
       </div>
-
-      <div class="status" id="topupStatus"></div>
-
-      <div class="notice">
-        DEMO ONLY — These credits have no real monetary value.
-        No real deposits or withdrawals are available.
-      </div>
-
     </div>
+  </div>
 
-  </section>
+  <div class="content-panel">
+    <h3>YOUR SKiNUM DEMO WALLET</h3>
+    <p class="muted">Your current platform balance</p>
+    <div class="wallet-amount" id="marketBalance">$0.00</div>
+    <p class="muted">Choose a demo top-up amount.</p>
 
-
-  <!-- CASES -->
-
-  <section class="page" id="casesPage">
-
-    <h2 class="section-title">
-      DISCOVER OUR CASES
-    </h2>
-
-    <p class="muted" style="margin-bottom:20px">
-      Choose your case and try your luck.
+    <div class="topup-buttons">
+      <button class="topup-btn" onclick="demoTopUp(1000)">+$10</button>
+      <button class="topup-btn" onclick="demoTopUp(2500)">+$25</button>
+      <button class="topup-btn" onclick="demoTopUp(5000)">+$50</button>
+      <button class="topup-btn" onclick="demoTopUp(10000)">+$100</button>
+    </div>
+    <div class="status" id="topupStatus">
+      Demo balance top-up. Steam login required.
+    </div>
+    <p class="muted" style="font-size:12px">
+      Demo credits only. These buttons do not process real payments.
     </p>
+  </div>
 
-    <div id="casesContainer" class="case-grid">
+  <div class="section-title">
+    <h2>Featured Skins</h2>
+    <span>POPULAR ITEMS</span>
+  </div>
+  <div class="grid" id="marketSkins"></div>
+</section>
 
-      <div class="loading">
-        Loading cases...
+<!-- CASES PAGE -->
+<section class="page" id="cases">
+  <div class="hero">
+    <div class="eyebrow">DISCOVER YOUR NEXT SKIN</div>
+    <h1>CASE OPENING</h1>
+    <p>Choose your case, open it and discover what you get.</p>
+  </div>
+
+  <div class="section-title">
+    <h2>Choose Your Case</h2>
+    <span>THREE CASE CATEGORIES</span>
+  </div>
+
+  <div class="grid" id="caseList">
+    <div class="card case-card">
+      <div class="card-image">🔪</div>
+      <div class="card-body">
+        <h3>Knife Case</h3>
+        <p class="muted">Discover exclusive knives.</p>
+        <div class="price">$25.00</div>
+        <button class="primary-btn" onclick="openCase('knife-case')">OPEN CASE</button>
       </div>
-
     </div>
-
-    <div id="caseDetail" style="display:none">
-
-      <button class="secondary-btn back-btn"
-        onclick="closeCaseDetail()">
-        ← BACK TO CASES
-      </button>
-
-      <div class="content-panel" style="text-align:center">
-
-        <h2 id="selectedCaseName"
-          style="color:var(--gold)">
-        </h2>
-
-        <p id="selectedCaseDescription"
-          class="muted"
-          style="margin:10px 0">
-        </p>
-
-        <div id="selectedCasePrice"
-          style="font-size:22px;font-weight:bold;margin:15px">
-        </div>
-
-        <div class="roulette-wrap">
-
-          <div class="roulette-pointer"></div>
-
-          <div class="roulette-window">
-
-            <div class="roulette"
-              id="roulette">
-            </div>
-
-          </div>
-
-          <div class="roulette-pointer"
-            style="margin-top:10px;margin-bottom:0">
-          </div>
-
-        </div>
-
-        <button class="primary-btn"
-          id="openCaseBtn"
-          onclick="openSelectedCase()">
-          OPEN CASE
-        </button>
-
-        <div class="status" id="caseStatus"></div>
-
+    <div class="card case-card">
+      <div class="card-image">🔫</div>
+      <div class="card-body">
+        <h3>Weapon Case</h3>
+        <p class="muted">Discover weapon skins.</p>
+        <div class="price">$10.00</div>
+        <button class="primary-btn" onclick="openCase('weapon-case')">OPEN CASE</button>
       </div>
-
-      <h3 class="section-title">
-        POSSIBLE DROPS
-      </h3>
-
-      <div class="skin-grid"
-        id="possibleSkins">
+    </div>
+    <div class="card case-card">
+      <div class="card-image">🎯</div>
+      <div class="card-body">
+        <h3>AWP Case</h3>
+        <p class="muted">Discover AWP skins.</p>
+        <div class="price">$18.00</div>
+        <button class="primary-btn" onclick="openCase('awp-case')">OPEN CASE</button>
       </div>
-
     </div>
+  </div>
 
-  </section>
+  <div class="content-panel">
+    <h3>HOW IT WORKS</h3>
+    <p class="muted">1. Sign in with Steam.</p>
+    <p class="muted">2. Choose your case.</p>
+    <p class="muted">3. Open the case and receive a platform inventory item.</p>
+  </div>
+</section>
 
+<!-- UPGRADE PAGE -->
+<section class="page" id="upgrade">
+  <div class="hero">
+    <div class="eyebrow">TAKE YOUR COLLECTION FURTHER</div>
+    <h1>SKIN UPGRADE</h1>
+    <p>Choose an eligible item from your inventory to try an upgrade.</p>
+  </div>
 
-  <!-- UPGRADE -->
-
-  <section class="page" id="upgradePage">
-
-    <div class="hero">
-
-      <div class="hero-label">
-        SKiNUM UPGRADE
-      </div>
-
-      <h1>UPGRADE YOUR SKINS</h1>
-
-      <p>
-        Improve your collection and aim for
-        more valuable skins.
-      </p>
-
+  <div class="content-panel">
+    <h2>Upgrade Center</h2>
+    <p class="muted">The upgrade system is currently a preview. Real upgrade functionality is not enabled yet.</p>
+    <div class="empty">
+      <div style="font-size:55px">⚡</div>
+      <h3>UPGRADE SYSTEM</h3>
+      <p>Coming soon</p>
     </div>
+  </div>
+</section>
 
-    <div class="content-panel">
+<!-- INVENTORY PAGE -->
+<section class="page" id="inventory">
+  <div class="hero">
+    <div class="eyebrow">YOUR COLLECTION</div>
+    <h1>MY INVENTORY</h1>
+    <p>View your won skins and account transactions.</p>
+  </div>
 
-      <div class="empty-state">
+  <div class="tabs">
+    <button class="tab-btn active" id="inventoryTab" onclick="switchInventoryTab('items',this)">MY SKINS</button>
+    <button class="tab-btn" id="transactionsTab" onclick="switchInventoryTab('transactions',this)">TRANSACTIONS</button>
+  </div>
 
-        <div class="symbol">⚡</div>
-
-        <h2>UPGRADE COMING SOON</h2>
-
-        <p style="margin-top:12px">
-          The upgrade system is currently under development.
-        </p>
-
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <!-- INVENTORY -->
-
-  <section class="page" id="inventoryPage">
-
-    <h2 class="section-title">
-      YOUR INVENTORY
-    </h2>
-
-    <p class="muted" style="margin-bottom:20px">
-      Your collected skins and account activity.
-    </p>
-
-    <div class="inventory-tabs">
-
-      <button class="inventory-tab active"
-        onclick="switchInventoryTab('skins',this)">
-        MY SKINS
-      </button>
-
-      <button class="inventory-tab"
-        onclick="switchInventoryTab('transactions',this)">
-        TRANSACTIONS
-      </button>
-
-    </div>
-
-    <div id="inventoryContent">
-
-      <div class="loading">
-        Loading inventory...
-      </div>
-
-    </div>
-
-  </section>
+  <div id="inventoryContent">
+    <div class="empty">Loading inventory...</div>
+  </div>
+</section>
 
 </main>
 
-
 <footer>
-
-  <div style="color:var(--gold);font-weight:bold;font-size:18px">
-    SKiNUM
-  </div>
-
+  <div style="color:var(--gold);font-weight:bold;font-size:19px;margin-bottom:8px">SKiNUM</div>
   THE CS2 SKIN UNIVERSE
-
-  <br>
-
-  SKiNUM is an independent demo platform.
-  It is not affiliated with Valve Corporation.
-
-  <br>
-
-  All demo credits have no real monetary value.
-
+  <p>SKiNUM is an independent platform concept and is not affiliated with Valve Corporation.</p>
+  <p>Demo balance is not real money.</p>
 </footer>
 
-
-<!-- WINNER MODAL -->
-
-<div class="result-modal" id="resultModal">
-
-  <div class="result-box">
-
-    <h2>CONGRATULATIONS!</h2>
-
-    <div class="result-skin" id="winnerIcon">
-      🎁
+<!-- CASE RESULT MODAL -->
+<div class="modal" id="resultModal">
+  <div class="modal-box">
+    <h2 id="resultTitle">CASE OPENING</h2>
+    <div class="roulette" id="roulette">
+      <div class="roulette-item">🎁<small>GOOD LUCK</small></div>
     </div>
-
-    <div class="result-name"
-      id="winnerName">
-    </div>
-
-    <div class="result-price"
-      id="winnerPrice">
-    </div>
-
-    <div class="result-actions">
-
-      <button class="primary-btn"
-        onclick="closeResult()">
-        CONTINUE
-      </button>
-
-    </div>
-
+    <div class="winner-icon" id="winnerIcon">🔫</div>
+    <h2 id="winnerName">Your skin</h2>
+    <div class="price" id="winnerPrice">$0.00</div>
+    <p class="muted" id="winnerMessage">Added to your inventory.</p>
+    <button class="primary-btn" onclick="closeResult()">CONTINUE</button>
   </div>
-
 </div>
 
-
 <script>
+"use strict";
 
-// ==========================================
-// STATE
-// ==========================================
+const $ = id => document.getElementById(id);
 
 const state = {
-
-  loggedIn: false,
-
-  user: null,
-
-  balance: 0,
-
-  cases: [],
-
-  selectedCase: null,
-
-  opening: false,
-
-  inventoryTab: 'skins'
-
+  loggedIn:false,
+  user:null,
+  balanceCents:0,
+  inventory:[],
+  transactions:[],
+  cases:[],
+  opening:false,
+  inventoryTab:"items"
 };
 
-
-// ==========================================
-// HELPERS
-// ==========================================
-
-const $ = (id) => document.getElementById(id);
-
+const fallbackSkins = [
+  {name:"AK-47 | Redline",price:12.50,icon:"🔫"},
+  {name:"AWP | Asiimov",price:45.00,icon:"🎯"},
+  {name:"M4A4 | Neo-Noir",price:28.00,icon:"🔫"},
+  {name:"USP-S | Kill Confirmed",price:35.00,icon:"🔫"},
+  {name:"Glock-18 | Fade",price:80.00,icon:"🔫"},
+  {name:"Desert Eagle | Printstream",price:25.00,icon:"🔫"},
+  {name:"Karambit | Blue Steel",price:250.00,icon:"🔪"},
+  {name:"Butterfly Knife | Night",price:400.00,icon:"🔪"},
+  {name:"AWP | Dragon Lore",price:1500.00,icon:"🎯"}
+];
 
 function money(cents){
-
-  return '$' + (
-    Number(cents || 0) / 100
-  ).toFixed(2);
-
+  return "$" + (Number(cents || 0) / 100).toFixed(2);
 }
 
-
-function escapeHTML(value){
-
-  return String(value ?? '').replace(
-    /[&<>"']/g,
-    (char) => ({
-      '&':'&amp;',
-      '<':'&lt;',
-      '>':'&gt;',
-      '"':'&quot;',
-      "'":'&#039;'
-    })[char]
-  );
-
+function showStatus(message,type){
+  const el=$("topupStatus");
+  if(!el)return;
+  el.textContent=message;
+  el.style.color=type==="error"?"var(--red)":type==="success"?"var(--green)":"var(--muted)";
 }
 
-
-function randomId(){
-
-  if (window.crypto?.randomUUID) {
-    return window.crypto.randomUUID();
-  }
-
-  return (
-    Date.now().toString(36) +
-    Math.random().toString(36).slice(2)
-  );
-
-}
-
-
-async function api(url, options = {}){
-
-  const response = await fetch(url, {
-
-    credentials: 'same-origin',
-
-    ...options,
-
-    headers: {
-
-      ...(options.body
-        ? {'Content-Type':'application/json'}
-        : {}),
-
+async function api(url,options={}){
+  const response=await fetch(url,{
+    credentials:"include",
+    headers:{
+      "Content-Type":"application/json",
       ...(options.headers || {})
-
-    }
-
+    },
+    ...options
   });
 
-  let data;
+  let data={};
+  try{
+    data=await response.json();
+  }catch(e){}
 
-  try {
-    data = await response.json();
-  } catch {
-    throw new Error('Invalid server response.');
+  if(!response.ok){
+    throw new Error(data.error || data.message || "Request failed ("+response.status+")");
   }
-
-  if (!response.ok) {
-
-    throw new Error(
-      data.message ||
-      data.error ||
-      'Request failed.'
-    );
-
-  }
-
   return data;
-
 }
 
+function showPage(page,button){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
 
-// ==========================================
-// NAVIGATION
-// ==========================================
+  const target=$(page);
+  if(target)target.classList.add("active");
 
-function showPage(pageId, button){
-
-  document.querySelectorAll('.page').forEach(page => {
-    page.classList.remove('active');
-  });
-
-  const page = $(pageId);
-
-  if (page) {
-    page.classList.add('active');
+  if(button){
+    button.classList.add("active");
+  }else{
+    const nav=document.querySelector('.nav-btn[onclick*="'+page+'"]');
+    if(nav)nav.classList.add("active");
   }
 
-  document.querySelectorAll('.nav-btn').forEach(btn => {
-    btn.classList.remove('active');
-  });
-
-  if (button) {
-    button.classList.add('active');
-  } else {
-
-    const navButton = document.querySelector(
-      `[data-page="${pageId}"]`
-    );
-
-    if (navButton) {
-      navButton.classList.add('active');
-    }
-
+  if(page==="inventory"){
+    loadInventory();
   }
-
-  if (pageId === 'casesPage') {
+  if(page==="market"){
+    loadMarket();
+  }
+  if(page==="cases"){
     loadCases();
   }
-
-  if (pageId === 'inventoryPage') {
-    loadInventory();
-  }
-
-  window.scrollTo({
-    top:0,
-    behavior:'smooth'
-  });
-
 }
-
-
-// ==========================================
-// STEAM LOGIN
-// ==========================================
 
 function steamLogin(){
-
-  window.location.href = '/auth/steam';
-
+  window.location.href="/auth/steam";
 }
-
-
-async function logout(){
-
-  try {
-
-    await api('/auth/logout', {
-      method:'POST'
-    });
-
-    state.loggedIn = false;
-    state.user = null;
-    state.balance = 0;
-
-    updateHeader();
-
-    showPage('marketPage');
-
-    await loadMe();
-
-  } catch(error) {
-
-    alert(error.message);
-
-  }
-
-}
-
-
-// ==========================================
-// HEADER
-// ==========================================
 
 function updateHeader(){
-
-  $('balanceBox').textContent =
-    'DEMO ' + money(state.balance);
-
-  if (!state.loggedIn || !state.user) {
-
-    $('authArea').innerHTML = `
-      <button class="login-btn" onclick="steamLogin()">
-        STEAM LOGIN
-      </button>
-    `;
-
-    return;
-
-  }
-
-  const avatar = escapeHTML(
-    state.user.avatar || ''
-  );
-
-  const name = escapeHTML(
-    state.user.displayName || 'Steam User'
-  );
-
-  $('authArea').innerHTML = `
-
-    <div class="user-info">
-
-      <img
-        src="${avatar}"
-        alt="Steam avatar"
-        onerror="this.style.display='none'"
-      >
-
-      <span class="user-name">
-        ${name}
-      </span>
-
-    </div>
-
-    <button class="logout-btn"
-      onclick="logout()">
-      LOGOUT
-    </button>
-
-  `;
-
-}
-
-
-// ==========================================
-// LOAD USER
-// ==========================================
-
-async function loadMe(){
-
-  try {
-
-    const data = await api('/api/me');
-
-    state.loggedIn = Boolean(data.loggedIn);
-
-    state.user = data.user || null;
-
-    if (state.loggedIn) {
-
-      await loadWallet();
-
-    } else {
-
-      state.balance = 0;
-
-    }
-
-    updateHeader();
-
-  } catch(error) {
-
-    console.error('User loading error:',error);
-
-    state.loggedIn = false;
-    state.user = null;
-    state.balance = 0;
-
-    updateHeader();
-
-  }
-
-}
-
-
-// ==========================================
-// WALLET
-// ==========================================
-
-async function loadWallet(){
-
-  if (!state.loggedIn) return;
-
-  try {
-
-    const data = await api('/api/wallet');
-
-    state.balance = Number(
-      data.balanceCents || 0
-    );
-
-    updateHeader();
-
-  } catch(error) {
-
-    console.error('Wallet error:',error);
-
-  }
-
-}
-
-
-// ==========================================
-// DEMO TOP UP
-// ==========================================
-
-async function demoTopUp(amountCents){
-
-  if (!state.loggedIn) {
-
-    alert('First login with Steam!');
-
-    steamLogin();
-
-    return;
-
-  }
-
-  const status = $('topupStatus');
-
-  if (status) {
-
-    status.className = 'status';
-
-    status.textContent = 'Adding demo balance...';
-
-  }
-
-  try {
-
-    const data = await api('/api/demo/topup', {
-
-      method:'POST',
-
-      body:JSON.stringify({
-
-        amountCents:amountCents
-
-      })
-
-    });
-
-    state.balance = Number(
-      data.balanceCents
-    );
-
-    updateHeader();
-
-    if (status) {
-
-      status.className = 'status success';
-
-      status.textContent =
-        'Success! New balance: ' +
-        money(state.balance);
-
-    }
-
-  } catch(error) {
-
-    if (status) {
-
-      status.className = 'status error';
-
-      status.textContent = error.message;
-
-    }
-
-  }
-
-}
-
-
-// ==========================================
-// LOAD CASES
-// ==========================================
-
-async function loadCases(){
-
-  const container = $('casesContainer');
-
-  if (!container) return;
-
-  container.innerHTML = `
-    <div class="loading">
-      Loading cases...
-    </div>
-  `;
-
-  try {
-
-    const data = await api('/api/cases');
-
-    state.cases = data.cases || [];
-
-    if (!state.cases.length) {
-
-      container.innerHTML = `
-        <div class="empty-state">
-          No cases available.
-        </div>
-      `;
-
-      return;
-
-    }
-
-    renderCases();
-
-  } catch(error) {
-
-    container.innerHTML = `
-      <div class="empty-state">
-        Could not load cases.
-        <p>${escapeHTML(error.message)}</p>
-      </div>
-    `;
-
-  }
-
-}
-
-
-// ==========================================
-// RENDER CASES
-// ==========================================
-
-function caseIcon(id){
-
-  if (id === 'knife-case') return '🔪';
-
-  if (id === 'weapon-case') return '🔫';
-
-  if (id === 'awp-case') return '🎯';
-
-  return '🎁';
-
-}
-
-
-function renderCases(){
-
-  const container = $('casesContainer');
-
-  container.innerHTML = state.cases.map(c => `
-
-    <div class="case-card">
-
-      <div class="case-art">
-        ${caseIcon(c.id)}
-      </div>
-
-      <h3>
-        ${escapeHTML(c.name)}
-      </h3>
-
-      <p>
-        ${escapeHTML(c.description)}
-      </p>
-
-      <div class="case-price">
-        ${money(c.priceCents)}
-      </div>
-
-      <button class="primary-btn"
-        onclick="selectCase('${escapeHTML(c.id)}')">
-        VIEW CASE
-      </button>
-
-    </div>
-
-  `).join('');
-
-}
-
-
-// ==========================================
-// SELECT CASE
-// ==========================================
-
-function selectCase(caseId){
-
-  const selected = state.cases.find(
-    c => c.id === caseId
-  );
-
-  if (!selected) return;
-
-  state.selectedCase = selected;
-
-  $('casesContainer').style.display = 'none';
-
-  $('caseDetail').style.display = 'block';
-
-  $('selectedCaseName').textContent =
-    selected.name;
-
-  $('selectedCaseDescription').textContent =
-    selected.description;
-
-  $('selectedCasePrice').textContent =
-    money(selected.priceCents);
-
-  $('caseStatus').textContent = '';
-
-  $('openCaseBtn').disabled = false;
-
-  $('openCaseBtn').textContent = 'OPEN CASE';
-
-  renderPossibleSkins(selected);
-
-  resetRoulette();
-
-}
-
-
-function closeCaseDetail(){
-
-  state.selectedCase = null;
-
-  $('caseDetail').style.display = 'none';
-
-  $('casesContainer').style.display = 'grid';
-
-}
-
-
-// ==========================================
-// POSSIBLE SKINS
-// ==========================================
-
-function renderPossibleSkins(selected){
-
-  const container = $('possibleSkins');
-
-  const skins = selected.skins || [];
-
-  if (!skins.length) {
-
-    container.innerHTML = `
-      <div class="empty-state">
-        No skins found.
-      </div>
-    `;
-
-    return;
-
-  }
-
-  container.innerHTML = skins.map(skin => `
-
-    <div class="skin-card">
-
-      <div class="skin-image">
-
-        ${skin.imageUrl
-          ? `<img src="${escapeHTML(skin.imageUrl)}"
-               alt="${escapeHTML(skin.name)}"
-               onerror="this.style.display='none'">`
-          : '🔫'
-        }
-
-      </div>
-
-      <h4>
-        ${escapeHTML(skin.name)}
-      </h4>
-
-      <p>
-        ${escapeHTML(skin.rarity)}
-      </p>
-
-      <div class="skin-price">
-        ${money(skin.priceCents)}
-      </div>
-
-    </div>
-
-  `).join('');
-
-}
-
-
-// ==========================================
-// ROULETTE
-// ==========================================
-
-function resetRoulette(){
-
-  const roulette = $('roulette');
-
-  roulette.style.transition = 'none';
-
-  roulette.style.transform = 'translateX(0)';
-
-  roulette.innerHTML = '';
-
-  const skins = state.selectedCase?.skins || [];
-
-  for (let i = 0; i < 15; i++) {
-
-    const skin = skins[
-      Math.floor(Math.random() * skins.length)
-    ];
-
-    if (!skin) continue;
-
-    roulette.innerHTML += `
-
-      <div class="roulette-item">
-
-        <span>🔫</span>
-
-        <strong>
-          ${escapeHTML(skin.name)}
-        </strong>
-
-      </div>
-
-    `;
-
-  }
-
-}
-
-
-// ==========================================
-// OPEN CASE
-// ==========================================
-
-async function openSelectedCase(){
-
-  if (state.opening) return;
-
-  if (!state.selectedCase) return;
-
-  if (!state.loggedIn) {
-
-    alert('Login with Steam first!');
-
-    steamLogin();
-
-    return;
-
-  }
-
-  const selected = state.selectedCase;
-
-  const status = $('caseStatus');
-
-  const button = $('openCaseBtn');
-
-  if (state.balance < selected.priceCents) {
-
-    status.className = 'status error';
-
-    status.textContent =
-      'Not enough demo balance.';
-
-    return;
-
-  }
-
-  state.opening = true;
-
-  button.disabled = true;
-
-  button.textContent = 'OPENING...';
-
-  status.className = 'status';
-
-  status.textContent =
-    'The case is opening...';
-
-  try {
-
-    const data = await api(
-      `/api/cases/${encodeURIComponent(selected.id)}/open`,
-      {
-        method:'POST',
-
-        body:JSON.stringify({
-
-          idempotencyKey:randomId()
-
-        })
+  $("headerBalance").textContent=money(state.balanceCents);
+  $("marketBalance").textContent=money(state.balanceCents);
+
+  const button=$("steamButton");
+
+  if(state.loggedIn && state.user){
+    const displayName=state.user.displayName || state.user.username || "STEAM ACCOUNT";
+    button.textContent=displayName.length>15?displayName.slice(0,15)+"...":displayName;
+    button.onclick=()=>{
+      if(confirm("Log out from Steam?")){
+        window.location.href="/auth/logout";
       }
-    );
-
-    state.balance = Number(
-      data.balanceCents
-    );
-
-    updateHeader();
-
-    const winner = data.skin;
-
-    if (!winner) {
-      throw new Error('Winner skin was not returned.');
-    }
-
-    await animateRoulette(winner);
-
-    $('winnerIcon').textContent =
-      winner.weapon === 'Knife' ? '🔪' : '🔫';
-
-    $('winnerName').textContent =
-      winner.name;
-
-    $('winnerPrice').textContent =
-      'Demo value: ' + money(winner.priceCents);
-
-    $('resultModal').classList.add('show');
-
-    status.textContent =
-      'Case opened successfully!';
-
-  } catch(error) {
-
-    status.className = 'status error';
-
-    status.textContent = error.message;
-
-    button.disabled = false;
-
-    button.textContent = 'OPEN CASE';
-
-  } finally {
-
-    state.opening = false;
-
-    await loadWallet();
-
+    };
+  }else{
+    button.textContent="STEAM LOGIN";
+    button.onclick=steamLogin;
   }
-
 }
-
-
-// ==========================================
-// ROULETTE ANIMATION
-// ==========================================
-
-function animateRoulette(winner){
-
-  return new Promise(resolve => {
-
-    const roulette = $('roulette');
-
-    const skins = state.selectedCase?.skins || [];
-
-    if (!skins.length) {
-
-      resolve();
-
-      return;
-
-    }
-
-    roulette.innerHTML = '';
-
-    const total = 45;
-
-    const winnerIndex = 37;
-
-    for (let i = 0; i < total; i++) {
-
-      const skin = i === winnerIndex
-        ? winner
-        : skins[
-            Math.floor(Math.random() * skins.length)
-          ];
-
-      roulette.innerHTML += `
-
-        <div class="roulette-item">
-
-          <span>
-            ${skin.weapon === 'Knife' ? '🔪' : '🔫'}
-          </span>
-
-          <strong>
-            ${escapeHTML(skin.name)}
-          </strong>
-
-        </div>
-
-      `;
-
-    }
-
-    roulette.style.transition = 'none';
-
-    roulette.style.transform = 'translateX(0)';
-
-    const itemWidth = 140;
-
-    const containerWidth =
-      roulette.parentElement.clientWidth;
-
-    const targetPosition =
-      winnerIndex * itemWidth -
-      containerWidth / 2 +
-      itemWidth / 2;
-
-    requestAnimationFrame(() => {
-
-      requestAnimationFrame(() => {
-
-        roulette.style.transition =
-          'transform 5s cubic-bezier(.12,.75,.12,1)';
-
-        roulette.style.transform =
-          `translateX(-${targetPosition}px)`;
-
-      });
-
-    });
-
-    setTimeout(resolve,5200);
-
-  });
-
-}
-
-
-// ==========================================
-// RESULT MODAL
-// ==========================================
-
-function closeResult(){
-
-  $('resultModal').classList.remove('show');
-
-  $('openCaseBtn').disabled = false;
-
-  $('openCaseBtn').textContent = 'OPEN CASE';
-
-  loadWallet();
-
-  if (state.loggedIn) {
-    loadInventory();
-  }
-
-}
-
-
-// ==========================================
-// INVENTORY
-// ==========================================
-
-async function loadInventory(){
-
-  const container = $('inventoryContent');
-
-  if (!container) return;
-
-  if (!state.loggedIn) {
-
-    container.innerHTML = `
-
-      <div class="content-panel">
-
-        <div class="empty-state">
-
-          <div class="symbol">🔐</div>
-
-          <h2>STEAM LOGIN REQUIRED</h2>
-
-          <p style="margin:12px 0">
-            Login with Steam to view your inventory.
-          </p>
-
-          <button class="primary-btn"
-            onclick="steamLogin()">
-            STEAM LOGIN
-          </button>
-
-        </div>
-
-      </div>
-
-    `;
-
-    return;
-
-  }
-
-  if (state.inventoryTab === 'transactions') {
-
-    await loadTransactions();
-
-    return;
-
-  }
-
-  container.innerHTML = `
-    <div class="loading">
-      Loading inventory...
-    </div>
-  `;
-
-  try {
-
-    const data = await api('/api/inventory');
-
-    const items = data.inventory || [];
-
-    if (!items.length) {
-
-      container.innerHTML = `
-
-        <div class="content-panel">
-
-          <div class="empty-state">
-
-            <div class="symbol">📦</div>
-
-            <h2>YOUR INVENTORY IS EMPTY</h2>
-
-            <p style="margin:12px 0">
-              Open a case to collect your first skin.
-            </p>
-
-            <button class="primary-btn"
-              onclick="showPage('casesPage')">
-              EXPLORE CASES
-            </button>
-
-          </div>
-
-        </div>
-
-      `;
-
-      return;
-
-    }
-
-    container.innerHTML = `
-
-      <div class="skin-grid">
-
-        ${items.map(item => {
-
-          const skin = item.skin;
-
-          return `
-
-            <div class="skin-card">
-
-              <div class="skin-image">
-
-                ${skin.imageUrl
-                  ? `<img src="${escapeHTML(skin.imageUrl)}"
-                       alt="${escapeHTML(skin.name)}"
-                       onerror="this.style.display='none'">`
-                  : '🔫'
-                }
-
-              </div>
-
-              <h4>
-                ${escapeHTML(skin.name)}
-              </h4>
-
-              <p>
-                ${escapeHTML(skin.rarity)}
-              </p>
-
-              <div class="skin-price">
-                ${money(skin.priceCents)}
-              </div>
-
-            </div>
-
-          `;
-
-        }).join('')}
-
-      </div>
-
-    `;
-
-  } catch(error) {
-
-    container.innerHTML = `
-      <div class="empty-state">
-        ${escapeHTML(error.message)}
-      </div>
-    `;
-
-  }
-
-}
-
-
-// ==========================================
-// INVENTORY TABS
-// ==========================================
-
-function switchInventoryTab(tab, button){
-
-  state.inventoryTab = tab;
-
-  document.querySelectorAll('.inventory-tab')
-    .forEach(btn => btn.classList.remove('active'));
-
-  if (button) {
-    button.classList.add('active');
-  }
-
-  loadInventory();
-
-}
-
-
-// ==========================================
-// TRANSACTIONS
-// ==========================================
-
-async function loadTransactions(){
-
-  const container = $('inventoryContent');
-
-  container.innerHTML = `
-    <div class="loading">
-      Loading transactions...
-    </div>
-  `;
-
-  try {
-
-    const data = await api('/api/transactions');
-
-    const items = data.transactions || [];
-
-    if (!items.length) {
-
-      container.innerHTML = `
-
-        <div class="content-panel">
-
-          <div class="empty-state">
-            No transactions yet.
-          </div>
-
-        </div>
-
-      `;
-
-      return;
-
-    }
-
-    container.innerHTML = `
-
-      <div class="content-panel">
-
-        <h3>TRANSACTION HISTORY</h3>
-
-        ${items.map(item => {
-
-          const amount = Number(
-            item.amountCents
-          );
-
-          const positive = amount >= 0;
-
-          const date = new Date(
-            item.createdAt
-          ).toLocaleString();
-
-          return `
-
-            <div class="transaction-row">
-
-              <div>
-
-                <strong>
-                  ${escapeHTML(item.description)}
-                </strong>
-
-                <div class="muted">
-                  ${escapeHTML(date)}
-                </div>
-
-              </div>
-
-              <div style="text-align:right">
-
-                <strong class="${
-                  positive ? 'positive' : 'negative'
-                }">
-
-                  ${positive ? '+' : ''}
-                  ${money(amount)}
-
-                </strong>
-
-                <div class="muted">
-                  Balance: ${money(item.balanceAfterCents)}
-                </div>
-
-              </div>
-
-            </div>
-
-          `;
-
-        }).join('')}
-
-      </div>
-
-    `;
-
-  } catch(error) {
-
-    container.innerHTML = `
-      <div class="empty-state">
-        ${escapeHTML(error.message)}
-      </div>
-    `;
-
-  }
-
-}
-
-
-// ==========================================
-// SERVER STATUS CHECK
-// ==========================================
 
 async function checkServer(){
+  try{
+    const data=await api("/api/me");
 
-  try {
+    state.loggedIn=Boolean(data.loggedIn);
+    state.user=data.user || null;
 
-    const data = await api('/api/status');
+    if(data.user && data.user.balanceCents!==undefined){
+      state.balanceCents=Number(data.user.balanceCents);
+    }
 
-    console.log(
-      'SKiNUM server:',
-      data.status,
-      'Database:',
-      data.database,
-      'Version:',
-      data.version
-    );
+    if(state.loggedIn){
+      await loadWallet();
+    }else{
+      state.balanceCents=0;
+    }
 
-  } catch(error) {
-
-    console.error(
-      'SKiNUM server check failed:',
-      error
-    );
-
+    updateHeader();
+    return data;
+  }catch(error){
+    console.error("Server check:",error);
+    updateHeader();
+    return null;
   }
-
 }
 
+async function loadWallet(){
+  try{
+    const data=await api("/api/wallet");
+    state.balanceCents=Number(
+      data.balanceCents ??
+      data.balance ??
+      state.balanceCents
+    );
+    updateHeader();
+  }catch(error){
+    console.error("Wallet:",error);
+  }
+}
 
-// ==========================================
-// INITIALIZATION
-// ==========================================
+async function demoTopUp(amountCents){
+  if(!state.loggedIn){
+    showStatus("Please sign in with Steam first.","error");
+    alert("Steam login is required to use demo top-up.");
+    steamLogin();
+    return;
+  }
+
+  const allowed=[1000,2500,5000,10000];
+  if(!allowed.includes(amountCents))return;
+
+  const buttons=document.querySelectorAll(".topup-btn");
+  buttons.forEach(b=>b.disabled=true);
+  showStatus("Processing demo top-up...");
+
+  try{
+    const data=await api("/api/demo/topup",{
+      method:"POST",
+      body:JSON.stringify({amountCents})
+    });
+
+    if(data.balanceCents!==undefined){
+      state.balanceCents=Number(data.balanceCents);
+    }else{
+      await loadWallet();
+    }
+
+    updateHeader();
+    showStatus("Demo balance successfully added!","success");
+    alert("Demo balance added: "+money(amountCents));
+  }catch(error){
+    showStatus(error.message || "Top-up failed.","error");
+    alert(error.message || "Demo top-up failed.");
+  }finally{
+    buttons.forEach(b=>b.disabled=false);
+  }
+}
+
+function renderMarketSkins(){
+  const container=$("marketSkins");
+  if(!container)return;
+
+  container.innerHTML=fallbackSkins.map(skin=>`
+    <div class="card">
+      <div class="card-image">${skin.icon}</div>
+      <div class="card-body">
+        <h3>${escapeHTML(skin.name)}</h3>
+        <div class="card-footer">
+          <span class="price">${money(Math.round(skin.price*100))}</span>
+          <span class="muted">CS2 SKIN</span>
+        </div>
+      </div>
+    </div>
+  `).join("");
+}
+
+async function loadMarket(){
+  renderMarketSkins();
+  await loadWallet();
+}
+
+async function loadCases(){
+  try{
+    const data=await api("/api/cases");
+    const cases=Array.isArray(data)?data:(data.cases || []);
+    if(cases.length)renderCases(cases);
+  }catch(error){
+    console.error("Cases:",error);
+  }
+}
+
+function renderCases(cases){
+  const container=$("caseList");
+  if(!container)return;
+
+  const icons={
+    "knife-case":"🔪",
+    "weapon-case":"🔫",
+    "awp-case":"🎯"
+  };
+
+  container.innerHTML=cases.map(c=>{
+    const price=Number(c.priceCents ?? c.price ?? 0);
+    return `
+      <div class="card case-card">
+        <div class="card-image">${icons[c.id] || "🎁"}</div>
+        <div class="card-body">
+          <h3>${escapeHTML(c.name || c.id)}</h3>
+          <p class="muted">${escapeHTML(c.description || "Discover your next skin.")}</p>
+          <div class="price">${money(price)}</div>
+          <button class="primary-btn" onclick="openCase('${escapeJS(c.id)}')">OPEN CASE</button>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+async function openCase(caseId){
+  if(state.opening)return;
+
+  if(!state.loggedIn){
+    alert("Please sign in with Steam first.");
+    steamLogin();
+    return;
+  }
+
+  state.opening=true;
+
+  const buttons=document.querySelectorAll(".case-card button");
+  buttons.forEach(b=>b.disabled=true);
+
+  $("resultTitle").textContent="OPENING CASE...";
+  $("winnerIcon").textContent="🎁";
+  $("winnerName").textContent="Good luck!";
+  $("winnerPrice").textContent="";
+  $("winnerMessage").textContent="Please wait...";
+  $("resultModal").classList.add("show");
+
+  const roulette=$("roulette");
+  roulette.innerHTML='<div class="roulette-item">🎁<small>OPENING...</small></div>';
+
+  try{
+    const data=await api("/api/cases/"+encodeURIComponent(caseId)+"/open",{
+      method:"POST",
+      body:JSON.stringify({})
+    });
+
+    const result=data.result || data.skin || data.item || data;
+
+    const name=result.name || result.skinName || "Mystery Skin";
+    const price=Number(result.priceCents ?? result.price ?? 0);
+    const icon=result.icon || "🔫";
+
+    roulette.innerHTML=`
+      <div class="roulette-item">🎁<small>SKiNUM</small></div>
+      <div class="roulette-item">${icon}<small>YOUR ITEM</small></div>
+      <div class="roulette-item">🎁<small>SKiNUM</small></div>
+    `;
+
+    await new Promise(resolve=>setTimeout(resolve,1300));
+
+    $("resultTitle").textContent="CONGRATULATIONS!";
+    $("winnerIcon").textContent=icon;
+    $("winnerName").textContent=name;
+    $("winnerPrice").textContent=money(price);
+    $("winnerMessage").textContent="Your item has been added to your platform inventory.";
+
+    if(data.balanceCents!==undefined){
+      state.balanceCents=Number(data.balanceCents);
+    }else{
+      await loadWallet();
+    }
+
+    updateHeader();
+    await loadInventoryData();
+  }catch(error){
+    $("resultTitle").textContent="CASE OPENING FAILED";
+    $("winnerIcon").textContent="⚠️";
+    $("winnerName").textContent="Unable to open case";
+    $("winnerPrice").textContent="";
+    $("winnerMessage").textContent=error.message;
+  }finally{
+    state.opening=false;
+    buttons.forEach(b=>b.disabled=false);
+  }
+}
+
+function closeResult(){
+  $("resultModal").classList.remove("show");
+  if(state.loggedIn){
+    loadInventory();
+  }
+  loadWallet();
+}
+
+async function loadInventoryData(){
+  try{
+    const data=await api("/api/inventory");
+    state.inventory=Array.isArray(data)?data:(data.inventory || data.items || []);
+  }catch(error){
+    console.error("Inventory:",error);
+    state.inventory=[];
+  }
+}
+
+async function loadTransactionsData(){
+  try{
+    const data=await api("/api/transactions");
+    state.transactions=Array.isArray(data)?data:(data.transactions || []);
+  }catch(error){
+    console.error("Transactions:",error);
+    state.transactions=[];
+  }
+}
+
+async function loadInventory(){
+  const container=$("inventoryContent");
+
+  if(!state.loggedIn){
+    container.innerHTML=`
+      <div class="empty">
+        <div style="font-size:50px">🔐</div>
+        <h3>STEAM LOGIN REQUIRED</h3>
+        <p>Sign in with Steam to see your inventory.</p>
+        <button class="primary-btn" onclick="steamLogin()">STEAM LOGIN</button>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML='<div class="empty">Loading your items...</div>';
+
+  if(state.inventoryTab==="items"){
+    await loadInventoryData();
+    renderInventory();
+  }else{
+    await loadTransactionsData();
+    renderTransactions();
+  }
+}
+
+function switchInventoryTab(tab,button){
+  state.inventoryTab=tab;
+
+  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+  if(button)button.classList.add("active");
+
+  loadInventory();
+}
+
+function renderInventory(){
+  const container=$("inventoryContent");
+
+  if(!state.inventory.length){
+    container.innerHTML=`
+      <div class="empty">
+        <div style="font-size:50px">📦</div>
+        <h3>YOUR INVENTORY IS EMPTY</h3>
+        <p>Open a case to receive your first skin.</p>
+        <button class="primary-btn" onclick="showPage('cases')">EXPLORE CASES</button>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML=`
+    <div class="item-list">
+      ${state.inventory.map(item=>{
+        const skin=item.skin || item;
+        const name=skin.name || skin.skinName || "CS2 Skin";
+        const price=Number(skin.priceCents ?? skin.price ?? 0);
+        const icon=skin.icon || "🔫";
+
+        return `
+          <div class="item-row">
+            <div class="item-left">
+              <div class="item-icon">${icon}</div>
+              <div>
+                <strong>${escapeHTML(name)}</strong>
+                <div class="muted">SKiNUM INVENTORY</div>
+              </div>
+            </div>
+            <div style="text-align:right">
+              <div class="price">${money(price)}</div>
+              <span class="muted">Owned</span>
+            </div>
+          </div>
+        `;
+      }).join("")}
+    </div>
+  `;
+}
+
+function renderTransactions(){
+  const container=$("inventoryContent");
+
+  if(!state.transactions.length){
+    container.innerHTML='<div class="empty">No transactions yet.</div>';
+    return;
+  }
+
+  container.innerHTML=`
+    <div class="item-list">
+      ${state.transactions.map(tx=>{
+        const amount=Number(tx.amountCents ?? tx.amount ?? 0);
+        const type=tx.type || tx.description || "Transaction";
+        const date=tx.createdAt || tx.created_at || "";
+
+        return `
+          <div class="item-row">
+            <div>
+              <strong>${escapeHTML(type)}</strong>
+              <div class="muted">${escapeHTML(String(date))}</div>
+            </div>
+            <div class="price">${money(amount)}</div>
+          </div>
+        `;
+      }).join("")}
+    </div>
+  `;
+}
+
+function escapeHTML(value){
+  return String(value ?? "").replace(/[&<>"']/g,char=>({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  })[char]);
+}
+
+function escapeJS(value){
+  return String(value ?? "").replace(/\\/g,"\\\\").replace(/'/g,"\\'");
+}
 
 async function initialize(){
-
+  renderMarketSkins();
   await checkServer();
 
-  await loadMe();
+  if(state.loggedIn){
+    await loadInventoryData();
+  }
 
   await loadCases();
-
-  const params = new URLSearchParams(
-    window.location.search
-  );
-
-  const loginStatus = params.get('login');
-
-  if (loginStatus === 'success') {
-
-    console.log('Steam login successful.');
-
-    window.history.replaceState(
-      {},
-      document.title,
-      window.location.pathname
-    );
-
-  }
-
-  if (loginStatus === 'failed') {
-
-    alert('Steam login failed. Please try again.');
-
-    window.history.replaceState(
-      {},
-      document.title,
-      window.location.pathname
-    );
-
-  }
-
-  if (loginStatus === 'not-configured') {
-
-    alert(
-      'Steam login is not configured on the server.'
-    );
-
-    window.history.replaceState(
-      {},
-      document.title,
-      window.location.pathname
-    );
-
-  }
-
+  updateHeader();
 }
 
-
-document.addEventListener(
-  'DOMContentLoaded',
-  initialize
-);
-
+initialize();
 </script>
 
 </body>
