@@ -27,7 +27,7 @@ if (!process.env.DATABASE_URL) {
 }
 
 // ==========================================
-// DATABASE CONNECTION
+// DATABASE
 // ==========================================
 
 const pool = new Pool({
@@ -44,7 +44,7 @@ pool.on("error", (error) => {
 });
 
 // ==========================================
-// SESSION STORE
+// SESSION
 // ==========================================
 
 const sessionStore = new PgSession({
@@ -109,7 +109,7 @@ passport.deserializeUser(async (steamId, done) => {
 });
 
 // ==========================================
-// STEAM STRATEGY
+// STEAM AUTHENTICATION
 // ==========================================
 
 passport.use(
@@ -172,13 +172,6 @@ function asyncRoute(handler) {
   };
 }
 
-function normalizeName(value) {
-  return String(value || "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, " ")
-    .trim();
-}
-
 function isValidImageUrl(value) {
   if (typeof value !== "string") return false;
 
@@ -191,11 +184,23 @@ function isValidImageUrl(value) {
 }
 
 // ==========================================
-// TAKE.SKIN IMAGE LOOKUP
+// SKIN IMAGE LOOKUP
 // ==========================================
 
-const TAKE_SKIN_API =
-  "https://take.skin/api/public/v1";
+// Demo skin slug -> Take.Skin mobile API slug.
+// These are lookup identifiers, not image URLs.
+
+const SKIN_IMAGE_SLUGS = {
+  "demo-ak-redline": "ak-47-redline",
+  "demo-awp-asiimov": "awp-asiimov",
+  "demo-m4-howl": "m4a4-howl",
+  "demo-glock-water": "glock-18-water-elemental",
+  "demo-deagle-blaze": "desert-eagle-blaze",
+  "demo-m4-emperor": "m4a4-the-emperor",
+  "demo-awp-worm": "awp-worm-god",
+  "demo-awp-neon": "awp-neo-noir",
+  "demo-awp-dragon": "awp-dragon-lore"
+};
 
 const TAKE_SKIN_MOBILE =
   "https://take.skin/api/mobile";
@@ -206,7 +211,7 @@ async function fetchJson(url) {
       Accept: "application/json",
       "User-Agent": "SKiNUM-CS2-Platform/1.0"
     },
-    signal: AbortSignal.timeout(8000)
+    signal: AbortSignal.timeout(10000)
   });
 
   if (!response.ok) {
@@ -217,37 +222,36 @@ async function fetchJson(url) {
 }
 
 function findImageUrl(data, depth = 0) {
-  if (!data || depth > 6) return null;
+  if (!data || depth > 8) return null;
 
   if (Array.isArray(data)) {
     for (const item of data) {
       const found = findImageUrl(item, depth + 1);
       if (found) return found;
     }
+
     return null;
   }
 
   if (typeof data !== "object") return null;
 
-  const preferredKeys = [
-    "image",
+  const keys = [
     "imageUrl",
     "image_url",
-    "render",
+    "image",
     "renderUrl",
     "render_url",
-    "preview",
+    "render",
     "previewUrl",
     "preview_url",
+    "preview",
     "icon",
     "thumbnail"
   ];
 
-  for (const key of preferredKeys) {
-    const value = data[key];
-
-    if (isValidImageUrl(value)) {
-      return value;
+  for (const key of keys) {
+    if (isValidImageUrl(data[key])) {
+      return data[key];
     }
   }
 
@@ -261,90 +265,40 @@ function findImageUrl(data, depth = 0) {
   return null;
 }
 
-function findSkinSlug(data, targetName, depth = 0) {
-  if (!data || depth > 5) return null;
+async function lookupSkinImage(skin) {
+  const slug = SKIN_IMAGE_SLUGS[skin.slug];
 
-  if (Array.isArray(data)) {
-    for (const item of data) {
-      const found = findSkinSlug(item, targetName, depth + 1);
-      if (found) return found;
-    }
+  if (!slug) {
+    console.log("UNKNOWN SKIN SLUG:", skin.slug);
     return null;
   }
 
-  if (typeof data !== "object") return null;
-
-  const target = normalizeName(targetName);
-
-  const candidates = [
-    data.marketHashName,
-    data.market_hash_name,
-    data.name,
-    data.displayName,
-    data.display_name
-  ].filter(Boolean);
-
-  const matches = candidates.some((name) => {
-    const normalized = normalizeName(name);
-
-    return normalized === target ||
-      normalized.includes(target) ||
-      target.includes(normalized);
-  });
-
-  if (matches && typeof data.slug === "string") {
-    return data.slug;
-  }
-
-  for (const value of Object.values(data)) {
-    if (value && typeof value === "object") {
-      const found = findSkinSlug(value, targetName, depth + 1);
-      if (found) return found;
-    }
-  }
-
-  return null;
-}
-
-async function lookupSkinImage(skin) {
   try {
-    const searchText = `${skin.weapon} ${skin.display_name
-      .split("|")
-      .slice(1)
-      .join("|")
-      .trim()}`;
+    const url =
+      `${TAKE_SKIN_MOBILE}/skins/${encodeURIComponent(slug)}`;
 
-    const searchUrl =
-      `${TAKE_SKIN_API}/skins?search=${encodeURIComponent(searchText)}&limit=20`;
+    console.log("IMAGE LOOKUP:", skin.display_name, url);
 
-    const searchData = await fetchJson(searchUrl);
+    const data = await fetchJson(url);
+    const imageUrl = findImageUrl(data);
 
-    let imageUrl = findImageUrl(searchData);
+    if (!imageUrl) {
+      console.log(
+        "NO IMAGE IN API RESPONSE:",
+        skin.display_name,
+        JSON.stringify(data).slice(0, 500)
+      );
 
-    const slug = findSkinSlug(
-      searchData,
-      skin.display_name
+      return null;
+    }
+
+    console.log(
+      "IMAGE FOUND:",
+      skin.display_name,
+      imageUrl
     );
 
-    if (imageUrl) {
-      return imageUrl;
-    }
-
-    if (slug) {
-      const detailUrl =
-        `${TAKE_SKIN_MOBILE}/skins/${encodeURIComponent(slug)}`;
-
-      const detailData = await fetchJson(detailUrl);
-      imageUrl = findImageUrl(detailData);
-
-      if (imageUrl) {
-        return imageUrl;
-      }
-    }
-
-    console.log("IMAGE NOT FOUND:", skin.display_name);
-    return null;
-
+    return imageUrl;
   } catch (error) {
     console.error(
       "IMAGE LOOKUP FAILED:",
@@ -380,7 +334,6 @@ async function syncSkinImages() {
       `SKIN IMAGE SYNC: ${result.rows.length} skins`
     );
 
-    // Three parallel requests at a time.
     for (let i = 0; i < result.rows.length; i += 3) {
       const batch = result.rows.slice(i, i + 3);
 
@@ -406,7 +359,6 @@ async function syncSkinImages() {
     }
 
     console.log("SKIN IMAGE SYNC FINISHED");
-
   } catch (error) {
     console.error("IMAGE SYNC ERROR:", error);
   } finally {
@@ -419,7 +371,6 @@ async function syncSkinImages() {
 // ==========================================
 
 async function initializeDatabase() {
-
   await pool.query(`
     CREATE TABLE IF NOT EXISTS users (
       steam_id VARCHAR(30) PRIMARY KEY,
@@ -448,7 +399,6 @@ async function initializeDatabase() {
     )
   `);
 
-  // Upgrade existing database safely.
   await pool.query(`
     ALTER TABLE skins
     ADD COLUMN IF NOT EXISTS image_url TEXT
@@ -613,12 +563,13 @@ async function initializeDatabase() {
   }
 
   // ========================================
-  // VALIDATE PROBABILITIES
+  // VALIDATE DROP PROBABILITIES
   // ========================================
 
   const invalidCases = await pool.query(`
-    SELECT c.slug,
-           COALESCE(SUM(ci.weight_bps), 0) AS total
+    SELECT
+      c.slug,
+      COALESCE(SUM(ci.weight_bps), 0) AS total
     FROM cases c
     LEFT JOIN case_items ci ON ci.case_id = c.id
     WHERE c.active = TRUE
@@ -823,7 +774,6 @@ app.post(
         throw new Error("USER_NOT_FOUND");
       }
 
-      // Prevent duplicate case opening requests.
       const previous = await client.query(
         `SELECT
            o.id,
@@ -939,7 +889,6 @@ app.post(
         throw new Error("INVALID_CASE_PROBABILITIES");
       }
 
-      // Server-side random selection.
       const randomNumber = crypto.randomInt(totalWeight);
 
       let cursor = 0;
@@ -1030,7 +979,6 @@ app.post(
           valueCents: Number(wonSkin.value_cents)
         }
       });
-
     } catch (error) {
       await client.query("ROLLBACK");
 
@@ -1060,7 +1008,6 @@ app.post(
       }
 
       throw error;
-
     } finally {
       client.release();
     }
@@ -1149,7 +1096,7 @@ app.get(
 );
 
 // ==========================================
-// IMAGE SYNC STATUS / MANUAL SYNC
+// IMAGE SYNC STATUS
 // ==========================================
 
 app.get(
@@ -1158,7 +1105,9 @@ app.get(
     const result = await pool.query(`
       SELECT
         COUNT(*)::int AS total,
-        COUNT(image_url)::int AS with_images
+        COUNT(*) FILTER (
+          WHERE image_url IS NOT NULL AND image_url <> ''
+        )::int AS with_images
       FROM skins
     `);
 
@@ -1175,6 +1124,10 @@ app.get(
   })
 );
 
+// ==========================================
+// MANUAL IMAGE SYNC
+// ==========================================
+
 app.post(
   "/api/images/sync",
   requireLogin,
@@ -1186,7 +1139,6 @@ app.post(
       });
     }
 
-    // Run in background.
     syncSkinImages();
 
     res.json({
@@ -1225,7 +1177,7 @@ app.get(
     res.json({
       success: true,
       app: "SKiNUM",
-      version: "7.7",
+      version: "7.8",
       status: "online",
       steamLogin: true,
       database: "connected",
@@ -1313,7 +1265,7 @@ async function startServer() {
 
     app.listen(PORT, () => {
       console.log("================================");
-      console.log("SKiNUM V7.7 SERVER ONLINE");
+      console.log("SKiNUM V7.8 SERVER ONLINE");
       console.log("DATABASE: CONNECTED");
       console.log("SESSION STORE: POSTGRESQL");
       console.log("STEAM AUTH: READY");
@@ -1324,7 +1276,7 @@ async function startServer() {
       console.log("SITE:", SITE_URL);
       console.log("================================");
 
-      // Do not block server startup if image API is unavailable.
+      // Start image sync after server startup.
       syncSkinImages();
 
       // Retry missing images every 12 hours.
@@ -1332,7 +1284,6 @@ async function startServer() {
         syncSkinImages();
       }, 12 * 60 * 60 * 1000);
     });
-
   } catch (error) {
     console.error("STARTUP ERROR:", error);
     process.exit(1);
