@@ -44,7 +44,7 @@ if (
   isProduction &&
   SESSION_SECRET === 'change-this-session-secret-before-production'
 ) {
-  console.error('Set a strong SESSION_SECRET in production.');
+  console.error('Set SESSION_SECRET in Render Environment.');
 }
 
 // ==========================================
@@ -53,14 +53,12 @@ if (
 
 const pool = new Pool({
   connectionString: DATABASE_URL,
-
   ssl:
     process.env.PGSSL === 'false'
       ? false
       : isProduction
         ? { rejectUnauthorized: false }
         : undefined,
-
   max: 10,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 10000
@@ -90,12 +88,10 @@ app.use(
       tableName: 'user_sessions',
       createTableIfMissing: true
     }),
-
     secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     name: 'skinum.sid',
-
     cookie: {
       httpOnly: true,
       secure: isProduction,
@@ -120,9 +116,8 @@ passport.deserializeUser(async (steamId, done) => {
   try {
     const result = await pool.query(
       `SELECT steam_id, display_name, avatar_url, profile_url
-       FROM users
-       WHERE steam_id = $1`,
-      [steamId]
+       FROM users WHERE steam_id = $1`,
+      [String(steamId)]
     );
 
     if (!result.rows.length) {
@@ -132,7 +127,7 @@ passport.deserializeUser(async (steamId, done) => {
     const row = result.rows[0];
 
     done(null, {
-      steamId: row.steam_id,
+      steamId: String(row.steam_id),
       displayName: row.display_name,
       avatar: row.avatar_url,
       profileUrl: row.profile_url
@@ -154,10 +149,9 @@ if (STEAM_API_KEY) {
         realm: `${SITE_URL}/`,
         apiKey: STEAM_API_KEY
       },
-
       async (_identifier, profile, done) => {
         try {
-          const steamId = profile.id;
+          const steamId = String(profile.id);
           const displayName = profile.displayName || 'Steam User';
 
           const avatar =
@@ -224,15 +218,15 @@ function centsToMoney(cents) {
 }
 
 // ==========================================
-// DATABASE INITIALIZATION + MIGRATIONS
+// DATABASE MIGRATION
 // ==========================================
 
 async function initializeDatabase() {
-  // Create tables and safely add missing columns
-  // to existing tables. Existing records are not deleted.
+  console.log('Starting SKiNUM database migration...');
+
+  // Create tables if they do not exist.
 
   await pool.query(`
-
     CREATE TABLE IF NOT EXISTS users (
       steam_id TEXT PRIMARY KEY,
       display_name TEXT NOT NULL DEFAULT 'Steam User',
@@ -243,6 +237,91 @@ async function initializeDatabase() {
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
+    CREATE TABLE IF NOT EXISTS skins (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL DEFAULT '',
+      weapon TEXT NOT NULL DEFAULT '',
+      rarity TEXT NOT NULL DEFAULT '',
+      image_url TEXT NOT NULL DEFAULT '',
+      market_price_cents INTEGER NOT NULL DEFAULT 0,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    CREATE TABLE IF NOT EXISTS cases (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL DEFAULT '',
+      description TEXT NOT NULL DEFAULT '',
+      price_cents INTEGER NOT NULL DEFAULT 0,
+      image_url TEXT NOT NULL DEFAULT '',
+      active BOOLEAN NOT NULL DEFAULT TRUE
+    );
+
+    CREATE TABLE IF NOT EXISTS case_items (
+      id BIGSERIAL PRIMARY KEY,
+      case_id TEXT NOT NULL,
+      skin_id TEXT NOT NULL,
+      drop_weight INTEGER NOT NULL DEFAULT 1
+    );
+
+    CREATE TABLE IF NOT EXISTS user_inventory (
+      id BIGSERIAL PRIMARY KEY,
+      steam_id TEXT NOT NULL,
+      skin_id TEXT NOT NULL,
+      source TEXT NOT NULL DEFAULT 'case',
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    CREATE TABLE IF NOT EXISTS transactions (
+      id BIGSERIAL PRIMARY KEY,
+      steam_id TEXT NOT NULL,
+      type TEXT NOT NULL DEFAULT 'unknown',
+      amount_cents BIGINT NOT NULL DEFAULT 0,
+      balance_after_cents BIGINT NOT NULL DEFAULT 0,
+      description TEXT NOT NULL DEFAULT '',
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    CREATE TABLE IF NOT EXISTS case_openings (
+      id BIGSERIAL PRIMARY KEY,
+      steam_id TEXT NOT NULL,
+      case_id TEXT NOT NULL,
+      skin_id TEXT NOT NULL,
+      idempotency_key TEXT,
+      price_cents INTEGER NOT NULL DEFAULT 0,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `);
+
+  // Remove old foreign keys before changing ID types.
+  // Existing records are preserved.
+
+  const foreignKeyTables = [
+    'case_items',
+    'user_inventory',
+    'transactions',
+    'case_openings'
+  ];
+
+  for (const table of foreignKeyTables) {
+    const result = await pool.query(
+      `SELECT conname
+       FROM pg_constraint
+       WHERE conrelid = $1::regclass
+       AND contype = 'f'`,
+      [table]
+    );
+
+    for (const row of result.rows) {
+      await pool.query(
+        `ALTER TABLE ${table}
+         DROP CONSTRAINT IF EXISTS "${row.conname}"`
+      );
+    }
+  }
+
+  // Add missing columns.
+
+  await pool.query(`
     ALTER TABLE users
       ADD COLUMN IF NOT EXISTS display_name TEXT NOT NULL DEFAULT 'Steam User',
       ADD COLUMN IF NOT EXISTS avatar_url TEXT NOT NULL DEFAULT '',
@@ -251,18 +330,6 @@ async function initializeDatabase() {
       ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
       ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
 
-
-    CREATE TABLE IF NOT EXISTS skins (
-      id TEXT PRIMARY KEY,
-      name TEXT NOT NULL,
-      weapon TEXT NOT NULL,
-      rarity TEXT NOT NULL,
-      image_url TEXT NOT NULL DEFAULT '',
-      market_price_cents INTEGER NOT NULL DEFAULT 0,
-      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-    );
-
-    -- FIX: migrate old skins table
     ALTER TABLE skins
       ADD COLUMN IF NOT EXISTS name TEXT NOT NULL DEFAULT '',
       ADD COLUMN IF NOT EXISTS weapon TEXT NOT NULL DEFAULT '',
@@ -271,16 +338,6 @@ async function initializeDatabase() {
       ADD COLUMN IF NOT EXISTS market_price_cents INTEGER NOT NULL DEFAULT 0,
       ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
 
-
-    CREATE TABLE IF NOT EXISTS cases (
-      id TEXT PRIMARY KEY,
-      name TEXT NOT NULL,
-      description TEXT NOT NULL DEFAULT '',
-      price_cents INTEGER NOT NULL,
-      image_url TEXT NOT NULL DEFAULT '',
-      active BOOLEAN NOT NULL DEFAULT TRUE
-    );
-
     ALTER TABLE cases
       ADD COLUMN IF NOT EXISTS name TEXT NOT NULL DEFAULT '',
       ADD COLUMN IF NOT EXISTS description TEXT NOT NULL DEFAULT '',
@@ -288,66 +345,97 @@ async function initializeDatabase() {
       ADD COLUMN IF NOT EXISTS image_url TEXT NOT NULL DEFAULT '',
       ADD COLUMN IF NOT EXISTS active BOOLEAN NOT NULL DEFAULT TRUE;
 
-
-    CREATE TABLE IF NOT EXISTS case_items (
-      id BIGSERIAL PRIMARY KEY,
-      case_id TEXT NOT NULL REFERENCES cases(id) ON DELETE CASCADE,
-      skin_id TEXT NOT NULL REFERENCES skins(id) ON DELETE CASCADE,
-      drop_weight INTEGER NOT NULL CHECK (drop_weight > 0),
-      UNIQUE(case_id, skin_id)
-    );
-
     ALTER TABLE case_items
+      ADD COLUMN IF NOT EXISTS case_id TEXT,
+      ADD COLUMN IF NOT EXISTS skin_id TEXT,
       ADD COLUMN IF NOT EXISTS drop_weight INTEGER NOT NULL DEFAULT 1;
 
-
-    CREATE TABLE IF NOT EXISTS user_inventory (
-      id BIGSERIAL PRIMARY KEY,
-      steam_id TEXT NOT NULL REFERENCES users(steam_id) ON DELETE CASCADE,
-      skin_id TEXT NOT NULL REFERENCES skins(id),
-      source TEXT NOT NULL DEFAULT 'case',
-      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-    );
-
     ALTER TABLE user_inventory
+      ADD COLUMN IF NOT EXISTS steam_id TEXT,
+      ADD COLUMN IF NOT EXISTS skin_id TEXT,
       ADD COLUMN IF NOT EXISTS source TEXT NOT NULL DEFAULT 'case',
       ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
 
-
-    CREATE TABLE IF NOT EXISTS transactions (
-      id BIGSERIAL PRIMARY KEY,
-      steam_id TEXT NOT NULL REFERENCES users(steam_id) ON DELETE CASCADE,
-      type TEXT NOT NULL,
-      amount_cents BIGINT NOT NULL,
-      balance_after_cents BIGINT NOT NULL,
-      description TEXT NOT NULL DEFAULT '',
-      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-    );
-
     ALTER TABLE transactions
+      ADD COLUMN IF NOT EXISTS steam_id TEXT,
       ADD COLUMN IF NOT EXISTS type TEXT NOT NULL DEFAULT 'unknown',
       ADD COLUMN IF NOT EXISTS amount_cents BIGINT NOT NULL DEFAULT 0,
       ADD COLUMN IF NOT EXISTS balance_after_cents BIGINT NOT NULL DEFAULT 0,
       ADD COLUMN IF NOT EXISTS description TEXT NOT NULL DEFAULT '',
       ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
 
-
-    CREATE TABLE IF NOT EXISTS case_openings (
-      id BIGSERIAL PRIMARY KEY,
-      steam_id TEXT NOT NULL REFERENCES users(steam_id) ON DELETE CASCADE,
-      case_id TEXT NOT NULL REFERENCES cases(id),
-      skin_id TEXT NOT NULL REFERENCES skins(id),
-      idempotency_key TEXT NOT NULL,
-      price_cents INTEGER NOT NULL,
-      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-      UNIQUE(steam_id, idempotency_key)
-    );
-
     ALTER TABLE case_openings
+      ADD COLUMN IF NOT EXISTS steam_id TEXT,
+      ADD COLUMN IF NOT EXISTS case_id TEXT,
+      ADD COLUMN IF NOT EXISTS skin_id TEXT,
       ADD COLUMN IF NOT EXISTS idempotency_key TEXT,
       ADD COLUMN IF NOT EXISTS price_cents INTEGER NOT NULL DEFAULT 0,
       ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+  `);
 
+  // IMPORTANT:
+  // Convert legacy numeric IDs into TEXT IDs.
+  // This fixes errors such as:
+  // invalid input syntax for type bigint: "ak-redline"
+
+  await pool.query(`
+    ALTER TABLE users
+      ALTER COLUMN steam_id DROP DEFAULT,
+      ALTER COLUMN steam_id TYPE TEXT
+      USING steam_id::TEXT;
+
+    ALTER TABLE skins
+      ALTER COLUMN id DROP DEFAULT,
+      ALTER COLUMN id TYPE TEXT
+      USING id::TEXT;
+
+    ALTER TABLE cases
+      ALTER COLUMN id DROP DEFAULT,
+      ALTER COLUMN id TYPE TEXT
+      USING id::TEXT;
+
+    ALTER TABLE case_items
+      ALTER COLUMN case_id TYPE TEXT
+      USING case_id::TEXT,
+      ALTER COLUMN skin_id TYPE TEXT
+      USING skin_id::TEXT;
+
+    ALTER TABLE user_inventory
+      ALTER COLUMN steam_id TYPE TEXT
+      USING steam_id::TEXT,
+      ALTER COLUMN skin_id TYPE TEXT
+      USING skin_id::TEXT;
+
+    ALTER TABLE transactions
+      ALTER COLUMN steam_id TYPE TEXT
+      USING steam_id::TEXT;
+
+    ALTER TABLE case_openings
+      ALTER COLUMN steam_id TYPE TEXT
+      USING steam_id::TEXT,
+      ALTER COLUMN case_id TYPE TEXT
+      USING case_id::TEXT,
+      ALTER COLUMN skin_id TYPE TEXT
+      USING skin_id::TEXT;
+  `);
+
+  // Ensure unique indexes for ON CONFLICT.
+
+  await pool.query(`
+    CREATE UNIQUE INDEX IF NOT EXISTS users_steam_id_unique
+      ON users(steam_id);
+
+    CREATE UNIQUE INDEX IF NOT EXISTS skins_id_unique
+      ON skins(id);
+
+    CREATE UNIQUE INDEX IF NOT EXISTS cases_id_unique
+      ON cases(id);
+
+    CREATE UNIQUE INDEX IF NOT EXISTS case_items_unique
+      ON case_items(case_id, skin_id);
+
+    CREATE UNIQUE INDEX IF NOT EXISTS case_openings_request_unique
+      ON case_openings(steam_id, idempotency_key);
 
     CREATE INDEX IF NOT EXISTS idx_inventory_steam
       ON user_inventory(steam_id, created_at DESC);
@@ -357,8 +445,63 @@ async function initializeDatabase() {
 
     CREATE INDEX IF NOT EXISTS idx_case_items_case
       ON case_items(case_id);
-
   `);
+
+  // Restore foreign keys.
+  // NOT VALID avoids failing because of unrelated legacy records.
+  // New records are still checked.
+
+  const foreignKeys = [
+    [
+      'case_items',
+      'case_items_case_fk',
+      'FOREIGN KEY (case_id) REFERENCES cases(id) ON DELETE CASCADE'
+    ],
+    [
+      'case_items',
+      'case_items_skin_fk',
+      'FOREIGN KEY (skin_id) REFERENCES skins(id) ON DELETE CASCADE'
+    ],
+    [
+      'user_inventory',
+      'inventory_user_fk',
+      'FOREIGN KEY (steam_id) REFERENCES users(steam_id) ON DELETE CASCADE'
+    ],
+    [
+      'user_inventory',
+      'inventory_skin_fk',
+      'FOREIGN KEY (skin_id) REFERENCES skins(id)'
+    ],
+    [
+      'transactions',
+      'transactions_user_fk',
+      'FOREIGN KEY (steam_id) REFERENCES users(steam_id) ON DELETE CASCADE'
+    ],
+    [
+      'case_openings',
+      'openings_user_fk',
+      'FOREIGN KEY (steam_id) REFERENCES users(steam_id) ON DELETE CASCADE'
+    ],
+    [
+      'case_openings',
+      'openings_case_fk',
+      'FOREIGN KEY (case_id) REFERENCES cases(id)'
+    ],
+    [
+      'case_openings',
+      'openings_skin_fk',
+      'FOREIGN KEY (skin_id) REFERENCES skins(id)'
+    ]
+  ];
+
+  for (const [table, name, definition] of foreignKeys) {
+    await pool.query(`
+      ALTER TABLE ${table}
+      ADD CONSTRAINT ${name}
+      ${definition}
+      NOT VALID
+    `);
+  }
 
   // ========================================
   // SKINS
@@ -428,7 +571,6 @@ async function initializeDatabase() {
       ['butterfly-night', 12],
       ['glock-fade', 70]
     ],
-
     'weapon-case': [
       ['ak-redline', 260],
       ['m4a4-neo-noir', 180],
@@ -437,7 +579,6 @@ async function initializeDatabase() {
       ['deagle-printstream', 90],
       ['awp-asiimov', 40]
     ],
-
     'awp-case': [
       ['awp-asiimov', 250],
       ['awp-dragon-lore', 5]
@@ -457,7 +598,7 @@ async function initializeDatabase() {
     }
   }
 
-  console.log('SKiNUM database initialized successfully.');
+  console.log('SKiNUM database migration completed.');
 }
 
 // ==========================================
@@ -486,7 +627,6 @@ app.get(
       { failureRedirect: '/?login=failed' }
     )(req, res, next);
   },
-
   (req, res) => {
     req.session.save((err) => {
       if (err) {
@@ -509,10 +649,7 @@ app.post('/auth/logout', (req, res, next) => {
 
     req.session.destroy(() => {
       res.clearCookie('skinum.sid');
-
-      res.json({
-        success: true
-      });
+      res.json({ success: true });
     });
   });
 });
@@ -542,7 +679,6 @@ app.get('/api/me', (req, res) => {
 
   res.json({
     loggedIn: true,
-
     user: {
       steamId: req.user.steamId,
       displayName: req.user.displayName,
@@ -559,12 +695,10 @@ app.get('/api/me', (req, res) => {
 app.get(
   '/api/wallet',
   requireLogin,
-
   asyncRoute(async (req, res) => {
     const result = await pool.query(
       `SELECT demo_balance_cents
-       FROM users
-       WHERE steam_id = $1`,
+       FROM users WHERE steam_id = $1`,
       [req.user.steamId]
     );
 
@@ -589,23 +723,20 @@ app.get(
 );
 
 // ==========================================
-// DEMO BALANCE TOP UP
+// DEMO TOP UP
 // ==========================================
 
 app.post(
   '/api/demo/topup',
   requireLogin,
-
   asyncRoute(async (req, res) => {
     const amountCents = Number(req.body?.amountCents);
-
     const allowedAmounts = [1000, 2500, 5000, 10000];
 
     if (!allowedAmounts.includes(amountCents)) {
       return res.status(400).json({
         success: false,
-        error: 'INVALID_AMOUNT',
-        message: 'Choose a valid demo top-up amount.'
+        error: 'INVALID_AMOUNT'
       });
     }
 
@@ -616,8 +747,7 @@ app.post(
 
       const locked = await client.query(
         `SELECT demo_balance_cents
-         FROM users
-         WHERE steam_id = $1
+         FROM users WHERE steam_id = $1
          FOR UPDATE`,
         [req.user.steamId]
       );
@@ -673,7 +803,6 @@ app.post(
 
 app.get(
   '/api/cases',
-
   asyncRoute(async (_req, res) => {
     const result = await pool.query(
       `SELECT
@@ -682,7 +811,6 @@ app.get(
         c.description,
         c.price_cents,
         c.image_url,
-
         COALESCE(
           json_agg(
             json_build_object(
@@ -696,11 +824,9 @@ app.get(
           ) FILTER (WHERE s.id IS NOT NULL),
           '[]'
         ) AS skins
-
        FROM cases c
        LEFT JOIN case_items ci ON ci.case_id = c.id
        LEFT JOIN skins s ON s.id = ci.skin_id
-
        WHERE c.active = TRUE
        GROUP BY c.id
        ORDER BY c.price_cents ASC`
@@ -708,7 +834,6 @@ app.get(
 
     res.json({
       success: true,
-
       cases: result.rows.map((c) => ({
         id: c.id,
         name: c.name,
@@ -729,7 +854,6 @@ app.get(
 app.post(
   '/api/cases/:caseId/open',
   requireLogin,
-
   asyncRoute(async (req, res) => {
     const caseId = String(req.params.caseId || '');
 
@@ -754,11 +878,9 @@ app.post(
           s.image_url,
           s.market_price_cents,
           u.demo_balance_cents
-
          FROM case_openings co
          JOIN skins s ON s.id = co.skin_id
          JOIN users u ON u.steam_id = co.steam_id
-
          WHERE co.steam_id = $1
            AND co.idempotency_key = $2`,
         [req.user.steamId, idempotencyKey]
@@ -774,7 +896,6 @@ app.post(
           replayed: true,
           mode: 'DEMO',
           balanceCents: Number(p.demo_balance_cents),
-
           skin: {
             id: p.skin_id,
             name: p.name,
@@ -798,8 +919,7 @@ app.post(
 
         return res.status(404).json({
           success: false,
-          error: 'CASE_NOT_FOUND',
-          message: 'Case not found.'
+          error: 'CASE_NOT_FOUND'
         });
       }
 
@@ -842,7 +962,6 @@ app.post(
           s.image_url,
           s.market_price_cents,
           ci.drop_weight
-
          FROM case_items ci
          JOIN skins s ON s.id = ci.skin_id
          WHERE ci.case_id = $1`,
@@ -857,6 +976,10 @@ app.post(
         (sum, item) => sum + Number(item.drop_weight),
         0
       );
+
+      if (!Number.isSafeInteger(totalWeight) || totalWeight <= 0) {
+        throw new Error('INVALID_DROP_WEIGHTS');
+      }
 
       let roll = crypto.randomInt(1, totalWeight + 1);
       let selected = itemsResult.rows[0];
@@ -922,12 +1045,10 @@ app.post(
         success: true,
         mode: 'DEMO',
         balanceCents: newBalance,
-
         case: {
           id: caseId,
           name: caseRow.name
         },
-
         skin: {
           id: selected.id,
           name: selected.name,
@@ -944,8 +1065,7 @@ app.post(
         return res.status(409).json({
           success: false,
           error: 'DUPLICATE_REQUEST',
-          message:
-            'This opening request was already processed. Refresh your balance and inventory.'
+          message: 'This opening request was already processed.'
         });
       }
 
@@ -957,13 +1077,12 @@ app.post(
 );
 
 // ==========================================
-// USER INVENTORY
+// INVENTORY
 // ==========================================
 
 app.get(
   '/api/inventory',
   requireLogin,
-
   asyncRoute(async (req, res) => {
     const result = await pool.query(
       `SELECT
@@ -976,10 +1095,8 @@ app.get(
         s.rarity,
         s.image_url,
         s.market_price_cents
-
        FROM user_inventory ui
        JOIN skins s ON s.id = ui.skin_id
-
        WHERE ui.steam_id = $1
        ORDER BY ui.created_at DESC
        LIMIT 200`,
@@ -988,12 +1105,10 @@ app.get(
 
     res.json({
       success: true,
-
       inventory: result.rows.map((r) => ({
         id: r.id,
         source: r.source,
         createdAt: r.created_at,
-
         skin: {
           id: r.skin_id,
           name: r.name,
@@ -1014,7 +1129,6 @@ app.get(
 app.get(
   '/api/transactions',
   requireLogin,
-
   asyncRoute(async (req, res) => {
     const result = await pool.query(
       `SELECT
@@ -1024,7 +1138,6 @@ app.get(
         balance_after_cents,
         description,
         created_at
-
        FROM transactions
        WHERE steam_id = $1
        ORDER BY created_at DESC
@@ -1034,7 +1147,6 @@ app.get(
 
     res.json({
       success: true,
-
       transactions: result.rows.map((r) => ({
         id: r.id,
         type: r.type,
@@ -1048,32 +1160,29 @@ app.get(
 );
 
 // ==========================================
-// SERVER STATUS
+// STATUS
 // ==========================================
 
 app.get(
   '/api/status',
-
   asyncRoute(async (_req, res) => {
     await pool.query('SELECT 1');
 
     res.json({
       success: true,
+      app: 'SKiNUM',
       status: 'online',
       database: 'connected',
+      sessionStore: 'postgresql',
+      steamLogin: Boolean(STEAM_API_KEY),
       mode: 'DEMO',
-      version: '8.0.0'
+      version: '8.1.0'
     });
   })
 );
 
-// ==========================================
-// DATABASE STATUS
-// ==========================================
-
 app.get(
   '/api/database',
-
   asyncRoute(async (_req, res) => {
     await pool.query('SELECT 1');
 
@@ -1088,11 +1197,7 @@ app.get(
 // STATIC FRONTEND
 // ==========================================
 
-app.use(
-  express.static(
-    path.join(__dirname, 'public')
-  )
-);
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('*', (req, res, next) => {
   if (
@@ -1102,9 +1207,7 @@ app.get('*', (req, res, next) => {
     return next();
   }
 
-  res.sendFile(
-    path.join(__dirname, 'public', 'index.html')
-  );
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // ==========================================
@@ -1121,7 +1224,6 @@ app.use((err, req, res, _next) => {
   res.status(500).json({
     success: false,
     error: 'INTERNAL_SERVER_ERROR',
-
     message: isProduction
       ? 'Something went wrong. Please try again.'
       : err.message
@@ -1135,17 +1237,11 @@ app.use((err, req, res, _next) => {
 initializeDatabase()
   .then(() => {
     app.listen(PORT, () => {
-      console.log(
-        `SKiNUM v8.0.0 listening on port ${PORT}`
-      );
+      console.log(`SKiNUM v8.1.0 listening on port ${PORT}`);
     });
   })
   .catch((err) => {
-    console.error(
-      'Database initialization failed:',
-      err
-    );
-
+    console.error('Database initialization failed:', err);
     process.exit(1);
   });
 
@@ -1154,9 +1250,7 @@ initializeDatabase()
 // ==========================================
 
 process.on('SIGTERM', async () => {
-  console.log(
-    'SIGTERM received. Closing PostgreSQL pool...'
-  );
+  console.log('SIGTERM received. Closing PostgreSQL pool...');
 
   await pool.end();
   process.exit(0);
