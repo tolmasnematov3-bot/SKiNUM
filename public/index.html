@@ -116,10 +116,51 @@ main{width:min(1100px,92%);margin:auto;padding:40px 0 70px}
   background:linear-gradient(150deg,#1a293e,#0e1521);
   border:1px solid var(--border);border-radius:15px;
   padding:20px;text-align:center;transition:.2s;
+  overflow:hidden;
 }
 .case-card:hover{transform:translateY(-4px);border-color:rgba(229,184,75,.5)}
-.case-art{height:150px;display:flex;align-items:center;justify-content:center}
-.case-art svg{width:155px;height:145px;filter:drop-shadow(0 12px 12px rgba(0,0,0,.5))}
+
+/* INDIVIDUAL CASE ART */
+.case-art{
+  height:160px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  position:relative;
+  overflow:hidden;
+  border-radius:10px;
+  background:radial-gradient(ellipse at center,rgba(229,184,75,.10),transparent 70%);
+}
+.case-art img{
+  width:46%;
+  height:135px;
+  object-fit:contain;
+  filter:drop-shadow(0 12px 12px rgba(0,0,0,.65));
+  transition:transform .3s ease;
+}
+.case-art img:only-child{width:85%;height:145px}
+.case-card:hover .case-art img{transform:scale(1.09) translateY(-4px)}
+.case-art-fallback{
+  width:100%;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+.case-art-fallback .case-symbol{
+  font-size:66px;
+  line-height:1;
+  filter:drop-shadow(0 10px 12px rgba(0,0,0,.7));
+}
+.case-art-fallback small{
+  color:var(--gold);
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:3px;
+}
 .case-card h3{margin:10px 0 7px;font-size:18px}
 .case-card p{color:var(--muted);font-size:12px}
 .case-price{color:var(--gold);font-size:21px;font-weight:bold;margin:17px 0}
@@ -297,6 +338,8 @@ footer{text-align:center;padding:25px;border-top:1px solid var(--border);color:#
   .menu-bottom h2{font-size:14px;letter-spacing:1px}
   .menu-bottom span{font-size:17px}
   .case-grid{grid-template-columns:1fr}
+  .case-art{height:150px}
+  .case-art img{height:125px}
   main{padding-top:25px}
   .roulette-box{padding:15px 10px}
   .roulette-window{height:165px}
@@ -501,7 +544,6 @@ function setMenuArtwork(elementId,skins,fallback){
 
 function updateHomeArtwork(cases){
   const allSkins=(cases||[]).flatMap(item=>item.items||[]);
-
   if(!allSkins.length)return;
 
   const findWeapon=keyword=>allSkins.filter(skin=>
@@ -582,16 +624,67 @@ async function loadWallet(){
   }
 }
 
-function caseArtwork(){
+/* CASE ARTWORK: USE IMAGES FROM EACH CASE */
+
+function getCaseTheme(item){
+  const name=String(item?.name||"").toLowerCase();
+  const slug=String(item?.slug||"").toLowerCase();
+  const text=name+" "+slug;
+
+  if(text.includes("knife")){
+    return {emoji:"🔪",label:"KNIFE COLLECTION"};
+  }
+
+  if(text.includes("awp")){
+    return {emoji:"🎯",label:"AWP COLLECTION"};
+  }
+
+  if(text.includes("weapon")){
+    return {emoji:"🔫",label:"WEAPON COLLECTION"};
+  }
+
+  if(text.includes("pistol")){
+    return {emoji:"🔫",label:"PISTOL COLLECTION"};
+  }
+
+  if(text.includes("rifle")){
+    return {emoji:"⚔️",label:"RIFLE COLLECTION"};
+  }
+
+  return {emoji:"🎁",label:"PREMIUM COLLECTION"};
+}
+
+function caseArtwork(item){
+  const skins=Array.isArray(item?.items)?item.items:[];
+  const images=skins
+    .filter(skin=>getSkinImage(skin))
+    .filter((skin,index,array)=>
+      array.findIndex(other=>getSkinImage(other)===getSkinImage(skin))===index
+    )
+    .slice(0,2);
+
+  if(images.length){
+    return `
+      <div class="case-art-skins">
+        ${images.map(skin=>`
+          <img
+            src="${escapeHTML(getSkinImage(skin))}"
+            alt="${escapeHTML(skin.name||"CS2 skin")}"
+            loading="lazy"
+            onerror="this.remove()">
+        `).join("")}
+      </div>
+    `;
+  }
+
+  const theme=getCaseTheme(item);
+
   return `
-  <svg viewBox="0 0 180 150" fill="none">
-    <path d="M30 43 L90 13 L150 43 L90 75 Z" fill="#7298c4" stroke="#d4e8ff" stroke-width="2"/>
-    <path d="M30 43 V108 L90 139 V75 Z" fill="#294568" stroke="#9dc7f6" stroke-width="2"/>
-    <path d="M150 43 V108 L90 139 V75 Z" fill="#3c6390" stroke="#9dc7f6" stroke-width="2"/>
-    <path d="M62 59 L90 44 L118 59 L90 74 Z" fill="#e8bd59"/>
-    <path d="M90 75 V139" stroke="#b9d9ff" stroke-width="2"/>
-    <path d="M74 88 L90 97 L106 88" stroke="#f5d68a" stroke-width="3"/>
-  </svg>`;
+    <div class="case-art-fallback">
+      <div class="case-symbol">${theme.emoji}</div>
+      <small>${theme.label}</small>
+    </div>
+  `;
 }
 
 async function loadCases(){
@@ -611,7 +704,7 @@ async function loadCases(){
 
     grid.innerHTML=state.cases.map(item=>`
       <article class="case-card">
-        <div class="case-art">${caseArtwork()}</div>
+        <div class="case-art">${caseArtwork(item)}</div>
         <h3>${escapeHTML(item.name)}</h3>
         <p>Discover your next CS2 skin</p>
         <div class="case-price">${money(item.priceCents)}</div>
